@@ -9,12 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Dark Theme (Default) - Deep Night Blue Accent */
+            /* Dark Theme (Default) */
             --bg-color: #0f1115;
             --card-bg: #1a1d24;
             --text-primary: #ffffff;
             --text-secondary: #8e94a3;
-            --accent: #2962ff; /* Глубокий ночной синий */
+            --accent: #2962ff;
             --accent-text: #ffffff;
             --danger: #ff4b4b;
             --success: #2ecc71;
@@ -111,7 +111,7 @@
             padding: 20px 15px;
             max-width: 600px;
             margin: 0 auto;
-            padding-bottom: calc(var(--nav-height) + 20px); /* Space for bottom nav */
+            padding-bottom: calc(var(--nav-height) + 20px);
         }
 
         /* Charts Section */
@@ -122,7 +122,6 @@
             margin-bottom: 15px;
         }
 
-        /* Chart Card Styles (Restored) */
         .chart-card {
             background-color: var(--card-bg);
             border-radius: 16px;
@@ -133,6 +132,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             cursor: pointer;
             transition: transform 0.2s;
+            height: fit-content; /* Prevent stretching */
         }
         .chart-card:active { transform: scale(0.96); }
         .chart-title {
@@ -142,6 +142,73 @@
             letter-spacing: 0.5px;
             margin-bottom: 10px;
             text-align: center;
+        }
+
+        /* Chart Container & Canvas Fixes */
+        .chart-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+        }
+        .chart-container canvas {
+            width: 120px !important;
+            height: 120px !important;
+        }
+        .chart-center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 1.2;
+            pointer-events: none;
+            width: 100%;
+        }
+        .chart-center-sub {
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Compact Legend */
+        .legend-list {
+            width: 100%;
+            margin-top: 10px;
+            max-height: 96px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            margin-bottom: 4px;
+            font-size: 11px;
+        }
+        .legend-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+        }
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .legend-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .legend-val {
+            flex-shrink: 0;
+            font-weight: 600;
         }
 
         /* Under Charts Grid (Goal + Calendar) */
@@ -567,7 +634,7 @@
             background-color: rgba(255,255,255,0.15);
         }
 
-        /* Fixed Label Structure for Repeat Toggle */
+        /* Repeat Toggle */
         .repeat-toggle-container {
             display: flex;
             align-items: center;
@@ -646,7 +713,7 @@
         .submit-btn:active { transform: scale(0.98); }
         .submit-btn.disabled { opacity: 0.6; pointer-events: none; }
 
-        /* Custom Confirm Dialog */
+        /* Custom Confirm Dialog (High Z-Index) */
         .confirm-dialog {
             position: fixed;
             top: 50%; left: 50%;
@@ -656,7 +723,7 @@
             border-radius: 16px;
             width: 85%;
             max-width: 320px;
-            z-index: 2000;
+            z-index: 4001;
             opacity: 0;
             visibility: hidden;
             transition: all 0.2s;
@@ -669,6 +736,18 @@
         .btn-confirm { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
         .btn-cancel { background: rgba(255,255,255,0.1); color: var(--text-primary); }
         .btn-delete { background: var(--danger); color: white; }
+
+        .confirm-overlay-high {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--overlay);
+            z-index: 4000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            backdrop-filter: blur(2px);
+        }
+        .confirm-overlay-high.active { opacity: 1; visibility: visible; }
 
         /* Month Picker Modal */
         .month-picker-grid {
@@ -689,7 +768,7 @@
         .year-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .btn-small { background: rgba(255,255,255,0.1); border: none; color: var(--text-primary); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
 
-        /* Tarot Card Styles (Dark Theme Forced) */
+        /* Tarot Card Styles */
         .tarot-card {
             width: 170px;
             aspect-ratio: 1/2;
@@ -868,19 +947,6 @@
             display: block;
         }
 
-        /* Chart Container Fixes */
-        .chart-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            overflow: hidden;
-            margin: 0 auto;
-        }
-        .chart-container canvas {
-            width: 120px;
-            height: 120px;
-        }
-
     </style>
 </head>
 <body>
@@ -943,7 +1009,7 @@
             </div>
         </div>
 
-        <!-- Balance Card (Moved after grid) -->
+        <!-- Balance Card -->
         <div class="balance-card" id="balanceCard">
             <div class="balance-title">Остаток за месяц</div>
             <div class="balance-amount" id="monthBalanceVal">0 ₽</div>
@@ -1175,8 +1241,8 @@
     </div>
 </div>
 
-<!-- Custom Confirm Dialog -->
-<div class="modal-overlay" id="confirmOverlay" style="z-index: 1999;"></div>
+<!-- Custom Confirm Dialog (High Z-Index) -->
+<div class="confirm-overlay-high" id="confirmOverlay"></div>
 <div class="confirm-dialog" id="confirmDialog">
     <div class="confirm-text" id="confirmText">Удалить операцию?</div>
     <div class="confirm-actions">
@@ -1195,14 +1261,10 @@
 
     // Global Error Handler
     window.onerror = (msg) => {
-        const t = document.getElementById('toast'); // Assuming toast exists or just log
-        // Since toast isn't in HTML, we'll just log or try to find a generic container if needed
-        // But per instructions, we just add the handler. If 'toast' doesn't exist, it fails silently or we assume it might be added later.
-        // For safety in this specific file without a toast element defined in HTML:
         console.error("Global Error:", msg);
     };
 
-    // Theme Handling (Fixed: Dark by default)
+    // Theme Handling (Dark by default)
     function applyTheme() {
         const scheme = (tg && tg.colorScheme === 'light') ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', scheme);
@@ -1332,6 +1394,21 @@
         fit();
     }
 
+    // Helper to close all sheets and overlays
+    function closeAllSheets() {
+        const sheets = ['addSheet', 'opDetailSheet', 'detailsSheet', 'monthSheet', 'goalSheet', 'fullCalSheet', 'dayDetailsSheet', 'achDetailSheet'];
+        sheets.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.classList.remove('active');
+        });
+        
+        const overlays = ['modalOverlay', 'monthOverlay', 'fullCalOverlay'];
+        overlays.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.classList.remove('active');
+        });
+    }
+
     function getFilteredOps(type = null, year = viewState.year, month = viewState.month) {
         return operations.filter(op => {
             const d = new Date(op.date);
@@ -1345,7 +1422,8 @@
         const year = viewState.year;
         const month = viewState.month;
         
-        document.getElementById('monthLabel').textContent = `${fullMonths[month]} ${year}`;
+        const monthLabel = document.getElementById('monthLabel');
+        if(monthLabel) monthLabel.textContent = `${fullMonths[month]} ${year}`;
         
         const ops = getFilteredOps();
         const incomeOps = ops.filter(o => o.type === 'income');
@@ -1464,22 +1542,34 @@
             groups[op.category] += op.amount;
         });
 
-        const labels = Object.keys(groups);
-        const data = Object.values(groups);
+        // Sort and take Top 5
+        const sortedCats = Object.keys(groups).sort((a, b) => groups[b] - groups[a]);
+        const top5 = sortedCats.slice(0, 5);
+        const rest = sortedCats.slice(5);
         
-        let colors = [];
+        let labels = [...top5];
+        let dataValues = top5.map(cat => groups[cat]);
+        let colors = top5.map(cat => getColorForCategory(cat, type));
+
+        if (rest.length > 0) {
+            labels.push('Прочее');
+            const restSum = rest.reduce((sum, cat) => sum + groups[cat], 0);
+            dataValues.push(restSum);
+            colors.push(getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim());
+        }
+
         if (labels.length === 0) {
+            labels = [''];
+            dataValues = [1];
             colors = [getComputedStyle(document.documentElement).getPropertyValue('--border').trim()];
-        } else {
-            colors = labels.map(l => getColorForCategory(l, type));
         }
 
         const legendContainer = document.getElementById(legendId);
         if(legendContainer) {
             legendContainer.innerHTML = '';
-            if (labels.length > 0) {
+            if (labels.length > 0 && labels[0] !== '') {
                 labels.forEach((lab, i) => {
-                    const pct = ((data[i] / total) * 100).toFixed(0);
+                    const pct = ((dataValues[i] / total) * 100).toFixed(0);
                     const div = document.createElement('div');
                     div.className = 'legend-item';
                     div.innerHTML = `
@@ -1500,19 +1590,17 @@
         if(!ctx) return;
 
         if (charts[type]) {
-            // Update existing chart
-            charts[type].data.labels = labels.length ? labels : [''];
-            charts[type].data.datasets[0].data = data.length ? data : [1];
+            charts[type].data.labels = labels;
+            charts[type].data.datasets[0].data = dataValues;
             charts[type].data.datasets[0].backgroundColor = colors;
             charts[type].update();
         } else {
-            // Create new chart
             charts[type] = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: labels.length ? labels : [''],
+                    labels: labels,
                     datasets: [{
-                        data: data.length ? data : [1],
+                        data: dataValues,
                         backgroundColor: colors,
                         borderWidth: 0,
                         hoverOffset: 10
@@ -1526,10 +1614,7 @@
                         tooltip: { enabled: false },
                         legend: { display: false }
                     },
-                    animation: {
-                        animateScale: true,
-                        animateRotate: true
-                    }
+                    animation: false
                 }
             });
         }
@@ -1848,7 +1933,9 @@
         document.getElementById('addSheet').classList.add('active');
         
         document.getElementById('opForm').reset();
-        document.getElementById('opId').value = '';
+        const opIdEl = document.getElementById('opId');
+        if(opIdEl) opIdEl.value = '';
+        
         document.getElementById('opRepeatCheck').checked = false;
         toggleRepeatOptions();
         setPeriod('day', document.querySelector('.radio-card'));
@@ -1856,12 +1943,18 @@
         hideSuggestions();
 
         if (editOp) {
-            document.getElementById('opId').value = editOp.id;
-            document.getElementById('opAmount').value = editOp.amount;
-            document.getElementById('opCategory').value = editOp.category;
-            document.getElementById('opNote').value = editOp.note || '';
+            if(opIdEl) opIdEl.value = editOp.id;
+            const amt = document.getElementById('opAmount');
+            const cat = document.getElementById('opCategory');
+            const note = document.getElementById('opNote');
+            
+            if(amt) amt.value = editOp.amount;
+            if(cat) cat.value = editOp.category;
+            if(note) note.value = editOp.note || '';
+            
             setType(editOp.type);
-            document.getElementById('opRepeatCheck').checked = editOp.isRecurring || false;
+            const repCheck = document.getElementById('opRepeatCheck');
+            if(repCheck) repCheck.checked = editOp.isRecurring || false;
             toggleRepeatOptions();
             if(editOp.period) {
                 const radio = document.querySelector(`.radio-card[onclick*="${editOp.period}"]`);
@@ -2092,18 +2185,20 @@
 
                     haptic('success');
                     
-                    const id = document.getElementById('opId').value;
+                    const idVal = document.getElementById('opId').value;
                     const amount = parseFloat(document.getElementById('opAmount').value);
                     const category = document.getElementById('opCategory').value.trim();
                     const note = document.getElementById('opNote').value.trim();
                     const isRecurring = document.getElementById('opRepeatCheck').checked;
 
-                    if (id) {
-                        const idx = operations.findIndex(o => o.id == id);
+                    if (idVal) {
+                        // Edit existing
+                        const idx = operations.findIndex(o => String(o.id) === String(idVal));
                         if (idx > -1) {
                             operations[idx] = { ...operations[idx], amount, category, note, type: currentType, isRecurring, period: isRecurring ? currentPeriod : null };
                         }
                     } else {
+                        // Create new
                         const baseId = Date.now() + '-' + Math.random().toString(36).slice(2);
                         const now = new Date();
                         
@@ -2142,12 +2237,7 @@
                     closeModal();
                 }, 100);
             } catch (err) {
-                const toastMsg = document.getElementById('toastMsg');
-                const toast = document.getElementById('toast');
-                if(toastMsg && toast) {
-                    toastMsg.textContent = 'Ошибка: ' + err.message;
-                    toast.classList.add('show');
-                }
+                console.error(err);
             } finally {
                 isSaving = false;
                 saveBtn.classList.remove('disabled');
@@ -2186,14 +2276,11 @@
     if(confirmOkBtn) {
         confirmOkBtn.onclick = () => {
             if (pendingDeleteId) {
-                operations = operations.filter(o => o.id !== pendingDeleteId && o.parentId !== pendingDeleteId);
+                operations = operations.filter(o => String(o.id) !== String(pendingDeleteId) && String(o.parentId) !== String(pendingDeleteId));
                 saveData();
                 updateUI();
                 haptic('success');
-                const detSheet = document.getElementById('detailsSheet');
-                if (detSheet && detSheet.classList.contains('active')) closeDetails();
-                const daySheet = document.getElementById('dayDetailsSheet');
-                if (daySheet && daySheet.classList.contains('active')) closeDayDetails();
+                closeAllSheets(); // Close any open sheets
             }
             hideDeleteConfirm();
         };
@@ -2534,17 +2621,10 @@
 
     document.getElementById('addBtn').onclick = () => openModal();
     
-    document.getElementById('modalOverlay').onclick = (e) => {
-        if(e.target === document.getElementById('modalOverlay')) {
-            closeOpDetail(); // Added per instruction
-            closeModal();
-            closeDetails();
-            closeMonthPicker();
-            closeGoal();
-            closeAchDetail();
-            closeFullCalendar();
-        }
-    };
+    // Overlay click handlers
+    document.getElementById('modalOverlay').onclick = closeAllSheets;
+    document.getElementById('monthOverlay').onclick = closeAllSheets;
+    document.getElementById('fullCalOverlay').onclick = closeAllSheets;
 
     document.getElementById('incomeChartCard').onclick = () => {
         haptic('medium');
