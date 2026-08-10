@@ -5,187 +5,413 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Мои финансы</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#f0f2f6;--card:#fff;--text:#141c26;--hint:#8b93a5;--accent:#2aabee;--accent2:#6f5bff;
---green:#22a45d;--red:#e5484d;--chip:#f1f3f7;--border:rgba(20,28,38,.08);--shadow:0 8px 24px rgba(20,28,38,.08)}
-body{--bg:#f0f2f6;--card:#fff;--text:#141c26;--hint:#8b93a5;--chip:#f1f3f7;--border:rgba(20,28,38,.08);
---shadow:0 8px 24px rgba(20,28,38,.08);color-scheme:light}
-body.dark{--bg:#0b111c;--card:#151d2b;--text:#edf1f7;--hint:#8b96a8;--chip:#1f2937;
---border:rgba(255,255,255,.07);--shadow:0 6px 20px rgba(0,0,0,.4);color-scheme:dark}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text)}
-.wrap{max-width:640px;margin:0 auto}
-.month-nav{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 16px 6px}
-.month-nav button{width:36px;height:36px;border-radius:12px;border:none;background:var(--card);
-box-shadow:var(--shadow);color:var(--text);font-size:18px;cursor:pointer}
-#monthTitle{font-size:17px;font-weight:700;min-width:160px;text-align:center}
-.summary{margin:10px 16px 12px;padding:20px;border-radius:22px;color:#fff;
-background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 10px 30px rgba(64,110,238,.35)}
-.summary .hint{font-size:13px;opacity:.85}
-#balance{display:block;font-size:34px;font-weight:800;letter-spacing:-.5px;margin-top:2px}
-.sum-row{display:flex;gap:10px;margin-top:16px}
-.sum{flex:1;background:rgba(255,255,255,.16);border-radius:14px;padding:10px 12px}
-.sum span{font-size:12px;opacity:.85;display:block}
-.sum strong{font-size:16px}
-#catsCard{margin:0 16px 12px;padding:16px;background:var(--card);border-radius:20px;box-shadow:var(--shadow)}
-.cats-title{font-size:13px;font-weight:600;color:var(--hint);margin-bottom:12px}
-.bar-row{margin-bottom:10px}.bar-row:last-child{margin-bottom:0}
-.bar-head{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
-.bar{height:6px;border-radius:3px;background:var(--chip);overflow:hidden}
-.bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#ff8a65,var(--red))}
-#list{margin:0 16px 110px;background:var(--card);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
-.tx{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border)}
+:root{
+  --bg:#f5f7fa;
+  --card:#ffffff;
+  --text:#1c1c1e;
+  --hint:#9ca3af;
+  --yellow:#ffd600;
+  --black:#1c1c1e;
+  --gray:#f2f2f7;
+  --border:#e5e5ea;
+  --green:#34c759;
+  --red:#ff3b30;
+  --shadow:0 4px 20px rgba(0,0,0,0.06);
+  --radius:20px;
+  --anim: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+body.dark{
+  --bg:#000000;
+  --card:#1c1c1e;
+  --text:#ffffff;
+  --hint:#8e8e93;
+  --gray:#2c2c2e;
+  --border:#3a3a3c;
+  --shadow:0 4px 20px rgba(0,0,0,0.3);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);transition:background 0.3s, color 0.3s;}
+.wrap{max-width:600px;margin:0 auto;padding-bottom:100px}
+
+/* Header */
+.header{padding:20px 16px 10px;display:flex;justify-content:space-between;align-items:center}
+.month-nav{display:flex;align-items:center;gap:12px;background:var(--card);padding:6px;border-radius:14px;box-shadow:var(--shadow)}
+.month-nav button{width:32px;height:32px;border-radius:10px;border:none;background:var(--gray);color:var(--text);font-size:18px;cursor:pointer;transition:transform 0.1s}
+.month-nav button:active{transform:scale(0.9)}
+#monthTitle{font-size:16px;font-weight:600;min-width:140px;text-align:center;color:var(--text)}
+
+/* Cards */
+.card{margin:12px 16px;padding:20px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);transition:transform 0.2s var(--anim)}
+.card:active{transform:scale(0.98)}
+
+/* Charts Row */
+.charts-row{display:flex;gap:12px;justify-content:center;margin:10px 16px}
+.chart-wrapper{flex:1;background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);position:relative;display:flex;flex-direction:column;align-items:center}
+.chart-title{font-size:13px;color:var(--hint);margin-bottom:8px;font-weight:500}
+.chart-container{position:relative;height:140px;width:100%;display:flex;justify-content:center}
+.chart-val{position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);font-size:18px;font-weight:700;color:var(--text)}
+.chart-sub{font-size:11px;color:var(--hint);font-weight:400;display:block;margin-top:2px}
+
+/* List */
+#list{margin:0 16px;border-radius:var(--radius);overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
+.tx{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border);transition:background 0.2s}
 .tx:last-child{border-bottom:none}
-.tx-icon{width:42px;height:42px;border-radius:14px;background:var(--chip);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.tx:active{background:var(--gray)}
+.tx-icon{width:44px;height:44px;border-radius:14px;background:var(--gray);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
 .tx-body{flex:1;min-width:0}
-.tx-title{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tx-sub{font-size:12.5px;color:var(--hint);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx-title{font-size:15px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx-sub{font-size:12px;color:var(--hint);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tx-amount{font-size:15px;font-weight:700;flex:none}
 .pos{color:var(--green)}.neg{color:var(--red)}
-.tx-del{border:none;background:none;color:var(--hint);opacity:.45;font-size:13px;padding:6px;cursor:pointer}
-.empty{padding:40px 20px;text-align:center;color:var(--hint);font-size:14px;line-height:1.5}
-.empty-ico{font-size:40px;margin-bottom:10px}
-.fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:20px;
-border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:28px;
-box-shadow:0 10px 26px rgba(64,110,238,.45);z-index:20;cursor:pointer}
-.fab:active{transform:scale(.95)}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:30}
+.tx-del{border:none;background:none;color:var(--hint);opacity:0.5;font-size:18px;padding:4px;cursor:pointer;transition:opacity 0.2s}
+.tx-del:hover{opacity:1}
+
+.empty{padding:40px 20px;text-align:center;color:var(--hint);font-size:14px}
+.empty-ico{font-size:36px;margin-bottom:10px;opacity:0.5}
+
+/* FAB */
+.fab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));width:60px;height:60px;border-radius:24px;
+border:none;background:var(--black);color:var(--yellow);font-size:28px;
+box-shadow:0 8px 24px rgba(0,0,0,0.15);z-index:20;cursor:pointer;transition:transform 0.2s var(--anim), box-shadow 0.2s}
+.fab:hover{box-shadow:0 12px 30px rgba(0,0,0,0.2)}
+.fab:active{transform:scale(0.9)}
+
+/* Sheet */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity 0.3s var(--anim);z-index:30}
 .overlay.show{opacity:1;pointer-events:auto}
-.sheet{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-radius:26px 26px 0 0;
-padding:14px 18px calc(20px + env(safe-area-inset-bottom));transform:translateY(105%);
-transition:transform .3s cubic-bezier(.2,.8,.2,1);z-index:31;max-height:88vh;overflow-y:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-radius:28px 28px 0 0;
+padding:20px 20px calc(24px + env(safe-area-inset-bottom));transform:translateY(110%);
+transition:transform 0.35s var(--anim);z-index:31;max-height:90vh;overflow-y:auto}
 .sheet.open{transform:translateY(0)}
-.grabber{width:44px;height:5px;border-radius:3px;background:var(--chip);margin:0 auto 12px}
-.sheet h2{font-size:18px;text-align:center}
-.segmented{display:flex;background:var(--chip);border-radius:14px;padding:4px;margin:14px 0}
-.segmented button{flex:1;border:none;background:none;padding:10px;border-radius:11px;font-size:14px;font-weight:600;color:var(--hint);cursor:pointer}
-.segmented button.active[data-type="expense"]{background:var(--card);color:var(--red);box-shadow:0 2px 8px rgba(0,0,0,.1)}
-.segmented button.active[data-type="income"]{background:var(--card);color:var(--green);box-shadow:0 2px 8px rgba(0,0,0,.1)}
-.sheet input{width:100%;border:none;background:var(--chip);border-radius:14px;padding:14px;font-size:16px;color:var(--text);margin-bottom:12px;outline:none}
-.sheet input:focus{box-shadow:0 0 0 2px var(--accent)}
-#amount{font-size:22px;font-weight:700}
+.grabber{width:40px;height:5px;border-radius:3px;background:var(--border);margin:0 auto 20px}
+.sheet h2{font-size:20px;text-align:center;font-weight:700;margin-bottom:20px;color:var(--text)}
+
+.segmented{display:flex;background:var(--gray);border-radius:14px;padding:4px;margin-bottom:20px}
+.segmented button{flex:1;border:none;background:none;padding:10px;border-radius:11px;font-size:14px;font-weight:600;color:var(--hint);cursor:pointer;transition:all 0.2s}
+.segmented button.active[data-type="expense"]{background:var(--card);color:var(--red);box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.segmented button.active[data-type="income"]{background:var(--card);color:var(--green);box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+
+.sheet input, .sheet select{width:100%;border:none;background:var(--gray);border-radius:16px;padding:16px;font-size:16px;color:var(--text);margin-bottom:14px;outline:none;transition:box-shadow 0.2s, background 0.2s}
+.sheet input:focus, .sheet select:focus{box-shadow:0 0 0 2px var(--yellow);background:var(--card)}
+#amount{font-size:24px;font-weight:700;text-align:center}
 input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.chip{border:none;background:var(--chip);color:var(--text);padding:9px 12px;border-radius:12px;font-size:13.5px;cursor:pointer}
-.chip.sel{background:rgba(42,171,238,.15);box-shadow:inset 0 0 0 1.5px var(--accent);color:var(--accent)}
-.save{width:100%;border:none;border-radius:16px;padding:15px;font-size:16px;font-weight:700;color:#fff;
-background:linear-gradient(135deg,var(--accent),var(--accent2));cursor:pointer}
-.save:active{transform:scale(.98)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{border:none;background:var(--gray);color:var(--text);padding:10px 14px;border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s}
+.chip:active{transform:scale(0.95)}
+.chip.sel{background:var(--black);color:var(--yellow);box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+
+.save{width:100%;border:none;border-radius:18px;padding:16px;font-size:16px;font-weight:700;color:#000;
+background:var(--yellow);cursor:pointer;transition:transform 0.1s, opacity 0.2s}
+.save:active{transform:scale(0.98)}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="month-nav">
-    <button id="prevM">‹</button><div id="monthTitle"></div><button id="nextM">›</button>
+  <div class="header">
+    <div style="flex:1"></div>
+    <div class="month-nav">
+      <button id="prevM">‹</button><div id="monthTitle"></div><button id="nextM">›</button>
+    </div>
+    <div style="flex:1;text-align:right"></div>
   </div>
-  <div class="summary">
-    <span class="hint">Баланс за месяц</span>
-    <strong id="balance">0 ₽</strong>
-    <div class="sum-row">
-      <div class="sum"><span>Доходы</span><strong id="incSum"></strong></div>
-      <div class="sum"><span>Расходы</span><strong id="expSum"></strong></div>
+
+  <div class="charts-row">
+    <div class="chart-wrapper">
+      <div class="chart-title">Доходы</div>
+      <div class="chart-container">
+        <canvas id="incChart"></canvas>
+        <div class="chart-val"><span id="incTotal">0</span><span class="chart-sub">₽</span></div>
+      </div>
+    </div>
+    <div class="chart-wrapper">
+      <div class="chart-title">Расходы</div>
+      <div class="chart-container">
+        <canvas id="expChart"></canvas>
+        <div class="chart-val"><span id="expTotal">0</span><span class="chart-sub">₽</span></div>
+      </div>
     </div>
   </div>
-  <div id="catsCard"><div class="cats-title">Структура расходов</div><div id="catsBody"></div></div>
+
   <div id="list"></div>
 </div>
+
 <button class="fab" id="addBtn">+</button>
+
 <div class="overlay" id="overlay"></div>
 <div class="sheet" id="sheet">
-  <div class="grabber"></div><h2>Новая запись</h2>
+  <div class="grabber"></div>
+  <h2>Операция</h2>
+  
   <div class="segmented">
     <button data-type="expense" class="active">Расход</button>
     <button data-type="income">Доход</button>
   </div>
-  <input id="amount" type="number" inputmode="decimal" placeholder="Сумма, ₽">
+
+  <input id="amount" type="number" inputmode="decimal" placeholder="0 ₽">
+  
   <div class="chips" id="chips"></div>
-  <input id="comment" placeholder="Комментарий (необязательно)">
+  
+  <input id="comment" placeholder="Комментарий">
   <input id="date" type="date">
+  
+  <label style="font-size:13px;color:var(--hint);display:block;margin-bottom:8px;font-weight:500">Повторение</label>
+  <select id="repeat">
+    <option value="none">Не повторять</option>
+    <option value="day">Ежедневно</option>
+    <option value="week">Еженедельно</option>
+    <option value="month">Ежемесячно</option>
+    <option value="year">Ежегодно</option>
+  </select>
+
   <button class="save" id="save">Сохранить</button>
 </div>
+
 <script>
 const $=s=>document.querySelector(s);
 const tg=window.Telegram?.WebApp;
 try{tg?.ready();tg?.expand();}catch(e){}
-const applyTheme=()=>document.body.classList.toggle('dark',tg?.colorScheme==='dark');
-applyTheme(); try{tg?.onEvent('themeChanged',applyTheme);}catch(e){}
 
+// Theme
+const applyTheme=()=>{
+  const isDark = tg?.colorScheme === 'dark' || window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.body.classList.toggle('dark', isDark);
+};
+applyTheme(); 
+try{tg?.onEvent('themeChanged',applyTheme);}catch(e){}
+
+// Data
 const CATS={
- expense:[['🏠','Жильё'],['🛒','Продукты'],['🍔','Еда вне дома'],['🚌','Проезд'],['📱','Связь'],['👕','Одежда'],['💊','Здоровье'],['🎉','Развлечения'],['🏋️','Спорт'],['📦','Прочее']],
+ expense:[['🏠','Жильё'],['🛒','Продукты'],['🍔','Еда'],['🚌','Транспорт'],['📱','Связь'],['👕','Одежда'],['💊','Здоровье'],['🎉','Развлечения'],['🏋️','Спорт'],['📦','Прочее']],
  income:[['💼','Зарплата'],['🧾','Фриланс'],['🎁','Подарки'],['📈','Инвестиции'],['💰','Прочее']]
 };
 const MN=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-const MG=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const MG=['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
+
 let txs=JSON.parse(localStorage.getItem('fin_txs')||'[]');
 let view=new Date(), formType='expense', formCat=null;
+let incChartInst=null, expChartInst=null;
+
 const save=()=>localStorage.setItem('fin_txs',JSON.stringify(txs));
-const fmt=n=>n.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽';
+const fmt=n=>n.toLocaleString('ru-RU',{maximumFractionDigits:0})+' ₽';
 const mKey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
 const todayStr=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
 const esc=s=>String(s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
 const icon=(t,n)=>(CATS[t].find(c=>c[1]===n)||['💸'])[0];
 
+// Regular transactions logic
+function processRegularTransactions() {
+  const now = new Date();
+  const today = todayStr();
+  let changed = false;
+  
+  txs.forEach(t => {
+    if (t.repeat && t.repeat !== 'none' && t.nextDate && t.nextDate <= today) {
+      // Create new transaction
+      const newTx = {
+        id: Date.now() + Math.random(),
+        type: t.type,
+        amount: t.amount,
+        cat: t.cat,
+        comment: t.comment + ' (авто)',
+        date: t.nextDate,
+        repeat: t.repeat,
+        nextDate: calculateNextDate(t.nextDate, t.repeat)
+      };
+      txs.push(newTx);
+      changed = true;
+    }
+  });
+  
+  if (changed) save();
+}
+
+function calculateNextDate(dateStr, repeat) {
+  const d = new Date(dateStr);
+  switch(repeat) {
+    case 'day': d.setDate(d.getDate() + 1); break;
+    case 'week': d.setDate(d.getDate() + 7); break;
+    case 'month': d.setMonth(d.getMonth() + 1); break;
+    case 'year': d.setFullYear(d.getFullYear() + 1); break;
+  }
+  return d.toISOString().split('T')[0];
+}
+
+// Init regulars on load
+processRegularTransactions();
+
+function initChart(ctx, color) {
+  return new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: [''],
+      datasets: [{
+        data: [1, 0],
+        backgroundColor: [color, 'transparent'],
+        borderWidth: 0,
+        circumference: 360,
+        cutout: '75%',
+        rotation: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false }
+      },
+      animation: {
+        animateRotate: true,
+        animateScale: true,
+        duration: 800,
+        easing: 'easeOutQuart'
+      }
+    }
+  });
+}
+
+function updateChart(inst, total, max) {
+  if (!inst) return;
+  const percent = max > 0 ? (total / max) : 0;
+  inst.data.datasets[0].data = [percent, 1 - percent];
+  inst.update();
+}
+
 function render(){
+  processRegularTransactions(); // Check again on render
+  
   const key=mKey(view);
   $('#monthTitle').textContent=MN[view.getMonth()]+' '+view.getFullYear();
+  
   const list=txs.filter(t=>t.date.startsWith(key));
   const inc=list.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
   const exp=list.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
-  $('#incSum').textContent='+'+fmt(inc);
-  $('#expSum').textContent='−'+fmt(exp);
-  const bal=inc-exp;
-  $('#balance').textContent=(bal<0?'−':'')+fmt(Math.abs(bal));
-  // структура расходов
-  const by={}; list.filter(t=>t.type==='expense').forEach(t=>by[t.cat]=(by[t.cat]||0)+t.amount);
-  const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  $('#catsCard').style.display=top.length?'':'none';
-  $('#catsBody').innerHTML=top.map(([n,s])=>`<div class="bar-row">
-    <div class="bar-head"><span>${icon('expense',n)} ${n}</span><span>${fmt(s)}</span></div>
-    <div class="bar"><div class="bar-fill" style="width:${Math.round(s/exp*100)}%"></div></div></div>`).join('');
-  // список
+  
+  $('#incTotal').textContent=inc.toLocaleString('ru-RU');
+  $('#expTotal').textContent=exp.toLocaleString('ru-RU');
+  
+  // Update charts
+  const maxVal = Math.max(inc, exp, 1000); // Scale relative to max of both or min 1000
+  updateChart(incChartInst, inc, maxVal);
+  updateChart(expChartInst, exp, maxVal);
+
+  // List
   const sorted=[...list].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
   $('#list').innerHTML=sorted.length?sorted.map(t=>{
     const[,m,d]=t.date.split('-').map(Number);
-    return `<div class="tx"><div class="tx-icon">${icon(t.type,t.cat)}</div>
-      <div class="tx-body"><div class="tx-title">${esc(t.cat)}</div>
-      <div class="tx-sub">${d} ${MG[m-1]}${t.comment?' · '+esc(t.comment):''}</div></div>
+    const repIcon = t.repeat && t.repeat !== 'none' ? '🔁' : '';
+    return `<div class="tx">
+      <div class="tx-icon">${icon(t.type,t.cat)}</div>
+      <div class="tx-body">
+        <div class="tx-title">${esc(t.cat)} ${repIcon}</div>
+        <div class="tx-sub">${d} ${MG[m-1]}${t.comment?' · '+esc(t.comment):''}</div>
+      </div>
       <div class="tx-amount ${t.type==='income'?'pos':'neg'}">${t.type==='income'?'+':'−'}${fmt(t.amount)}</div>
-      <button class="tx-del" data-id="${t.id}">✕</button></div>`;
-  }).join(''):`<div class="empty"><div class="empty-ico">🗒️</div>Пока нет записей за этот месяц.<br>Нажмите «+», чтобы добавить.</div>`;
+      <button class="tx-del" data-id="${t.id}">✕</button>
+    </div>`;
+  }).join(''):`<div class="empty"><div class="empty-ico">📂</div>Нет операций за этот месяц</div>`;
 }
+
+// Nav
 $('#prevM').onclick=()=>{view.setMonth(view.getMonth()-1);render();};
 $('#nextM').onclick=()=>{view.setMonth(view.getMonth()+1);render();};
+
+// Delete
 $('#list').addEventListener('click',e=>{
   const b=e.target.closest('.tx-del'); if(!b)return;
   const id=+b.dataset.id;
   const del=()=>{txs=txs.filter(t=>t.id!==id);save();render();tg?.HapticFeedback?.impactOccurred('light');};
-  if(tg?.showConfirm)tg.showConfirm('Удалить эту запись?',ok=>ok&&del());
-  else if(confirm('Удалить эту запись?'))del();
+  if(tg?.showConfirm)tg.showConfirm('Удалить?',ok=>ok&&del());
+  else if(confirm('Удалить?'))del();
 });
-// форма
+
+// Form
 const sheet=$('#sheet'),overlay=$('#overlay');
 const buildChips=()=>$('#chips').innerHTML=CATS[formType].map(([i,n])=>
   `<button class="chip${formCat===n?' sel':''}" data-cat="${n}">${i} ${n}</button>`).join('');
+  
 const segUpdate=()=>document.querySelectorAll('.segmented button').forEach(b=>
   b.classList.toggle('active',b.dataset.type===formType));
-document.querySelectorAll('.segmented button').forEach(b=>b.onclick=()=>{formType=b.dataset.type;formCat=null;segUpdate();buildChips();});
-$('#chips').addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;formCat=c.dataset.cat;buildChips();tg?.HapticFeedback?.impactOccurred('light');});
-const openSheet=()=>{formType='expense';formCat=null;segUpdate();buildChips();
-  $('#amount').value='';$('#comment').value='';$('#date').value=todayStr();
-  sheet.classList.add('open');overlay.classList.add('show');setTimeout(()=>$('#amount').focus(),250);};
-const closeSheet=()=>{sheet.classList.remove('open');overlay.classList.remove('show');};
-$('#addBtn').onclick=openSheet; overlay.onclick=closeSheet;
+  
+document.querySelectorAll('.segmented button').forEach(b=>b.onclick=()=>{
+  formType=b.dataset.type;
+  formCat=null;
+  segUpdate();
+  buildChips();
+  tg?.HapticFeedback?.impactOccurred('light');
+});
+
+$('#chips').addEventListener('click',e=>{
+  const c=e.target.closest('.chip');if(!c)return;
+  formCat=c.dataset.cat;
+  buildChips();
+  tg?.HapticFeedback?.impactOccurred('light');
+});
+
+const openSheet=()=>{
+  formType='expense';
+  formCat=null;
+  segUpdate();
+  buildChips();
+  $('#amount').value='';
+  $('#comment').value='';
+  $('#date').value=todayStr();
+  $('#repeat').value='none';
+  sheet.classList.add('open');
+  overlay.classList.add('show');
+  setTimeout(()=>$('#amount').focus(),250);
+};
+
+const closeSheet=()=>{
+  sheet.classList.remove('open');
+  overlay.classList.remove('show');
+};
+
+$('#addBtn').onclick=openSheet; 
+overlay.onclick=closeSheet;
+
 $('#save').onclick=()=>{
   const amount=parseFloat(($('#amount').value||'').replace(',','.'));
   const date=$('#date').value||todayStr();
+  const repeat=$('#repeat').value;
   const warn=m=>tg?.showAlert?tg.showAlert(m):alert(m);
-  if(!amount||amount<=0)return warn('Введите сумму больше нуля');
+  
+  if(!amount||amount<=0)return warn('Введите сумму');
   if(!formCat)return warn('Выберите категорию');
-  txs.push({id:Date.now(),type:formType,amount,cat:formCat,comment:$('#comment').value.trim(),date});
-  save(); const[y,m]=date.split('-').map(Number); view=new Date(y,m-1,1);
-  render(); closeSheet(); tg?.HapticFeedback?.notificationOccurred('success');
+  
+  const baseTx = {
+    id:Date.now(),
+    type:formType,
+    amount,
+    cat:formCat,
+    comment:$('#comment').value.trim(),
+    date,
+    repeat,
+    nextDate: repeat !== 'none' ? calculateNextDate(date, repeat) : null
+  };
+  
+  txs.push(baseTx);
+  
+  // If repeat, maybe add a note? No, just save.
+  
+  save(); 
+  const[y,m]=date.split('-').map(Number); 
+  view=new Date(y,m-1,1);
+  render(); 
+  closeSheet(); 
+  tg?.HapticFeedback?.notificationOccurred('success');
 };
-render();
+
+// Init Charts
+window.addEventListener('DOMContentLoaded', () => {
+  incChartInst = initChart(document.getElementById('incChart').getContext('2d'), '#34c759');
+  expChartInst = initChart(document.getElementById('expChart').getContext('2d'), '#ff3b30');
+  render();
+});
+
 </script>
 </body>
 </html>
