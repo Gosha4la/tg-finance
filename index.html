@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Мои Финансы</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -35,7 +35,13 @@
             --overlay: rgba(0, 0, 0, 0.3);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            -webkit-touch-callout: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
         
         body {
             margin: 0;
@@ -46,8 +52,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
             overflow-x: hidden;
             padding-bottom: 80px;
-            user-select: none;
-            -webkit-user-select: none;
+            touch-action: manipulation;
         }
 
         /* Header & Month Navigation */
@@ -62,6 +67,7 @@
             align-items: center;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
+            padding-top: max(15px, env(safe-area-inset-top));
         }
 
         .month-nav {
@@ -72,6 +78,7 @@
             font-size: 18px;
             width: 100%;
             justify-content: center;
+            position: relative;
         }
 
         .nav-btn {
@@ -80,23 +87,28 @@
             color: var(--text-primary);
             font-size: 24px;
             cursor: pointer;
-            padding: 5px 15px;
+            padding: 5px 10px;
             border-radius: 50%;
             transition: background 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 101;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
         }
+        .nav-btn:first-child { left: 0; }
+        .nav-btn:last-child { right: 0; }
 
-        .nav-btn:active { background-color: var(--card-bg); transform: scale(0.9); }
+        .nav-btn:active { background-color: var(--card-bg); transform: translateY(-50%) scale(0.9); }
 
         .current-month-label {
             cursor: pointer;
-            padding: 5px 15px;
+            padding: 5px 10px;
             border-radius: 8px;
             transition: background 0.2s;
-            white-space: nowrap;
+            text-align: center;
         }
         .current-month-label:active { background-color: var(--card-bg); }
 
@@ -127,6 +139,7 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            touch-action: manipulation;
         }
 
         .chart-card:active { transform: scale(0.96); }
@@ -141,8 +154,8 @@
 
         .chart-container {
             position: relative;
-            width: 110px;
-            height: 110px;
+            width: 120px;
+            height: 120px;
         }
 
         .chart-center-text {
@@ -152,10 +165,9 @@
             transform: translate(-50%, -50%);
             text-align: center;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 16px;
             line-height: 1.2;
             pointer-events: none;
-            width: 100%;
         }
         
         .chart-center-sub {
@@ -167,23 +179,22 @@
         .legend-list {
             width: 100%;
             margin-top: 10px;
-            max-height: 80px;
+            max-height: 100px;
             overflow-y: auto;
-            font-size: 10px;
-            padding-right: 2px;
+            font-size: 11px;
         }
         
         .legend-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
             padding: 2px 0;
         }
 
-        .legend-left { display: flex; align-items: center; gap: 5px; overflow: hidden; }
-        .legend-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-        .legend-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60px; }
+        .legend-left { display: flex; align-items: center; gap: 6px; overflow: hidden; }
+        .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .legend-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; }
         .legend-val { font-weight: 600; flex-shrink: 0; }
 
         /* Operations List */
@@ -215,7 +226,7 @@
             transform: translateY(10px);
             position: relative;
             overflow: hidden;
-            cursor: pointer;
+            touch-action: manipulation;
         }
 
         .op-item::before {
@@ -229,16 +240,15 @@
         }
 
         .op-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             background-color: rgba(255,255,255,0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
             flex-shrink: 0;
-            color: var(--cat-color);
         }
 
         .op-details { flex-grow: 1; min-width: 0; }
@@ -252,7 +262,6 @@
             border-radius: 4px;
             font-weight: 700;
             text-transform: uppercase;
-            margin-left: 5px;
         }
         .op-amount { font-weight: 700; font-size: 15px; white-space: nowrap; }
         .op-amount.income { color: var(--success); }
@@ -263,7 +272,6 @@
             padding: 40px 20px;
             color: var(--text-secondary);
             font-size: 14px;
-            line-height: 1.5;
         }
 
         /* FAB */
@@ -271,8 +279,8 @@
             position: fixed;
             bottom: 25px;
             right: 25px;
-            width: 56px;
-            height: 56px;
+            width: 60px;
+            height: 60px;
             background-color: var(--accent);
             color: var(--accent-text);
             border-radius: 50%;
@@ -315,7 +323,7 @@
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
-            -webkit-overflow-scrolling: touch;
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
         }
         .bottom-sheet.active { transform: translateY(0); }
 
@@ -335,20 +343,7 @@
             margin-bottom: 20px;
         }
         .sheet-title { font-size: 20px; font-weight: 700; }
-        .close-btn { 
-            background: none; 
-            border: none; 
-            color: var(--text-secondary); 
-            font-size: 28px; 
-            cursor: pointer; 
-            padding: 0; 
-            width: 30px; 
-            height: 30px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-        }
-        .close-btn:active { color: var(--text-primary); }
+        .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; padding: 5px; }
 
         /* Form Styles */
         .segment-control {
@@ -360,7 +355,7 @@
         }
         .segment-btn {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border: none;
             background: transparent;
             color: var(--text-secondary);
@@ -368,7 +363,6 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 14px;
         }
         .segment-btn.active.income { background-color: var(--success); color: #fff; box-shadow: 0 2px 8px rgba(46, 204, 113, 0.4); }
         .segment-btn.active.expense { background-color: var(--danger); color: #fff; box-shadow: 0 2px 8px rgba(255, 75, 75, 0.4); }
@@ -386,6 +380,8 @@
             outline: none;
             transition: border 0.2s;
             -webkit-appearance: none;
+            user-select: text;
+            -webkit-user-select: text;
         }
         .form-input:focus { border-color: var(--accent); }
 
@@ -481,8 +477,7 @@
         }
         .month-cell.active { background: var(--accent); color: #000; font-weight: bold; }
         .year-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .btn-small { background: rgba(255,255,255,0.1); border: none; color: var(--text-primary); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; }
-        .btn-small:active { background: rgba(255,255,255,0.2); }
+        .btn-small { background: rgba(255,255,255,0.1); border: none; color: var(--text-primary); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
 
         /* Animations */
         @keyframes slideIn {
@@ -561,7 +556,8 @@
         <button class="close-btn" onclick="closeModal()">×</button>
     </div>
 
-    <form id="opForm" onsubmit="handleFormSubmit(event)">
+    <!-- Removed form tag to prevent default submit behavior issues on Android -->
+    <div id="opForm">
         <input type="hidden" id="opId">
         
         <div class="segment-control">
@@ -571,7 +567,7 @@
 
         <div class="form-group">
             <label class="form-label">Сумма</label>
-            <input type="number" id="opAmount" class="form-input" placeholder="0" required inputmode="decimal">
+            <input type="number" id="opAmount" class="form-input" placeholder="0" required inputmode="decimal" autocomplete="off">
         </div>
 
         <div class="form-group">
@@ -581,7 +577,7 @@
         </div>
 
         <div class="form-group">
-            <label class="repeat-toggle" onclick="toggleRepeatOptions()">
+            <label class="repeat-toggle" onclick="toggleRepeatOptionsManual()">
                 <span>Повторяющаяся операция</span>
                 <label class="switch">
                     <input type="checkbox" id="opRepeatCheck" onchange="toggleRepeatOptions()">
@@ -597,8 +593,8 @@
             </div>
         </div>
 
-        <button type="submit" class="submit-btn">Сохранить</button>
-    </form>
+        <button type="button" class="submit-btn" id="saveBtn">Сохранить</button>
+    </div>
 </div>
 
 <!-- Details Modal (Chart Tap) -->
@@ -633,17 +629,11 @@
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
-    tg.enableClosingConfirmation();
 
     // Theme Handling
     function applyTheme() {
         const theme = tg.colorScheme === 'light' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', theme);
-        if(theme === 'light') {
-            Chart.defaults.color = '#8e94a3';
-        } else {
-            Chart.defaults.color = '#8e94a3';
-        }
     }
     applyTheme();
     tg.onEvent('themeChanged', applyTheme);
@@ -683,19 +673,13 @@
     };
 
     const formatMoney = (num) => new Intl.NumberFormat('ru-RU').format(num);
-    
-    const haptic = (style = 'light') => { 
-        if(tg.HapticFeedback) {
-            tg.HapticFeedback.impactOccurred(style);
-        }
-    };
+    const haptic = (style = 'light') => { if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred(style); };
 
     // --- Core Logic ---
 
     function getFilteredOps(type = null, year = currentDate.getFullYear(), month = currentDate.getMonth()) {
         return operations.filter(op => {
             const d = new Date(op.date);
-            // Fix timezone issue by comparing UTC parts or local parts consistently
             const matchDate = d.getFullYear() === year && d.getMonth() === month;
             const matchType = type ? op.type === type : true;
             return matchDate && matchType;
@@ -743,12 +727,11 @@
             const isInc = op.type === 'income';
             const sign = isInc ? '+' : '-';
             const amountClass = isInc ? 'income' : 'expense';
-            const dateObj = new Date(op.date);
-            const dateStr = dateObj.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+            const dateStr = new Date(op.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
             const autoBadge = op.isRecurring ? '<span class="auto-badge">AUTO</span>' : '';
 
             li.innerHTML = `
-                <div class="op-icon">●</div>
+                <div class="op-icon" style="color: ${color}">●</div>
                 <div class="op-details">
                     <div class="op-name">${op.category} ${autoBadge}</div>
                     <div class="op-date">${dateStr}</div>
@@ -757,17 +740,11 @@
             `;
             
             li.onclick = () => {
-                haptic('medium');
                 if(confirm(`Удалить операцию "${op.category}"?`)) {
+                    haptic('rigid');
                     operations = operations.filter(o => o.id !== op.id);
-                    // Also remove recurring children if deleting parent? 
-                    // For simplicity, we just remove by ID. If parentId logic is needed, filter that too.
-                    if(op.parentId) {
-                         // Optional: remove parent too? Usually no, just this instance.
-                    }
                     saveData();
                     updateUI();
-                    if(containerId === 'detailsList') closeDetails();
                 }
             };
             container.appendChild(li);
@@ -783,7 +760,6 @@
         const total = ops.reduce((sum, op) => sum + op.amount, 0);
         document.getElementById(totalId).textContent = formatMoney(total);
 
-        // Group by category
         const groups = {};
         ops.forEach(op => {
             if (!groups[op.category]) groups[op.category] = 0;
@@ -794,39 +770,33 @@
         const data = Object.values(groups);
         const colors = labels.map(l => getColorForCategory(l, type));
 
-        // Destroy old
         if (charts[type]) charts[type].destroy();
 
-        // Legend
         const legendContainer = document.getElementById(legendId);
         legendContainer.innerHTML = '';
-        if (total > 0) {
-            labels.forEach((lab, i) => {
-                const pct = ((data[i] / total) * 100).toFixed(0);
-                const div = document.createElement('div');
-                div.className = 'legend-item';
-                div.innerHTML = `
-                    <div class="legend-left">
-                        <div class="legend-dot" style="background:${colors[i]}"></div>
-                        <div class="legend-name">${lab}</div>
-                    </div>
-                    <div class="legend-val">${pct}%</div>
-                `;
-                legendContainer.appendChild(div);
-            });
-        } else {
-            legendContainer.innerHTML = '<div style="text-align:center; color:var(--text-secondary); font-size:10px;">Нет данных</div>';
-        }
+        labels.forEach((lab, i) => {
+            const pct = ((data[i] / total) * 100).toFixed(0);
+            if(total === 0) return;
+            const div = document.createElement('div');
+            div.className = 'legend-item';
+            div.innerHTML = `
+                <div class="legend-left">
+                    <div class="legend-dot" style="background:${colors[i]}"></div>
+                    <div class="legend-name">${lab}</div>
+                </div>
+                <div class="legend-val">${pct}%</div>
+            `;
+            legendContainer.appendChild(div);
+        });
 
-        // Chart.js
         const ctx = document.getElementById(ctxId).getContext('2d');
         charts[type] = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: labels,
                 datasets: [{
-                    data: data.length ? data : [1],
-                    backgroundColor: data.length ? colors : ['rgba(255,255,255,0.1)'],
+                    data: data,
+                    backgroundColor: colors,
                     borderWidth: 0,
                     hoverOffset: 10
                 }]
@@ -842,19 +812,16 @@
                 animation: {
                     animateScale: true,
                     animateRotate: true
-                },
-                events: [] // Disable default interactions to use custom tap
+                }
             }
         });
 
-        // Tap Event
         const card = document.getElementById(cardId);
-        // Remove old listener clone
+        // Remove old listener by cloning node to avoid double firing on some devices
         const newCard = card.cloneNode(true);
         card.parentNode.replaceChild(newCard, card);
         
         newCard.onclick = () => {
-            if (total === 0) return;
             haptic('medium');
             openDetails(type, ops);
         };
@@ -874,25 +841,25 @@
             setType(editOp.type);
             document.getElementById('opRepeatCheck').checked = editOp.isRecurring || false;
             toggleRepeatOptions();
-            if(editOp.period) {
-                const el = document.querySelector(`.radio-card[onclick*="${editOp.period}"]`);
-                if(el) setPeriod(editOp.period, el);
-            }
+            if(editOp.period) setPeriod(editOp.period, document.querySelector(`.radio-card[onclick*="${editOp.period}"]`));
         } else {
-            document.getElementById('opForm').reset();
+            document.getElementById('opForm').reset(); // Resets inputs but not our custom state
             document.getElementById('opId').value = '';
+            document.getElementById('opAmount').value = '';
+            document.getElementById('opCategory').value = '';
             setType('expense');
             toggleRepeatOptions();
             setPeriod('day', document.querySelector('.radio-card')); 
         }
         
-        // Populate datalist
         const cats = [...new Set(operations.map(o => o.category))];
         const dl = document.getElementById('catSuggestions');
         dl.innerHTML = cats.map(c => `<option value="${c}">`).join('');
         
         // Focus first input after animation
-        setTimeout(() => document.getElementById('opAmount').focus(), 300);
+        setTimeout(() => {
+            document.getElementById('opAmount').focus();
+        }, 300);
     }
 
     function closeModal() {
@@ -968,6 +935,15 @@
         if (checked) opts.classList.add('show');
         else opts.classList.remove('show');
     }
+    
+    // Wrapper for label click to ensure checkbox toggles correctly on Android
+    function toggleRepeatOptionsManual() {
+        const chk = document.getElementById('opRepeatCheck');
+        // Small delay to let the click register before checking state
+        setTimeout(() => {
+            toggleRepeatOptions();
+        }, 10);
+    }
 
     function setPeriod(p, el) {
         currentPeriod = p;
@@ -976,50 +952,51 @@
         haptic('light');
     }
 
-    // Global handler for form submit to ensure mobile compatibility
-    window.handleFormSubmit = function(e) {
-        e.preventDefault();
-        e.stopPropagation();
+    // Explicit Save Handler for Android reliability
+    document.getElementById('saveBtn').onclick = () => {
+        const amountVal = document.getElementById('opAmount').value;
+        const categoryVal = document.getElementById('opCategory').value.trim();
         
+        if (!amountVal || !categoryVal) {
+            haptic('error');
+            alert('Заполните сумму и название категории');
+            return;
+        }
+
         haptic('success');
         
         const id = document.getElementById('opId').value;
-        const amount = parseFloat(document.getElementById('opAmount').value);
-        const category = document.getElementById('opCategory').value.trim();
+        const amount = parseFloat(amountVal);
         const isRecurring = document.getElementById('opRepeatCheck').checked;
 
         if (id) {
-            // Edit existing (only single instance for simplicity in this version)
             const idx = operations.findIndex(o => o.id == id);
             if (idx > -1) {
-                operations[idx] = { ...operations[idx], amount, category, type: currentType, isRecurring, period: isRecurring ? currentPeriod : null };
+                operations[idx] = { ...operations[idx], amount, category: categoryVal, type: currentType, isRecurring, period: isRecurring ? currentPeriod : null };
             }
         } else {
-            // New Operation
-            const now = new Date();
             const baseOp = {
                 id: Date.now(),
-                date: now.toISOString(),
+                date: new Date().toISOString(),
                 type: currentType,
                 amount,
-                category,
+                category: categoryVal,
                 isRecurring,
                 period: isRecurring ? currentPeriod : null
             };
             operations.push(baseOp);
             
-            // Generate future occurrences
             if (isRecurring) {
-                let nextDate = new Date(now);
-                // Generate for 1 year ahead
+                let nextDate = new Date();
+                // Generate 12 future instances
                 for(let i=0; i<12; i++) {
                     incrementDate(nextDate, currentPeriod);
                     operations.push({
-                        id: Date.now() + i + 1 + Math.random(), // Unique ID
+                        id: Date.now() + i + 1,
                         date: nextDate.toISOString(),
                         type: currentType,
                         amount,
-                        category,
+                        category: categoryVal,
                         isRecurring: true,
                         period: currentPeriod,
                         parentId: baseOp.id
@@ -1041,13 +1018,11 @@
     }
 
     // --- Event Listeners ---
-    document.getElementById('addBtn').onclick = (e) => {
-        e.preventDefault();
-        openModal();
-    };
+    document.getElementById('addBtn').onclick = () => openModal();
     
-    document.getElementById('modalOverlay').onclick = (e) => {
-        if(e.target === document.getElementById('modalOverlay')) {
+    const overlay = document.getElementById('modalOverlay');
+    overlay.onclick = (e) => {
+        if(e.target === overlay) {
             closeModal();
             closeDetails();
             closeMonthPicker();
