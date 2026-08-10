@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Dark Theme (Default) */
             --bg-color: #0f1115;
             --card-bg: #1a1d24;
             --text-primary: #ffffff;
@@ -53,7 +52,6 @@
             user-select: none;
         }
 
-        /* Header & Month Navigation */
         header {
             position: sticky;
             top: 0;
@@ -94,7 +92,6 @@
         }
         .nav-btn.prev { left: 10px; }
         .nav-btn.next { right: 10px; }
-
         .nav-btn:active { background-color: var(--card-bg); transform: scale(0.9); }
 
         .current-month-label {
@@ -106,7 +103,6 @@
         }
         .current-month-label:active { background-color: var(--card-bg); }
 
-        /* Main Content */
         .container {
             padding: 20px 15px;
             max-width: 600px;
@@ -114,7 +110,6 @@
             padding-bottom: calc(var(--nav-height) + 20px);
         }
 
-        /* Charts Section */
         .charts-wrapper {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -132,7 +127,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             cursor: pointer;
             transition: transform 0.2s;
-            height: fit-content; /* Prevent stretching */
         }
         .chart-card:active { transform: scale(0.96); }
         .chart-title {
@@ -144,74 +138,6 @@
             text-align: center;
         }
 
-        /* Chart Container & Canvas Fixes */
-        .chart-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto;
-        }
-        .chart-container canvas {
-            width: 120px !important;
-            height: 120px !important;
-        }
-        .chart-center-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            font-weight: 700;
-            font-size: 16px;
-            line-height: 1.2;
-            pointer-events: none;
-            width: 100%;
-        }
-        .chart-center-sub {
-            font-size: 10px;
-            color: var(--text-secondary);
-            font-weight: 400;
-        }
-
-        /* Compact Legend */
-        .legend-list {
-            width: 100%;
-            margin-top: 10px;
-            max-height: 96px;
-            overflow-y: auto;
-            padding-right: 2px;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 6px;
-            margin-bottom: 4px;
-            font-size: 11px;
-        }
-        .legend-left {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            min-width: 0;
-        }
-        .legend-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-        .legend-name {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .legend-val {
-            flex-shrink: 0;
-            font-weight: 600;
-        }
-
-        /* Under Charts Grid (Goal + Calendar) */
         .under-charts-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -220,7 +146,6 @@
             align-items: stretch;
         }
 
-        /* Balance Card */
         .balance-card {
             background-color: var(--card-bg);
             border-radius: 16px;
@@ -230,36 +155,11 @@
             text-align: center;
             animation: fadeScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        .balance-title { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .balance-amount { font-size: 28px; font-weight: 800; line-height: 1.2; margin-bottom: 4px; transition: color 0.3s ease; }
+        .balance-carry { font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; }
+        .balance-total { font-size: 12px; color: var(--text-secondary); margin-top: 8px; }
 
-        .balance-title {
-            font-size: 13px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-
-        .balance-amount {
-            font-size: 28px;
-            font-weight: 800;
-            line-height: 1.2;
-            margin-bottom: 4px;
-            transition: color 0.3s ease;
-        }
-        
-        .balance-carry {
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .balance-total {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 8px;
-        }
-
-        /* Goal Card */
         .goal-card {
             background-color: var(--card-bg);
             border-radius: 16px;
@@ -272,55 +172,17 @@
             transition: transform 0.2s;
         }
         .goal-card:active { transform: scale(0.96); }
-        
         .goal-content { display: flex; flex-direction: column; height: 100%; }
         .goal-header { font-size: 14px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; text-align: center;}
         .goal-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; }
-        
-        .goal-empty {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: var(--text-secondary);
-            font-size: 13px;
-            text-align: center;
-        }
+        .goal-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary); font-size: 13px; text-align: center; }
         .goal-empty span { font-size: 24px; margin-bottom: 5px; opacity: 0.5; }
-
         .goal-name { font-weight: 700; font-size: 14px; margin-bottom: 8px; color: var(--text-primary); }
-        .goal-progress-bar-bg {
-            width: 100%;
-            height: 6px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 8px;
-        }
-        .goal-progress-bar-fill {
-            height: 100%;
-            background: var(--accent);
-            width: 0%;
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 3px;
-        }
-        .goal-stats {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--text-secondary);
-        }
-        .goal-achieved {
-            margin-top: 8px;
-            font-size: 12px;
-            color: var(--success);
-            font-weight: 700;
-            text-align: center;
-            animation: pulse 1s infinite;
-        }
+        .goal-progress-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+        .goal-progress-bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 3px; }
+        .goal-stats { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); }
+        .goal-achieved { margin-top: 8px; font-size: 12px; color: var(--success); font-weight: 700; text-align: center; animation: pulse 1s infinite; }
 
-        /* Calendar Card */
         .calendar-card {
             background-color: var(--card-bg);
             border-radius: 16px;
@@ -333,61 +195,16 @@
             transition: transform 0.2s;
         }
         .calendar-card:active { transform: scale(0.96); }
-        
         .cal-header { font-size: 14px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; text-align: center; }
-        .mini-cal-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 2px;
-            flex-grow: 1;
-            align-content: start;
-        }
-        .cal-day-name {
-            font-size: 9px;
-            color: var(--text-secondary);
-            text-align: center;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        .cal-day-cell {
-            aspect-ratio: 1;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 9px;
-            color: rgba(255,255,255,0.75);
-            position: relative;
-            transition: transform 0.1s;
-        }
+        .mini-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; flex-grow: 1; align-content: start; }
+        .cal-day-name { font-size: 9px; color: var(--text-secondary); text-align: center; font-weight: 600; margin-bottom: 4px; }
+        .cal-day-cell { aspect-ratio: 1; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: rgba(255,255,255,0.75); position: relative; transition: transform 0.1s; }
         [data-theme="light"] .cal-day-cell { color: rgba(0,0,0,0.6); }
-        
         .cal-day-cell:active { transform: scale(0.8); }
-        .cal-day-cell.has-income::after {
-            content: '';
-            position: absolute;
-            top: 2px; right: 2px;
-            width: 3px; height: 3px;
-            background: var(--success);
-            border-radius: 50%;
-        }
+        .cal-day-cell.has-income::after { content: ''; position: absolute; top: 2px; right: 2px; width: 3px; height: 3px; background: var(--success); border-radius: 50%; }
 
-        /* Operations List */
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .ops-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
+        .section-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .ops-list { list-style: none; padding: 0; margin: 0; }
         .op-item {
             background-color: var(--card-bg);
             border-radius: 12px;
@@ -403,54 +220,18 @@
             overflow: hidden;
             cursor: pointer;
         }
-
-        .op-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background-color: var(--cat-color);
-        }
-
-        .op-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background-color: rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-
+        .op-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background-color: var(--cat-color); }
+        .op-icon { width: 40px; height: 40px; border-radius: 12px; background-color: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
         .op-details { flex-grow: 1; min-width: 0; }
         .op-name { font-weight: 600; font-size: 15px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .op-note { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .op-date { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; margin-top: 2px;}
-        .auto-badge {
-            font-size: 9px;
-            background: var(--accent);
-            color: #fff;
-            padding: 1px 4px;
-            border-radius: 4px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
+        .auto-badge { font-size: 9px; background: var(--accent); color: #fff; padding: 1px 4px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
         .op-amount { font-weight: 700; font-size: 15px; white-space: nowrap; }
         .op-amount.income { color: var(--success); }
         .op-amount.expense { color: var(--danger); }
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 14px; }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        /* FAB */
         .fab {
             position: fixed;
             bottom: calc(72px + var(--safe-bottom));
@@ -473,12 +254,9 @@
         }
         .fab:active { transform: scale(0.9); }
 
-        /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             height: calc(var(--nav-height) + var(--safe-bottom));
             background-color: var(--card-bg);
             border-top: 1px solid var(--border);
@@ -489,38 +267,10 @@
             z-index: 80;
             padding-bottom: var(--safe-bottom);
         }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 10px; cursor: pointer; transition: color 0.2s; width: 50%; height: 100%; padding-bottom: var(--safe-bottom); margin-bottom: calc(-1 * var(--safe-bottom)); }
+        .nav-item svg { width: 22px; height: 22px; margin-bottom: 4px; stroke: currentColor; stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        .nav-item.active { color: var(--accent); }
 
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            font-size: 10px;
-            cursor: pointer;
-            transition: color 0.2s;
-            width: 50%;
-            height: 100%;
-            padding-bottom: var(--safe-bottom);
-            margin-bottom: calc(-1 * var(--safe-bottom));
-        }
-
-        .nav-item svg {
-            width: 22px;
-            height: 22px;
-            margin-bottom: 4px;
-            stroke: currentColor;
-            stroke-width: 1.7;
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .nav-item.active {
-            color: var(--accent);
-        }
-
-        /* Bottom Sheet Modal */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -548,172 +298,44 @@
             padding-bottom: calc(20px + var(--safe-bottom));
         }
         .bottom-sheet.active { transform: translateY(0); }
-        
-        .bottom-sheet.super-layer {
-            z-index: 1002;
-        }
+        .bottom-sheet.super-layer { z-index: 1002; }
 
-        .sheet-handle {
-            width: 40px;
-            height: 4px;
-            background-color: var(--text-secondary);
-            border-radius: 2px;
-            margin: 0 auto 20px;
-            opacity: 0.3;
-        }
-
-        .sheet-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+        .sheet-handle { width: 40px; height: 4px; background-color: var(--text-secondary); border-radius: 2px; margin: 0 auto 20px; opacity: 0.3; }
+        .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .sheet-title { font-size: 20px; font-weight: 700; }
         .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; padding: 5px; }
 
-        /* Form Styles */
-        .segment-control {
-            display: flex;
-            background-color: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 20px;
-        }
-        .segment-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        .segment-control { display: flex; background-color: rgba(255,255,255,0.05); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
+        .segment-btn { flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-secondary); font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
         .segment-btn.active.income { background-color: var(--success); color: #fff; box-shadow: 0 2px 8px rgba(46, 204, 113, 0.4); }
         .segment-btn.active.expense { background-color: var(--danger); color: #fff; box-shadow: 0 2px 8px rgba(255, 75, 75, 0.4); }
 
         .form-group { margin-bottom: 15px; }
         .form-label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
-        .form-input {
-            width: 100%;
-            padding: 14px;
-            background-color: rgba(255,255,255,0.05);
-            border: 1px solid transparent;
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 16px;
-            outline: none;
-            transition: border 0.2s;
-            -webkit-appearance: none;
-        }
+        .form-input { width: 100%; padding: 14px; background-color: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 12px; color: var(--text-primary); font-size: 16px; outline: none; transition: border 0.2s; -webkit-appearance: none; }
         .form-input:focus { border-color: var(--accent); }
 
-        /* Suggestions Container */
-        .suggestions-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 8px;
-            max-height: 120px;
-            overflow-y: auto;
-            padding: 4px;
-        }
-        .suggestion-chip {
-            background-color: rgba(255,255,255,0.05);
-            color: var(--text-primary);
-            padding: 6px 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: background 0.2s;
-            user-select: none;
-            white-space: nowrap;
-        }
-        .suggestion-chip:active {
-            background-color: rgba(255,255,255,0.15);
-        }
+        .suggestions-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; max-height: 120px; overflow-y: auto; padding: 4px; }
+        .suggestion-chip { background-color: rgba(255,255,255,0.05); color: var(--text-primary); padding: 6px 12px; border-radius: 10px; font-size: 13px; cursor: pointer; transition: background 0.2s; user-select: none; white-space: nowrap; }
+        .suggestion-chip:active { background-color: rgba(255,255,255,0.15); }
 
-        /* Repeat Toggle */
-        .repeat-toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px;
-            background-color: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            cursor: pointer;
-            margin-bottom: 0; 
-        }
-        
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 28px;
-            flex-shrink: 0;
-            margin-left: 10px;
-            pointer-events: auto;
-        }
+        .repeat-toggle-container { display: flex; align-items: center; justify-content: space-between; padding: 14px; background-color: rgba(255,255,255,0.05); border-radius: 12px; cursor: pointer; margin-bottom: 0; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; margin-left: 10px; pointer-events: auto; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(255,255,255,0.2);
-            transition: .4s;
-            border-radius: 34px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.2); transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--accent); }
         input:checked + .slider:before { transform: translateX(22px); }
 
-        .repeat-options {
-            margin-top: 15px;
-            display: none;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
+        .repeat-options { margin-top: 15px; display: none; grid-template-columns: 1fr 1fr; gap: 10px; }
         .repeat-options.show { display: grid; }
-        .radio-card {
-            background: rgba(255,255,255,0.05);
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 13px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            user-select: none;
-        }
+        .radio-card { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; text-align: center; font-size: 13px; cursor: pointer; border: 2px solid transparent; user-select: none; }
         .radio-card.selected { border-color: var(--accent); background: rgba(41, 98, 255, 0.15); }
 
-        .submit-btn {
-            width: 100%;
-            padding: 16px;
-            background-color: var(--accent);
-            color: var(--accent-text);
-            border: none;
-            border-radius: 14px;
-            font-size: 16px;
-            font-weight: 700;
-            margin-top: 10px;
-            cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
-        }
+        .submit-btn { width: 100%; padding: 16px; background-color: var(--accent); color: var(--accent-text); border: none; border-radius: 14px; font-size: 16px; font-weight: 700; margin-top: 10px; cursor: pointer; transition: transform 0.1s, opacity 0.2s; }
         .submit-btn:active { transform: scale(0.98); }
         .submit-btn.disabled { opacity: 0.6; pointer-events: none; }
 
-        /* Custom Confirm Dialog (High Z-Index) */
         .confirm-dialog {
             position: fixed;
             top: 50%; left: 50%;
@@ -737,38 +359,12 @@
         .btn-cancel { background: rgba(255,255,255,0.1); color: var(--text-primary); }
         .btn-delete { background: var(--danger); color: white; }
 
-        .confirm-overlay-high {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: var(--overlay);
-            z-index: 4000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-            backdrop-filter: blur(2px);
-        }
-        .confirm-overlay-high.active { opacity: 1; visibility: visible; }
-
-        /* Month Picker Modal */
-        .month-picker-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .month-cell {
-            padding: 12px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 14px;
-        }
+        .month-picker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+        .month-cell { padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; text-align: center; cursor: pointer; font-size: 14px; }
         .month-cell.active { background: var(--accent); color: #fff; font-weight: bold; }
         .year-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .btn-small { background: rgba(255,255,255,0.1); border: none; color: var(--text-primary); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
 
-        /* Tarot Card Styles */
         .tarot-card {
             width: 170px;
             aspect-ratio: 1/2;
@@ -787,171 +383,49 @@
             transition: transform 0.3s, filter 0.3s, box-shadow 0.3s;
             flex-shrink: 0;
         }
-        
-        .tarot-card.opened {
-            filter: none;
-            box-shadow: 0 0 12px rgba(217,160,91,0.25), 0 6px 16px rgba(0,0,0,0.45), inset 0 0 0 2px #7a4d26;
-        }
+        .tarot-card.opened { filter: none; box-shadow: 0 0 12px rgba(217,160,91,0.25), 0 6px 16px rgba(0,0,0,0.45), inset 0 0 0 2px #7a4d26; }
+        .tarot-card.closed { filter: grayscale(0.8) brightness(0.55); }
+        .tarot-canvas { width: 100%; flex-grow: 1; position: relative; display: flex; align-items: center; justify-content: center; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 4px); }
+        .tarot-canvas::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 50% 45%, rgba(217,160,91,0.18), transparent 60%); pointer-events: none; }
+        .tarot-emoji { font-size: 52px; z-index: 2; filter: drop-shadow(0 0 6px rgba(255,180,80,0.45)); transition: transform 0.5s; }
+        .tarot-card.opened .tarot-emoji { transform: scale(1.1); }
+        .tarot-progress-overlay { position: absolute; top: 10px; width: 70%; text-align: center; font-size: 9px; color: rgba(255,255,255,0.6); z-index: 3; text-shadow: 0 1px 2px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tarot-progress-bar { position: absolute; bottom: 18%; width: 70%; height: 4px; background: rgba(0,0,0,0.5); border-radius: 2px; overflow: hidden; z-index: 3; }
+        .tarot-progress-fill { height: 100%; background: #d9a05b; width: 0%; transition: width 0.5s; }
+        .tarot-label { width: 100%; height: 18%; background: linear-gradient(to bottom, #c99a63, #b9854f); display: flex; align-items: center; justify-content: center; text-align: center; padding: 4px; box-sizing: border-box; border-top: 1px solid rgba(0,0,0,0.2); z-index: 2; flex-shrink: 0; }
+        .tarot-name { font-family: 'Press Start 2P', cursive; font-size: 7px; color: #3a2413; line-height: 1.4; max-height: 100%; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; letter-spacing: 0.5px; }
 
-        .tarot-card.closed {
-            filter: grayscale(0.8) brightness(0.55);
-        }
+        .achievements-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 10px; }
+        .ach-header { padding: 15px; text-align: center; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+        .ach-progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+        .ach-progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
 
-        .tarot-canvas {
-            width: 100%;
-            flex-grow: 1;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 4px);
-        }
-
-        .tarot-canvas::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at 50% 45%, rgba(217,160,91,0.18), transparent 60%);
-            pointer-events: none;
-        }
-
-        .tarot-emoji {
-            font-size: 52px;
-            z-index: 2;
-            filter: drop-shadow(0 0 6px rgba(255,180,80,0.45));
-            transition: transform 0.5s;
-        }
-        
-        .tarot-card.opened .tarot-emoji {
-            transform: scale(1.1);
-        }
-
-        .tarot-progress-overlay {
-            position: absolute;
-            top: 10px;
-            width: 70%;
-            text-align: center;
-            font-size: 9px;
-            color: rgba(255,255,255,0.6);
-            z-index: 3;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .tarot-progress-bar {
-            position: absolute;
-            bottom: 18%;
-            width: 70%;
-            height: 4px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 2px;
-            overflow: hidden;
-            z-index: 3;
-        }
-        .tarot-progress-fill {
-            height: 100%;
-            background: #d9a05b;
-            width: 0%;
-            transition: width 0.5s;
-        }
-
-        .tarot-label {
-            width: 100%;
-            height: 18%;
-            background: linear-gradient(to bottom, #c99a63, #b9854f);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 4px;
-            box-sizing: border-box;
-            border-top: 1px solid rgba(0,0,0,0.2);
-            z-index: 2;
-            flex-shrink: 0;
-        }
-
-        .tarot-name {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 7px;
-            color: #3a2413;
-            line-height: 1.4;
-            max-height: 100%;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            letter-spacing: 0.5px;
-        }
-
-        /* Achievements Grid */
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            padding: 10px;
-        }
-
-        .ach-header {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 10px;
-        }
-        .ach-progress-container {
-            width: 100%;
-            height: 6px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
-            margin-top: 8px;
-            overflow: hidden;
-        }
-        .ach-progress-fill {
-            height: 100%;
-            background: var(--accent);
-            width: 0%;
-            transition: width 0.5s;
-        }
-
-        /* Animations */
-        @keyframes slideIn {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; } to { opacity: 1; }
-        }
-        @keyframes fadeScale {
-            0% { opacity: 0; transform: scale(0.95); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
+        @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeScale { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         .fade-enter { animation: fadeIn 0.3s ease forwards; }
 
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--text-secondary); border-radius: 2px; opacity: 0.3; }
 
-        /* Screen Visibility */
-        .screen {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        .screen.active {
-            display: block;
-        }
+        .screen { display: none; animation: fadeIn 0.3s ease; }
+        .screen.active { display: block; }
 
+        .chart-container { position: relative; width: 120px; height: 120px; margin: 0 auto; }
+        .chart-container canvas { width: 120px !important; height: 120px !important; }
+
+        .legend-list { width: 100%; margin-top: 10px; max-height: 96px; overflow-y: auto; }
+        .legend-item { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 4px; font-size: 11px; }
+        .legend-left { display: flex; align-items: center; gap: 6px; min-width: 0; }
+        .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .legend-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .legend-val { flex-shrink: 0; font-weight: 600; }
     </style>
 </head>
 <body>
 
-<!-- FINANCES SCREEN -->
 <div id="financesScreen" class="screen active">
     <header>
         <div class="month-nav">
@@ -962,15 +436,14 @@
     </header>
 
     <div class="container">
-        <!-- Charts -->
         <div class="charts-wrapper">
             <div class="chart-card" id="incomeChartCard">
                 <div class="chart-title">Доходы</div>
                 <div class="chart-container">
                     <canvas id="incomeChart" width="240" height="240"></canvas>
-                    <div class="chart-center-text">
+                    <div class="chart-center-text" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-weight:700;font-size:16px;pointer-events:none;width:100%;">
                         <div id="totalIncomeVal">0</div>
-                        <div class="chart-center-sub">₽</div>
+                        <div style="font-size:10px;color:var(--text-secondary);font-weight:400;">₽</div>
                     </div>
                 </div>
                 <div class="legend-list" id="incomeLegend"></div>
@@ -979,37 +452,28 @@
                 <div class="chart-title">Расходы</div>
                 <div class="chart-container">
                     <canvas id="expenseChart" width="240" height="240"></canvas>
-                    <div class="chart-center-text">
+                    <div class="chart-center-text" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-weight:700;font-size:16px;pointer-events:none;width:100%;">
                         <div id="totalExpenseVal">0</div>
-                        <div class="chart-center-sub">₽</div>
+                        <div style="font-size:10px;color:var(--text-secondary);font-weight:400;">₽</div>
                     </div>
                 </div>
                 <div class="legend-list" id="expenseLegend"></div>
             </div>
         </div>
 
-        <!-- Under Charts Grid (Goal + Calendar) -->
         <div class="under-charts-grid">
-            <!-- Goal Card -->
             <div class="goal-card" id="goalCard">
                 <div class="goal-content">
                     <div class="goal-header">Цель</div>
-                    <div class="goal-body" id="goalBody">
-                        <!-- Content injected via JS -->
-                    </div>
+                    <div class="goal-body" id="goalBody"></div>
                 </div>
             </div>
-
-            <!-- Calendar Card -->
             <div class="calendar-card" id="calendarCardBtn">
                 <div class="cal-header">Календарь</div>
-                <div class="mini-cal-grid" id="miniCalGrid">
-                    <!-- Days injected via JS -->
-                </div>
+                <div class="mini-cal-grid" id="miniCalGrid"></div>
             </div>
         </div>
 
-        <!-- Balance Card -->
         <div class="balance-card" id="balanceCard">
             <div class="balance-title">Остаток за месяц</div>
             <div class="balance-amount" id="monthBalanceVal">0 ₽</div>
@@ -1017,21 +481,15 @@
             <div class="balance-total">Всего за всё время: <span id="totalBalanceVal">0</span> ₽</div>
         </div>
 
-        <!-- History -->
         <div class="section-title">
             История операций
             <span style="font-size: 12px; color: var(--text-secondary); font-weight: 400;" id="historyCount">0 записей</span>
         </div>
-        <ul class="ops-list" id="opsList">
-            <!-- Items injected here -->
-        </ul>
-        <div id="emptyState" class="empty-state" style="display: none;">
-            В этом месяце пока нет операций.<br>Нажмите +, чтобы добавить.
-        </div>
+        <ul class="ops-list" id="opsList"></ul>
+        <div id="emptyState" class="empty-state" style="display: none;">В этом месяце пока нет операций.<br>Нажмите +, чтобы добавить.</div>
     </div>
 </div>
 
-<!-- ACHIEVEMENTS SCREEN -->
 <div id="achievementsScreen" class="screen">
     <header>
         <div class="month-nav" style="justify-content: space-between; padding: 0 10px;">
@@ -1047,15 +505,12 @@
                 <div class="ach-progress-fill" id="achTotalProgress"></div>
             </div>
         </div>
-        <div class="achievements-grid" id="achievementsGrid">
-            <!-- Cards injected via JS -->
-        </div>
+        <div class="achievements-grid" id="achievementsGrid"></div>
     </div>
 </div>
 
 <button class="fab" id="addBtn">+</button>
 
-<!-- Bottom Navigation -->
 <div class="bottom-nav">
     <div class="nav-item active" id="navFinances" onclick="switchTab('finances')">
         <svg viewBox="0 0 24 24"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M20 7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5"/><circle cx="17" cy="13.5" r="1.2" fill="currentColor" stroke="none"/></svg>
@@ -1067,7 +522,6 @@
     </div>
 </div>
 
-<!-- Add/Edit Modal -->
 <div class="modal-overlay" id="modalOverlay"></div>
 <div class="bottom-sheet" id="addSheet">
     <div class="sheet-handle"></div>
@@ -1075,31 +529,25 @@
         <div class="sheet-title">Новая операция</div>
         <button class="close-btn" onclick="closeModal()">×</button>
     </div>
-
     <form id="opForm" onsubmit="return false;">
         <input type="hidden" id="opId">
-        
         <div class="segment-control">
             <button type="button" class="segment-btn active expense" id="typeExpense" onclick="setType('expense')">Расход</button>
             <button type="button" class="segment-btn" id="typeIncome" onclick="setType('income')">Доход</button>
         </div>
-
         <div class="form-group">
             <label class="form-label">Сумма</label>
             <input type="number" id="opAmount" class="form-input" placeholder="0" required inputmode="decimal" autocomplete="off" enterkeyhint="done">
         </div>
-
         <div class="form-group">
             <label class="form-label">Категория / Название</label>
             <input type="text" id="opCategory" class="form-input" placeholder="Например: Продукты" required autocomplete="off" enterkeyhint="done">
             <div class="suggestions-container" id="categorySuggestions" style="display: none;"></div>
         </div>
-
         <div class="form-group">
             <label class="form-label">Заметка (необязательно)</label>
             <input type="text" id="opNote" class="form-input" placeholder="Комментарий" autocomplete="off">
         </div>
-
         <div class="form-group">
             <div class="repeat-toggle-container" id="repeatToggleContainer">
                 <span>Повторяющаяся операция</span>
@@ -1108,7 +556,6 @@
                     <span class="slider"></span>
                 </label>
             </div>
-            
             <div class="repeat-options" id="repeatOptions">
                 <div class="radio-card selected" onclick="setPeriod('day', this)">Ежедневно</div>
                 <div class="radio-card" onclick="setPeriod('week', this)">Еженедельно</div>
@@ -1116,12 +563,10 @@
                 <div class="radio-card" onclick="setPeriod('year', this)">Ежегодно</div>
             </div>
         </div>
-
         <button type="button" class="submit-btn" id="saveBtn">Сохранить</button>
     </form>
 </div>
 
-<!-- Operation Details Modal -->
 <div class="bottom-sheet" id="opDetailSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
@@ -1135,7 +580,6 @@
     </div>
 </div>
 
-<!-- Details Modal (Chart Tap) -->
 <div class="bottom-sheet" id="detailsSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
@@ -1145,7 +589,6 @@
     <ul class="ops-list" id="detailsList"></ul>
 </div>
 
-<!-- Month Picker Modal -->
 <div class="modal-overlay" id="monthOverlay"></div>
 <div class="bottom-sheet" id="monthSheet" style="height: auto; max-height: 80%;">
     <div class="sheet-handle"></div>
@@ -1162,7 +605,6 @@
     <button class="submit-btn" style="margin-top: 20px; background: rgba(255,255,255,0.1); color: var(--text-primary);" onclick="goToCurrentMonth()">Текущий месяц</button>
 </div>
 
-<!-- Full Calendar Modal -->
 <div class="modal-overlay" id="fullCalOverlay"></div>
 <div class="bottom-sheet" id="fullCalSheet">
     <div class="sheet-handle"></div>
@@ -1179,7 +621,6 @@
     <div class="mini-cal-grid" id="fullCalGrid" style="gap: 4px;"></div>
 </div>
 
-<!-- Day Details Modal -->
 <div class="bottom-sheet super-layer" id="dayDetailsSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
@@ -1196,7 +637,6 @@
     <div id="dayEmptyState" class="empty-state" style="display: none;">Нет операций за этот день.</div>
 </div>
 
-<!-- Goal Modal -->
 <div class="bottom-sheet" id="goalSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
@@ -1226,23 +666,19 @@
     </div>
 </div>
 
-<!-- Achievement Detail Modal -->
 <div class="bottom-sheet" id="achDetailSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
         <div class="sheet-title">Достижение</div>
         <button class="close-btn" onclick="closeAchDetail()">×</button>
     </div>
-    <div id="achDetailContent" style="display: flex; flex-direction: column; align-items: center;">
-        <!-- Card injected here -->
-        <div id="achDetailName" style="margin-top: 16px; font-weight: bold; font-size: 16px; text-align: center;"></div>
-        <div id="achDetailDesc" style="margin-top: 12px; padding: 0 12px; line-height: 1.5; font-size: 13px; color: var(--text-secondary); text-align: center;"></div>
-        <div id="achDetailDate" style="margin-top: 8px; font-size: 12px; color: var(--accent); font-weight: 600;"></div>
-    </div>
+    <div style="display:flex; justify-content:center; margin-bottom:16px;"><div id="achDetailCard"></div></div>
+    <div id="achDetailName" style="text-align:center; font-weight:700; font-size:18px; margin-bottom:8px;"></div>
+    <div id="achDetailDesc" style="text-align:center; color:var(--text-secondary); font-size:13px; margin-bottom:8px;"></div>
+    <div id="achDetailDate" style="text-align:center; color:var(--text-secondary); font-size:12px; display:none;"></div>
 </div>
 
-<!-- Custom Confirm Dialog (High Z-Index) -->
-<div class="confirm-overlay-high" id="confirmOverlay"></div>
+<div class="modal-overlay" id="confirmOverlay" style="z-index: 4000;"></div>
 <div class="confirm-dialog" id="confirmDialog">
     <div class="confirm-text" id="confirmText">Удалить операцию?</div>
     <div class="confirm-actions">
@@ -1252,19 +688,9 @@
 </div>
 
 <script>
-    // --- Init & Config ---
     const tg = window.Telegram.WebApp;
-    if (tg) {
-        tg.ready();
-        tg.expand();
-    }
+    if (tg) { tg.ready(); tg.expand(); }
 
-    // Global Error Handler
-    window.onerror = (msg) => {
-        console.error("Global Error:", msg);
-    };
-
-    // Theme Handling (Dark by default)
     function applyTheme() {
         const scheme = (tg && tg.colorScheme === 'light') ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', scheme);
@@ -1272,12 +698,7 @@
     applyTheme();
     if (tg) tg.onEvent('themeChanged', applyTheme);
 
-    // State
-    let viewState = {
-        year: new Date().getFullYear(),
-        month: new Date().getMonth()
-    };
-    
+    let viewState = { year: new Date().getFullYear(), month: new Date().getMonth() };
     let operations = JSON.parse(localStorage.getItem('fin_ops')) || [];
     let categoryColors = JSON.parse(localStorage.getItem('fin_colors')) || {};
     let currentType = 'expense';
@@ -1285,17 +706,14 @@
     let charts = { income: null, expense: null };
     let pickerYear = viewState.year;
     let isSaving = false;
-    
     let goalData = JSON.parse(localStorage.getItem('fin_goal')) || null;
     let achievementsUnlocked = JSON.parse(localStorage.getItem('fin_achievements')) || {};
-    
     let currentOpDetail = null;
     let pendingDeleteId = null;
 
     const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
     const fullMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
     const weekDays = ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'];
-    
     const expensePalette = ['#ff4b4b', '#ff9f43', '#ffb142', '#feca57', '#54a0ff', '#5f27cd', '#c8d6e5'];
     const incomePalette = ['#2ecc71', '#1abc9c', '#48dbfb', '#0abde3', '#10ac84', '#26de81', '#badc58'];
 
@@ -1372,40 +790,24 @@
     };
 
     const formatMoney = (num) => new Intl.NumberFormat('ru-RU').format(num);
-    
     const haptic = (style) => {
         if (tg && tg.HapticFeedback) {
-            if (['success', 'error', 'warning'].includes(style)) {
-                tg.HapticFeedback.notificationOccurred(style);
-            } else {
-                tg.HapticFeedback.impactOccurred(style);
-            }
+            if (['success', 'error', 'warning'].includes(style)) tg.HapticFeedback.notificationOccurred(style);
+            else tg.HapticFeedback.impactOccurred(style);
         }
     };
 
     const vv = window.visualViewport;
     if (vv) {
-        const fit = () => {
-            document.querySelectorAll('.bottom-sheet').forEach(s => {
-                s.style.maxHeight = vv.height + 'px';
-            });
-        };
+        const fit = () => document.querySelectorAll('.bottom-sheet').forEach(s => s.style.maxHeight = vv.height + 'px');
         vv.addEventListener('resize', fit);
         fit();
     }
 
-    // Helper to close all sheets and overlays
     function closeAllSheets() {
-        const sheets = ['addSheet', 'opDetailSheet', 'detailsSheet', 'monthSheet', 'goalSheet', 'fullCalSheet', 'dayDetailsSheet', 'achDetailSheet'];
-        sheets.forEach(id => {
-            const el = document.getElementById(id);
-            if(el) el.classList.remove('active');
-        });
-        
-        const overlays = ['modalOverlay', 'monthOverlay', 'fullCalOverlay'];
-        overlays.forEach(id => {
-            const el = document.getElementById(id);
-            if(el) el.classList.remove('active');
+        document.querySelectorAll('.bottom-sheet').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.modal-overlay').forEach(el => {
+            if(el.id !== 'confirmOverlay') el.classList.remove('active');
         });
     }
 
@@ -1421,7 +823,6 @@
     function updateUI() {
         const year = viewState.year;
         const month = viewState.month;
-        
         const monthLabel = document.getElementById('monthLabel');
         if(monthLabel) monthLabel.textContent = `${fullMonths[month]} ${year}`;
         
@@ -1431,14 +832,12 @@
 
         const firstOfMonth = new Date(year, month, 1);
         const pastOps = operations.filter(op => new Date(op.date) < firstOfMonth);
-        
         const pastIncome = pastOps.filter(o => o.type === 'income').reduce((sum, op) => sum + op.amount, 0);
         const pastExpense = pastOps.filter(o => o.type === 'expense').reduce((sum, op) => sum + op.amount, 0);
         const carry = pastIncome - pastExpense;
 
         const monthIncome = incomeOps.reduce((sum, op) => sum + op.amount, 0);
         const monthExpense = expenseOps.reduce((sum, op) => sum + op.amount, 0);
-        
         const monthBalance = carry + monthIncome - monthExpense;
         
         const totalIncome = operations.filter(o => o.type === 'income').reduce((sum, op) => sum + op.amount, 0);
@@ -1450,24 +849,19 @@
             balanceEl.textContent = (monthBalance >= 0 ? '+' : '') + formatMoney(monthBalance) + ' ₽';
             balanceEl.style.color = monthBalance >= 0 ? 'var(--success)' : 'var(--danger)';
         }
-        
         const carryEl = document.getElementById('balanceCarryVal');
         if(carryEl) {
             if (carry !== 0) {
                 carryEl.textContent = `Перенос с прошлых месяцев: ${(carry >= 0 ? '+' : '') + formatMoney(carry)} ₽`;
                 carryEl.style.display = 'block';
-            } else {
-                carryEl.style.display = 'none';
-            }
+            } else carryEl.style.display = 'none';
         }
-
         const card = document.getElementById('balanceCard');
         if(card) {
             card.style.animation = 'none';
             card.offsetHeight;
             card.style.animation = 'fadeScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
         }
-
         const totalEl = document.getElementById('totalBalanceVal');
         if(totalEl) totalEl.textContent = formatMoney(totalBalance);
 
@@ -1479,10 +873,8 @@
 
         renderChart('income', incomeOps);
         renderChart('expense', expenseOps);
-        
         renderGoalCard();
         renderMiniCalendar();
-        
         checkAchievements();
         renderAchievementsGrid();
     }
@@ -1491,27 +883,23 @@
         const container = document.getElementById(containerId);
         if(!container) return;
         container.innerHTML = '';
-        
         if (data.length === 0) {
             if(containerId === 'opsList') return; 
             container.innerHTML = '<li class="empty-state">Нет операций</li>';
             return;
         }
-
         data.forEach((op, index) => {
             const color = getColorForCategory(op.category, op.type);
             const li = document.createElement('li');
             li.className = 'op-item';
             li.style.setProperty('--cat-color', color);
             li.style.animationDelay = `${index * 0.05}s`;
-            
             const isInc = op.type === 'income';
             const sign = isInc ? '+' : '-';
             const amountClass = isInc ? 'income' : 'expense';
             const dateStr = new Date(op.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
             const autoBadge = op.isRecurring ? '<span class="auto-badge">AUTO</span>' : '';
             const noteHtml = op.note ? `<div class="op-note">${op.note}</div>` : '';
-
             li.innerHTML = `
                 <div class="op-icon" style="color: ${color}">●</div>
                 <div class="op-details">
@@ -1521,7 +909,6 @@
                 </div>
                 <div class="op-amount ${amountClass}">${sign}${formatMoney(op.amount)}</div>
             `;
-            
             li.onclick = () => openOpDetail(op);
             container.appendChild(li);
         });
@@ -1531,7 +918,6 @@
         const ctxId = type === 'income' ? 'incomeChart' : 'expenseChart';
         const totalId = type === 'income' ? 'totalIncomeVal' : 'totalExpenseVal';
         const legendId = type === 'income' ? 'incomeLegend' : 'expenseLegend';
-        
         const total = ops.reduce((sum, op) => sum + op.amount, 0);
         const totalEl = document.getElementById(totalId);
         if(totalEl) totalEl.textContent = formatMoney(total);
@@ -1542,34 +928,37 @@
             groups[op.category] += op.amount;
         });
 
-        // Sort and take Top 5
-        const sortedCats = Object.keys(groups).sort((a, b) => groups[b] - groups[a]);
-        const top5 = sortedCats.slice(0, 5);
-        const rest = sortedCats.slice(5);
+        let labels = Object.keys(groups);
+        let data = Object.values(groups);
         
-        let labels = [...top5];
-        let dataValues = top5.map(cat => groups[cat]);
-        let colors = top5.map(cat => getColorForCategory(cat, type));
-
-        if (rest.length > 0) {
-            labels.push('Прочее');
-            const restSum = rest.reduce((sum, cat) => sum + groups[cat], 0);
-            dataValues.push(restSum);
-            colors.push(getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim());
+        // TOP-5 + Other
+        if (labels.length > 5) {
+            const sorted = labels.map((l, i) => ({ label: l, value: data[i] }))
+                                 .sort((a, b) => b.value - a.value);
+            const top5 = sorted.slice(0, 5);
+            const otherSum = sorted.slice(5).reduce((s, item) => s + item.value, 0);
+            
+            labels = top5.map(i => i.label);
+            data = top5.map(i => i.value);
+            if (otherSum > 0) {
+                labels.push('Прочее');
+                data.push(otherSum);
+            }
         }
 
+        let colors = [];
         if (labels.length === 0) {
-            labels = [''];
-            dataValues = [1];
             colors = [getComputedStyle(document.documentElement).getPropertyValue('--border').trim()];
+        } else {
+            colors = labels.map(l => l === 'Прочее' ? 'var(--text-secondary)' : getColorForCategory(l, type));
         }
 
         const legendContainer = document.getElementById(legendId);
         if(legendContainer) {
             legendContainer.innerHTML = '';
-            if (labels.length > 0 && labels[0] !== '') {
+            if (labels.length > 0) {
                 labels.forEach((lab, i) => {
-                    const pct = ((dataValues[i] / total) * 100).toFixed(0);
+                    const pct = total > 0 ? ((data[i] / total) * 100).toFixed(0) : 0;
                     const div = document.createElement('div');
                     div.className = 'legend-item';
                     div.innerHTML = `
@@ -1590,17 +979,17 @@
         if(!ctx) return;
 
         if (charts[type]) {
-            charts[type].data.labels = labels;
-            charts[type].data.datasets[0].data = dataValues;
+            charts[type].data.labels = labels.length ? labels : [''];
+            charts[type].data.datasets[0].data = data.length ? data : [1];
             charts[type].data.datasets[0].backgroundColor = colors;
             charts[type].update();
         } else {
             charts[type] = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: labels,
+                    labels: labels.length ? labels : [''],
                     datasets: [{
-                        data: dataValues,
+                        data: data.length ? data : [1],
                         backgroundColor: colors,
                         borderWidth: 0,
                         hoverOffset: 10
@@ -1610,10 +999,7 @@
                     responsive: false,
                     maintainAspectRatio: false,
                     cutout: '75%',
-                    plugins: {
-                        tooltip: { enabled: false },
-                        legend: { display: false }
-                    },
+                    plugins: { tooltip: { enabled: false }, legend: { display: false } },
                     animation: false
                 }
             });
@@ -1624,31 +1010,17 @@
         const container = document.getElementById('goalBody');
         if(!container) return;
         if (!goalData || !goalData.name) {
-            container.innerHTML = `
-                <div class="goal-empty">
-                    <span>+</span>
-                    <div>Создать цель</div>
-                </div>
-            `;
+            container.innerHTML = `<div class="goal-empty"><span>+</span><div>Создать цель</div></div>`;
             return;
         }
-
         const percent = Math.min(100, Math.round((goalData.saved / goalData.target) * 100));
         const left = goalData.target - goalData.saved;
         const isAchieved = goalData.saved >= goalData.target && goalData.target > 0;
-
         container.innerHTML = `
             <div class="goal-name">${goalData.name}</div>
-            <div class="goal-progress-bar-bg">
-                <div class="goal-progress-bar-fill" style="width: ${percent}%"></div>
-            </div>
-            <div class="goal-stats">
-                <span>${formatMoney(goalData.saved)} ₽</span>
-                <span>${percent}%</span>
-            </div>
-            <div class="goal-stats" style="margin-top: 4px; font-size: 10px;">
-                Осталось: ${formatMoney(left)} ₽
-            </div>
+            <div class="goal-progress-bar-bg"><div class="goal-progress-bar-fill" style="width: ${percent}%"></div></div>
+            <div class="goal-stats"><span>${formatMoney(goalData.saved)} ₽</span><span>${percent}%</span></div>
+            <div class="goal-stats" style="margin-top: 4px; font-size: 10px;">Осталось: ${formatMoney(left)} ₽</div>
             ${isAchieved ? '<div class="goal-achieved">Цель достигнута 🎉</div>' : ''}
         `;
     }
@@ -1661,7 +1033,6 @@
             const sDis = document.getElementById('goalSavedDisplay');
             const cGrp = document.getElementById('goalCurrentGroup');
             const dBtn = document.getElementById('deleteGoalBtn');
-            
             if(nIn) nIn.value = goalData.name;
             if(tIn) tIn.value = goalData.target;
             if(sDis) sDis.textContent = formatMoney(goalData.saved) + ' ₽';
@@ -1673,7 +1044,6 @@
             const aIn = document.getElementById('goalAddAmount');
             const cGrp = document.getElementById('goalCurrentGroup');
             const dBtn = document.getElementById('deleteGoalBtn');
-
             if(nIn) nIn.value = '';
             if(tIn) tIn.value = '';
             if(aIn) aIn.value = '';
@@ -1683,286 +1053,134 @@
         document.getElementById('modalOverlay').classList.add('active');
         document.getElementById('goalSheet').classList.add('active');
     }
-
     function closeGoal() {
         document.getElementById('modalOverlay').classList.remove('active');
         document.getElementById('goalSheet').classList.remove('active');
     }
-
     function saveGoalSettings() {
         const name = document.getElementById('goalNameInput').value.trim();
         const target = parseFloat(document.getElementById('goalTargetInput').value);
-        
         if (!name || !target) return;
-
-        if (!goalData) {
-            goalData = { name, target, saved: 0 };
-        } else {
-            goalData.name = name;
-            goalData.target = target;
-        }
-        saveData();
-        renderGoalCard();
-        closeGoal();
-        haptic('success');
-        checkAchievements();
+        if (!goalData) goalData = { name, target, saved: 0 };
+        else { goalData.name = name; goalData.target = target; }
+        saveData(); renderGoalCard(); closeGoal(); haptic('success'); checkAchievements();
     }
-
     function addToGoal() {
         const amount = parseFloat(document.getElementById('goalAddAmount').value);
         if (!amount || amount <= 0) return;
-        
-        goalData.saved += amount;
-        saveData();
-        renderGoalCard();
-        const inp = document.getElementById('goalAddAmount');
-        if(inp) inp.value = '';
-        const dis = document.getElementById('goalSavedDisplay');
-        if(dis) dis.textContent = formatMoney(goalData.saved) + ' ₽';
-        haptic('success');
-        checkAchievements();
+        goalData.saved += amount; saveData(); renderGoalCard();
+        const inp = document.getElementById('goalAddAmount'); if(inp) inp.value = '';
+        const dis = document.getElementById('goalSavedDisplay'); if(dis) dis.textContent = formatMoney(goalData.saved) + ' ₽';
+        haptic('success'); checkAchievements();
     }
-
     function deleteGoal() {
-        if(confirm('Удалить цель?')) {
-            goalData = null;
-            saveData();
-            renderGoalCard();
-            closeGoal();
-            haptic('warning');
-        }
+        if(confirm('Удалить цель?')) { goalData = null; saveData(); renderGoalCard(); closeGoal(); haptic('warning'); }
     }
 
     function renderMiniCalendar() {
-        const grid = document.getElementById('miniCalGrid');
-        if(!grid) return;
-        grid.innerHTML = '';
-        
-        weekDays.forEach(d => {
-            const el = document.createElement('div');
-            el.className = 'cal-day-name';
-            el.textContent = d;
-            grid.appendChild(el);
-        });
-
-        const year = viewState.year;
-        const month = viewState.month;
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
+        const grid = document.getElementById('miniCalGrid'); if(!grid) return; grid.innerHTML = '';
+        weekDays.forEach(d => { const el = document.createElement('div'); el.className = 'cal-day-name'; el.textContent = d; grid.appendChild(el); });
+        const year = viewState.year, month = viewState.month;
+        const firstDay = new Date(year, month, 1), lastDay = new Date(year, month + 1, 0);
         const startOffset = (firstDay.getDay() + 6) % 7;
-        
         const monthOps = getFilteredOps();
-        const dayExpenses = {};
-        const dayIncomes = {};
-        let maxExpense = 0;
-
+        const dayExpenses = {}, dayIncomes = {}; let maxExpense = 0;
         monthOps.forEach(op => {
             const d = new Date(op.date).getDate();
-            if (op.type === 'expense') {
-                dayExpenses[d] = (dayExpenses[d] || 0) + op.amount;
-                if (dayExpenses[d] > maxExpense) maxExpense = dayExpenses[d];
-            } else {
-                dayIncomes[d] = true;
-            }
+            if (op.type === 'expense') { dayExpenses[d] = (dayExpenses[d] || 0) + op.amount; if (dayExpenses[d] > maxExpense) maxExpense = dayExpenses[d]; }
+            else dayIncomes[d] = true;
         });
-
-        for (let i = 0; i < startOffset; i++) {
-            const cell = document.createElement('div');
-            grid.appendChild(cell);
-        }
-
+        for (let i = 0; i < startOffset; i++) grid.appendChild(document.createElement('div'));
         for (let d = 1; d <= lastDay.getDate(); d++) {
-            const cell = document.createElement('div');
-            cell.className = 'cal-day-cell';
-            cell.textContent = d;
-            
+            const cell = document.createElement('div'); cell.className = 'cal-day-cell'; cell.textContent = d;
             const exp = dayExpenses[d] || 0;
-            if (exp > 0) {
-                const intensity = 0.15 + (exp / maxExpense) * 0.85;
-                cell.style.backgroundColor = `rgba(255, 75, 75, ${intensity})`;
-                cell.style.color = '#fff';
-            }
-            if (dayIncomes[d]) {
-                cell.classList.add('has-income');
-            }
-            
-            cell.onclick = () => openFullCalendar();
-            grid.appendChild(cell);
+            if (exp > 0) { cell.style.backgroundColor = `rgba(255, 75, 75, ${0.15 + (exp / maxExpense) * 0.85})`; cell.style.color = '#fff'; }
+            if (dayIncomes[d]) cell.classList.add('has-income');
+            cell.onclick = () => openFullCalendar(); grid.appendChild(cell);
         }
     }
 
     let currentFullCalDate = new Date(viewState.year, viewState.month, 1);
-
     function openFullCalendar() {
-        currentFullCalDate = new Date(viewState.year, viewState.month, 1);
-        renderFullCalendar();
+        currentFullCalDate = new Date(viewState.year, viewState.month, 1); renderFullCalendar();
         document.getElementById('fullCalOverlay').classList.add('active');
-        document.getElementById('fullCalSheet').classList.add('active');
-        haptic('light');
+        document.getElementById('fullCalSheet').classList.add('active'); haptic('light');
     }
-
     function closeFullCalendar() {
         document.getElementById('fullCalOverlay').classList.remove('active');
         document.getElementById('fullCalSheet').classList.remove('active');
         closeDayDetails();
     }
-
     function renderFullCalendar() {
-        const year = currentFullCalDate.getFullYear();
-        const month = currentFullCalDate.getMonth();
-        
-        const lbl = document.getElementById('fullCalMonthLabel');
-        if(lbl) lbl.textContent = `${fullMonths[month]} ${year}`;
-        
-        const grid = document.getElementById('fullCalGrid');
-        if(!grid) return;
-        grid.innerHTML = '';
-        
-        weekDays.forEach(d => {
-            const el = document.createElement('div');
-            el.className = 'cal-day-name';
-            el.textContent = d;
-            grid.appendChild(el);
-        });
-
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const startOffset = (firstDay.getDay() + 6) % 7;
-        const today = new Date();
-
-        const monthOps = operations.filter(op => {
-            const d = new Date(op.date);
-            return d.getFullYear() === year && d.getMonth() === month;
-        });
-
-        const dayExpenses = {};
-        const dayIncomes = {};
-        let maxExpense = 0;
-
+        const year = currentFullCalDate.getFullYear(), month = currentFullCalDate.getMonth();
+        const lbl = document.getElementById('fullCalMonthLabel'); if(lbl) lbl.textContent = `${fullMonths[month]} ${year}`;
+        const grid = document.getElementById('fullCalGrid'); if(!grid) return; grid.innerHTML = '';
+        weekDays.forEach(d => { const el = document.createElement('div'); el.className = 'cal-day-name'; el.textContent = d; grid.appendChild(el); });
+        const firstDay = new Date(year, month, 1), lastDay = new Date(year, month + 1, 0);
+        const startOffset = (firstDay.getDay() + 6) % 7; const today = new Date();
+        const monthOps = operations.filter(op => { const d = new Date(op.date); return d.getFullYear() === year && d.getMonth() === month; });
+        const dayExpenses = {}, dayIncomes = {}; let maxExpense = 0;
         monthOps.forEach(op => {
             const d = new Date(op.date).getDate();
-            if (op.type === 'expense') {
-                dayExpenses[d] = (dayExpenses[d] || 0) + op.amount;
-                if (dayExpenses[d] > maxExpense) maxExpense = dayExpenses[d];
-            } else {
-                dayIncomes[d] = true;
-            }
+            if (op.type === 'expense') { dayExpenses[d] = (dayExpenses[d] || 0) + op.amount; if (dayExpenses[d] > maxExpense) maxExpense = dayExpenses[d]; }
+            else dayIncomes[d] = true;
         });
-
-        for (let i = 0; i < startOffset; i++) {
-            const cell = document.createElement('div');
-            grid.appendChild(cell);
-        }
-
+        for (let i = 0; i < startOffset; i++) grid.appendChild(document.createElement('div'));
         for (let d = 1; d <= lastDay.getDate(); d++) {
-            const cell = document.createElement('div');
-            cell.className = 'cal-day-cell';
-            cell.textContent = d;
-            cell.style.fontSize = '12px';
-            cell.style.width = '100%';
-            cell.style.height = '40px';
-            
+            const cell = document.createElement('div'); cell.className = 'cal-day-cell'; cell.textContent = d;
+            cell.style.fontSize = '12px'; cell.style.width = '100%'; cell.style.height = '40px';
             const exp = dayExpenses[d] || 0;
-            if (exp > 0) {
-                const intensity = 0.15 + (exp / maxExpense) * 0.85;
-                cell.style.backgroundColor = `rgba(255, 75, 75, ${intensity})`;
-                cell.style.color = '#fff';
-            }
-            if (dayIncomes[d]) {
-                cell.classList.add('has-income');
-            }
-            
-            if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                cell.style.border = `2px solid var(--accent)`;
-                cell.style.boxSizing = 'border-box';
-            }
-
-            cell.onclick = () => openDayDetails(year, month, d);
-            grid.appendChild(cell);
+            if (exp > 0) { cell.style.backgroundColor = `rgba(255, 75, 75, ${0.15 + (exp / maxExpense) * 0.85})`; cell.style.color = '#fff'; }
+            if (dayIncomes[d]) cell.classList.add('has-income');
+            if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) { cell.style.border = `2px solid var(--accent)`; cell.style.boxSizing = 'border-box'; }
+            cell.onclick = () => openDayDetails(year, month, d); grid.appendChild(cell);
         }
     }
-
     function openDayDetails(year, month, day) {
         const dateStr = `${day} ${fullMonths[month]} ${year}`;
-        const titleEl = document.getElementById('dayDetailsTitle');
-        if(titleEl) titleEl.textContent = dateStr;
-        
-        const dayOps = operations.filter(op => {
-            const d = new Date(op.date);
-            return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
-        }).sort((a, b) => new Date(b.date) - new Date(a.date));
-
+        const titleEl = document.getElementById('dayDetailsTitle'); if(titleEl) titleEl.textContent = dateStr;
+        const dayOps = operations.filter(op => { const d = new Date(op.date); return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day; }).sort((a, b) => new Date(b.date) - new Date(a.date));
         const inc = dayOps.filter(o => o.type === 'income').reduce((s, o) => s + o.amount, 0);
         const exp = dayOps.filter(o => o.type === 'expense').reduce((s, o) => s + o.amount, 0);
-
-        const iSum = document.getElementById('dayIncomeSum');
-        const eSum = document.getElementById('dayExpenseSum');
+        const iSum = document.getElementById('dayIncomeSum'), eSum = document.getElementById('dayExpenseSum');
         if(iSum) iSum.textContent = inc > 0 ? `+${formatMoney(inc)} ₽` : '';
         if(eSum) eSum.textContent = exp > 0 ? `-${formatMoney(exp)} ₽` : '';
-
         renderList('dayDetailsList', dayOps);
-        const empty = document.getElementById('dayEmptyState');
-        if(empty) empty.style.display = dayOps.length === 0 ? 'block' : 'none';
-
-        document.getElementById('dayDetailsSheet').classList.add('active');
-        haptic('light');
+        const empty = document.getElementById('dayEmptyState'); if(empty) empty.style.display = dayOps.length === 0 ? 'block' : 'none';
+        document.getElementById('dayDetailsSheet').classList.add('active'); haptic('light');
     }
-
-    function closeDayDetails() {
-        document.getElementById('dayDetailsSheet').classList.remove('active');
-    }
-
-    function backToCalendar() {
-        closeDayDetails();
-    }
-
-    document.getElementById('prevFullCalMonth').onclick = () => {
-        currentFullCalDate.setMonth(currentFullCalDate.getMonth() - 1);
-        renderFullCalendar();
-        haptic('light');
-    };
-    document.getElementById('nextFullCalMonth').onclick = () => {
-        currentFullCalDate.setMonth(currentFullCalDate.getMonth() + 1);
-        renderFullCalendar();
-        haptic('light');
-    };
+    function closeDayDetails() { document.getElementById('dayDetailsSheet').classList.remove('active'); }
+    function backToCalendar() { closeDayDetails(); }
+    document.getElementById('prevFullCalMonth').onclick = () => { currentFullCalDate.setMonth(currentFullCalDate.getMonth() - 1); renderFullCalendar(); haptic('light'); };
+    document.getElementById('nextFullCalMonth').onclick = () => { currentFullCalDate.setMonth(currentFullCalDate.getMonth() + 1); renderFullCalendar(); haptic('light'); };
 
     function openModal(editOp = null) {
         haptic('light');
         document.getElementById('modalOverlay').classList.add('active');
         document.getElementById('addSheet').classList.add('active');
-        
         document.getElementById('opForm').reset();
-        const opIdEl = document.getElementById('opId');
-        if(opIdEl) opIdEl.value = '';
         
-        document.getElementById('opRepeatCheck').checked = false;
-        toggleRepeatOptions();
-        setPeriod('day', document.querySelector('.radio-card'));
-        setType('expense');
-        hideSuggestions();
-
+        const opIdEl = document.getElementById('opId');
         if (editOp) {
-            if(opIdEl) opIdEl.value = editOp.id;
-            const amt = document.getElementById('opAmount');
-            const cat = document.getElementById('opCategory');
-            const note = document.getElementById('opNote');
-            
-            if(amt) amt.value = editOp.amount;
-            if(cat) cat.value = editOp.category;
-            if(note) note.value = editOp.note || '';
-            
+            opIdEl.value = editOp.id;
+            document.getElementById('opAmount').value = editOp.amount;
+            document.getElementById('opCategory').value = editOp.category;
+            document.getElementById('opNote').value = editOp.note || '';
             setType(editOp.type);
-            const repCheck = document.getElementById('opRepeatCheck');
-            if(repCheck) repCheck.checked = editOp.isRecurring || false;
+            document.getElementById('opRepeatCheck').checked = editOp.isRecurring || false;
             toggleRepeatOptions();
             if(editOp.period) {
                 const radio = document.querySelector(`.radio-card[onclick*="${editOp.period}"]`);
                 if(radio) setPeriod(editOp.period, radio);
             }
+        } else {
+            opIdEl.value = '';
+            toggleRepeatOptions();
+            setPeriod('day', document.querySelector('.radio-card'));
+            setType('expense');
         }
+        hideSuggestions();
     }
-
     function closeModal() {
         document.getElementById('modalOverlay').classList.remove('active');
         document.getElementById('addSheet').classList.remove('active');
@@ -1974,283 +1192,157 @@
         currentOpDetail = op;
         const isInc = op.type === 'income';
         const sign = isInc ? '+' : '-';
-        const amountClass = isInc ? 'income' : 'expense';
         const dateStr = new Date(op.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
         const noteHtml = op.note ? `<div style="margin-top:5px; color:var(--text-secondary); font-size:14px;">${op.note}</div>` : '';
         const autoBadge = op.isRecurring ? '<span class="auto-badge">AUTO</span>' : '';
-
         const content = document.getElementById('opDetailContent');
         if(content) {
             content.innerHTML = `
                 <div style="text-align:center; margin-bottom: 20px;">
-                    <div style="font-size: 24px; font-weight: bold; color: var(${isInc ? '--success' : '--danger'}); margin-bottom: 5px;">
-                        ${sign}${formatMoney(op.amount)} ₽
-                    </div>
+                    <div style="font-size: 24px; font-weight: bold; color: var(${isInc ? '--success' : '--danger'}); margin-bottom: 5px;">${sign}${formatMoney(op.amount)} ₽</div>
                     <div style="font-weight: 600; font-size: 16px;">${op.category} ${autoBadge}</div>
                     <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">${dateStr}</div>
                     ${noteHtml}
                 </div>
             `;
         }
-        
         document.getElementById('modalOverlay').classList.add('active');
         document.getElementById('opDetailSheet').classList.add('active');
         haptic('light');
     }
-
     function closeOpDetail() {
         document.getElementById('modalOverlay').classList.remove('active');
         document.getElementById('opDetailSheet').classList.remove('active');
         currentOpDetail = null;
     }
-
     function editCurrentOp() {
-        if (currentOpDetail) {
-            closeOpDetail();
-            setTimeout(() => openModal(currentOpDetail), 300);
-        }
+        if (currentOpDetail) { closeOpDetail(); setTimeout(() => openModal(currentOpDetail), 300); }
     }
-
     function deleteCurrentOp() {
         if (currentOpDetail) {
+            const id = currentOpDetail.id;
             closeOpDetail();
-            showDeleteConfirm(currentOpDetail.id);
+            showDeleteConfirm(id);
         }
     }
 
     function openDetails(type, ops) {
         const title = type === 'income' ? 'Доходы' : 'Расходы';
-        const tEl = document.getElementById('detailsTitle');
-        if(tEl) tEl.textContent = title;
+        const tEl = document.getElementById('detailsTitle'); if(tEl) tEl.textContent = title;
         renderList('detailsList', ops);
         document.getElementById('modalOverlay').classList.add('active');
         document.getElementById('detailsSheet').classList.add('active');
     }
-
-    function closeDetails() {
-        document.getElementById('modalOverlay').classList.remove('active');
-        document.getElementById('detailsSheet').classList.remove('active');
-    }
+    function closeDetails() { document.getElementById('modalOverlay').classList.remove('active'); document.getElementById('detailsSheet').classList.remove('active'); }
 
     function openMonthPicker() {
-        haptic('light');
-        pickerYear = viewState.year;
-        renderMonthGrid();
+        haptic('light'); pickerYear = viewState.year; renderMonthGrid();
         document.getElementById('monthOverlay').classList.add('active');
         document.getElementById('monthSheet').classList.add('active');
     }
-
-    function closeMonthPicker() {
-        document.getElementById('monthOverlay').classList.remove('active');
-        document.getElementById('monthSheet').classList.remove('active');
-    }
-
+    function closeMonthPicker() { document.getElementById('monthOverlay').classList.remove('active'); document.getElementById('monthSheet').classList.remove('active'); }
     function renderMonthGrid() {
-        const yEl = document.getElementById('pickerYear');
-        if(yEl) yEl.textContent = pickerYear;
-        const grid = document.getElementById('monthGrid');
-        if(!grid) return;
-        grid.innerHTML = '';
+        const yEl = document.getElementById('pickerYear'); if(yEl) yEl.textContent = pickerYear;
+        const grid = document.getElementById('monthGrid'); if(!grid) return; grid.innerHTML = '';
         months.forEach((m, idx) => {
             const div = document.createElement('div');
             div.className = `month-cell ${idx === viewState.month && pickerYear === viewState.year ? 'active' : ''}`;
             div.textContent = m;
-            div.onclick = () => {
-                viewState.year = pickerYear;
-                viewState.month = idx;
-                updateUI();
-                closeMonthPicker();
-                haptic('medium');
-            };
+            div.onclick = () => { viewState.year = pickerYear; viewState.month = idx; updateUI(); closeMonthPicker(); haptic('medium'); };
             grid.appendChild(div);
         });
     }
-
-    function goToCurrentMonth() {
-        const now = new Date();
-        viewState.year = now.getFullYear();
-        viewState.month = now.getMonth();
-        updateUI();
-        closeMonthPicker();
-        haptic('medium');
-    }
+    function goToCurrentMonth() { const now = new Date(); viewState.year = now.getFullYear(); viewState.month = now.getMonth(); updateUI(); closeMonthPicker(); haptic('medium'); }
 
     function setType(t) {
         currentType = t;
-        const bExp = document.getElementById('typeExpense');
-        const bInc = document.getElementById('typeIncome');
+        const bExp = document.getElementById('typeExpense'), bInc = document.getElementById('typeIncome');
         if(bExp) bExp.className = `segment-btn ${t === 'expense' ? 'active expense' : ''}`;
         if(bInc) bInc.className = `segment-btn ${t === 'income' ? 'active income' : ''}`;
         haptic('light');
     }
-
     function toggleRepeatOptions() {
         const checked = document.getElementById('opRepeatCheck').checked;
         const opts = document.getElementById('repeatOptions');
-        if(opts) {
-            if (checked) opts.classList.add('show');
-            else opts.classList.remove('show');
-        }
+        if(opts) { if (checked) opts.classList.add('show'); else opts.classList.remove('show'); }
     }
-
     function setPeriod(p, el) {
         currentPeriod = p;
         document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
-        if(el) el.classList.add('selected');
-        haptic('light');
+        if(el) el.classList.add('selected'); haptic('light');
     }
-
     document.getElementById('repeatToggleContainer').onclick = (e) => {
         if (e.target.closest('.switch')) return;
         const checkbox = document.getElementById('opRepeatCheck');
-        if(checkbox) {
-            checkbox.checked = !checkbox.checked;
-            toggleRepeatOptions();
-            haptic('light');
-        }
+        if(checkbox) { checkbox.checked = !checkbox.checked; toggleRepeatOptions(); haptic('light'); }
     };
 
     const catInput = document.getElementById('opCategory');
     const suggestionsContainer = document.getElementById('categorySuggestions');
-
     function showSuggestions(filterText = '') {
         if(!suggestionsContainer || !catInput) return;
         const allCats = [...new Set(operations.map(o => o.category))];
         const lastUsed = [...allCats].reverse().slice(0, 8);
-        
-        let filtered = [];
-        if (filterText.trim() === '') {
-            filtered = lastUsed;
-        } else {
-            filtered = allCats.filter(c => c.toLowerCase().includes(filterText.toLowerCase()));
-        }
-
-        if (filtered.length === 0) {
-            hideSuggestions();
-            return;
-        }
-
+        let filtered = filterText.trim() === '' ? lastUsed : allCats.filter(c => c.toLowerCase().includes(filterText.toLowerCase()));
+        if (filtered.length === 0) { hideSuggestions(); return; }
         suggestionsContainer.innerHTML = '';
         filtered.forEach(cat => {
-            const chip = document.createElement('div');
-            chip.className = 'suggestion-chip';
-            chip.textContent = cat;
-            chip.onclick = () => {
-                catInput.value = cat;
-                hideSuggestions();
-                haptic('light');
-            };
+            const chip = document.createElement('div'); chip.className = 'suggestion-chip'; chip.textContent = cat;
+            chip.onclick = () => { catInput.value = cat; hideSuggestions(); haptic('light'); };
             suggestionsContainer.appendChild(chip);
         });
-        
         suggestionsContainer.style.display = 'flex';
     }
-
-    function hideSuggestions() {
-        if(suggestionsContainer) {
-            suggestionsContainer.style.display = 'none';
-            suggestionsContainer.innerHTML = '';
-        }
-    }
-
+    function hideSuggestions() { if(suggestionsContainer) { suggestionsContainer.style.display = 'none'; suggestionsContainer.innerHTML = ''; } }
     if(catInput) {
         catInput.addEventListener('focus', () => showSuggestions(catInput.value));
         catInput.addEventListener('input', (e) => showSuggestions(e.target.value));
     }
-    document.addEventListener('click', (e) => {
-        if (catInput && suggestionsContainer && !catInput.contains(e.target) && !suggestionsContainer.contains(e.target)) hideSuggestions();
-    });
+    document.addEventListener('click', (e) => { if (catInput && suggestionsContainer && !catInput.contains(e.target) && !suggestionsContainer.contains(e.target)) hideSuggestions(); });
 
     const saveBtn = document.getElementById('saveBtn');
     if(saveBtn) {
         saveBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (isSaving) return;
-            if (document.activeElement) document.activeElement.blur();
-            hideSuggestions();
-
-            isSaving = true;
-            saveBtn.classList.add('disabled');
-            saveBtn.textContent = 'Сохранение...';
-
+            e.preventDefault(); if (isSaving) return;
+            if (document.activeElement) document.activeElement.blur(); hideSuggestions();
+            isSaving = true; saveBtn.classList.add('disabled'); saveBtn.textContent = 'Сохранение...';
             try {
                 setTimeout(() => {
                     const form = document.getElementById('opForm');
-                    if (!form.checkValidity()) {
-                        form.reportValidity();
-                        const invalid = form.querySelector(':invalid');
-                        if (invalid) invalid.scrollIntoView({ block: 'center', behavior: 'smooth' });
-                        throw new Error("Validation failed");
-                    }
-
+                    if (!form.checkValidity()) { form.reportValidity(); throw new Error("Validation failed"); }
                     haptic('success');
-                    
-                    const idVal = document.getElementById('opId').value;
+                    const id = document.getElementById('opId').value;
                     const amount = parseFloat(document.getElementById('opAmount').value);
                     const category = document.getElementById('opCategory').value.trim();
                     const note = document.getElementById('opNote').value.trim();
                     const isRecurring = document.getElementById('opRepeatCheck').checked;
-
-                    if (idVal) {
-                        // Edit existing
-                        const idx = operations.findIndex(o => String(o.id) === String(idVal));
+                    
+                    if (id) {
+                        const idx = operations.findIndex(o => String(o.id) === String(id));
                         if (idx > -1) {
                             operations[idx] = { ...operations[idx], amount, category, note, type: currentType, isRecurring, period: isRecurring ? currentPeriod : null };
                         }
                     } else {
-                        // Create new
                         const baseId = Date.now() + '-' + Math.random().toString(36).slice(2);
                         const now = new Date();
-                        
-                        operations.push({
-                            id: baseId,
-                            date: now.toISOString(),
-                            type: currentType,
-                            amount,
-                            category,
-                            note,
-                            isRecurring,
-                            period: isRecurring ? currentPeriod : null
-                        });
-                        
+                        operations.push({ id: baseId, date: now.toISOString(), type: currentType, amount, category, note, isRecurring, period: isRecurring ? currentPeriod : null });
                         if (isRecurring) {
                             let nextDate = new Date(now);
                             for(let i=0; i<12; i++) {
-                                incrementDate(nextDate, currentPeriod);
-                                operations.push({
-                                    id: Date.now() + '-' + i + '-' + Math.random().toString(36).slice(2),
-                                    date: nextDate.toISOString(),
-                                    type: currentType,
-                                    amount,
-                                    category,
-                                    note,
-                                    isRecurring: true,
-                                    period: currentPeriod,
-                                    parentId: baseId
-                                });
+                                if (currentPeriod === 'day') nextDate.setDate(nextDate.getDate() + 1);
+                                else if (currentPeriod === 'week') nextDate.setDate(nextDate.getDate() + 7);
+                                else if (currentPeriod === 'month') nextDate.setMonth(nextDate.getMonth() + 1);
+                                else if (currentPeriod === 'year') nextDate.setFullYear(nextDate.getFullYear() + 1);
+                                operations.push({ id: Date.now() + '-' + i + '-' + Math.random().toString(36).slice(2), date: nextDate.toISOString(), type: currentType, amount, category, note, isRecurring: true, period: currentPeriod, parentId: baseId });
                             }
                         }
                     }
-
-                    saveData();
-                    updateUI();
-                    closeModal();
+                    saveData(); updateUI(); closeModal();
                 }, 100);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                isSaving = false;
-                saveBtn.classList.remove('disabled');
-                saveBtn.textContent = 'Сохранить';
+            } catch (err) { console.error(err); } finally {
+                isSaving = false; saveBtn.classList.remove('disabled'); saveBtn.textContent = 'Сохранить';
             }
         });
-    }
-
-    function incrementDate(date, period) {
-        if (period === 'day') date.setDate(date.getDate() + 1);
-        if (period === 'week') date.setDate(date.getDate() + 7);
-        if (period === 'month') date.setMonth(date.getMonth() + 1);
-        if (period === 'year') date.setFullYear(date.getFullYear() + 1);
     }
 
     const confirmOverlay = document.getElementById('confirmOverlay');
@@ -2266,26 +1358,24 @@
         if(confirmDialog) confirmDialog.classList.add('active');
         haptic('warning');
     }
-
     function hideDeleteConfirm() {
         pendingDeleteId = null;
         if(confirmOverlay) confirmOverlay.classList.remove('active');
         if(confirmDialog) confirmDialog.classList.remove('active');
     }
-
     if(confirmOkBtn) {
         confirmOkBtn.onclick = () => {
             if (pendingDeleteId) {
-                operations = operations.filter(o => String(o.id) !== String(pendingDeleteId) && String(o.parentId) !== String(pendingDeleteId));
-                saveData();
-                updateUI();
-                haptic('success');
-                closeAllSheets(); // Close any open sheets
+                operations = operations.filter(o => o.id !== pendingDeleteId && o.parentId !== pendingDeleteId);
+                saveData(); updateUI(); haptic('success');
+                const detSheet = document.getElementById('detailsSheet');
+                if (detSheet && detSheet.classList.contains('active')) closeDetails();
+                const daySheet = document.getElementById('dayDetailsSheet');
+                if (daySheet && daySheet.classList.contains('active')) closeDayDetails();
             }
             hideDeleteConfirm();
         };
     }
-
     if(confirmCancelBtn) confirmCancelBtn.onclick = hideDeleteConfirm;
     if(confirmOverlay) confirmOverlay.onclick = hideDeleteConfirm;
 
@@ -2293,374 +1383,184 @@
         if (ach.type === 'count') return [operations.length, ach.target];
         if (ach.type === 'goal') return [goalData ? goalData.saved : 0, ach.target];
         if (ach.type === 'cat_year') {
-            const now = new Date();
-            const yearAgo = new Date();
-            yearAgo.setFullYear(now.getFullYear() - 1);
-            const sum = operations.filter(op => {
-                const d = new Date(op.date);
-                return d >= yearAgo && op.type === 'expense' && ach.catKeys.some(k => op.category.toLowerCase().includes(k));
-            }).reduce((s, op) => s + op.amount, 0);
+            const now = new Date(); const yearAgo = new Date(); yearAgo.setFullYear(now.getFullYear() - 1);
+            const sum = operations.filter(op => { const d = new Date(op.date); return d >= yearAgo && op.type === 'expense' && ach.catKeys.some(k => op.category.toLowerCase().includes(k)); }).reduce((s, op) => s + op.amount, 0);
             return [sum, ach.target];
         }
-        if (ach.type === 'uniq_cats') {
-            const cats = new Set(operations.map(o => o.category));
-            return [cats.size, ach.target];
-        }
-        if (ach.type === 'cat_count') {
-            const count = operations.filter(op => ach.catKeys.some(k => op.category.toLowerCase().includes(k))).length;
-            return [count, ach.target];
-        }
-        if (ach.type === 'recurring_count') {
-            const count = operations.filter(op => op.isRecurring).length;
-            return [count, ach.target];
-        }
+        if (ach.type === 'uniq_cats') return [new Set(operations.map(o => o.category)).size, ach.target];
+        if (ach.type === 'cat_count') return [operations.filter(op => ach.catKeys.some(k => op.category.toLowerCase().includes(k))).length, ach.target];
+        if (ach.type === 'recurring_count') return [operations.filter(op => op.isRecurring).length, ach.target];
         if (ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') {
-            let streak = 0;
-            const today = new Date();
+            let streak = 0; const today = new Date();
             for (let i = 1; i < 100; i++) {
-                const d = new Date(today);
-                d.setDate(d.getDate() - i);
-                const dStr = d.toISOString().split('T')[0];
+                const d = new Date(today); d.setDate(d.getDate() - i); const dStr = d.toISOString().split('T')[0];
                 const hasExpense = operations.some(op => op.type === 'expense' && new Date(op.date).toISOString().startsWith(dStr));
                 const hasIncome = operations.some(op => op.type === 'income' && new Date(op.date).toISOString().startsWith(dStr));
-                
-                if (ach.type === 'series_no_exp') {
-                    if (hasExpense) break;
-                    streak++;
-                } else if (ach.type === 'series_no_exp_inc') {
-                    if (hasExpense || !hasIncome) break;
-                    streak++;
-                }
+                if (ach.type === 'series_no_exp') { if (hasExpense) break; streak++; }
+                else if (ach.type === 'series_no_exp_inc') { if (hasExpense || !hasIncome) break; streak++; }
             }
             return [streak, ach.target];
         }
         return [0, 0];
     }
-
     function checkCondition(ach) {
         const [cur, target] = getProgress(ach);
-        
-        if (ach.type === 'count' || ach.type === 'goal' || ach.type === 'cat_year' || 
-            ach.type === 'uniq_cats' || ach.type === 'cat_count' || ach.type === 'recurring_count' ||
-            ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') {
-            return cur >= target;
-        }
-        
+        if (['count','goal','cat_year','uniq_cats','cat_count','recurring_count','series_no_exp','series_no_exp_inc'].includes(ach.type)) return cur >= target;
         if (ach.type === 'month_positive') {
-            const monthsMap = {};
-            operations.forEach(op => {
-                const d = new Date(op.date);
-                const key = `${d.getFullYear()}-${d.getMonth()}`;
-                if (!monthsMap[key]) monthsMap[key] = { inc: 0, exp: 0 };
-                if (op.type === 'income') monthsMap[key].inc += op.amount;
-                else monthsMap[key].exp += op.amount;
-            });
-            return Object.values(monthsMap).some(m => m.inc > m.exp);
+            const m = {}; operations.forEach(op => { const k = `${new Date(op.date).getFullYear()}-${new Date(op.date).getMonth()}`; if(!m[k]) m[k]={inc:0,exp:0}; if(op.type==='income') m[k].inc+=op.amount; else m[k].exp+=op.amount; });
+            return Object.values(m).some(x => x.inc > x.exp);
         }
-        
-        if (ach.type === 'goal_completed') {
-            return goalData && goalData.saved >= goalData.target && goalData.target > 0;
-        }
-
-        if (ach.type === 'single_income') {
-            return operations.some(op => op.type === 'income' && op.amount >= ach.target);
-        }
-
+        if (ach.type === 'goal_completed') return goalData && goalData.saved >= goalData.target && goalData.target > 0;
+        if (ach.type === 'single_income') return operations.some(op => op.type === 'income' && op.amount >= ach.target);
         if (ach.type === 'months_positive_series') {
-            let streak = 0;
-            const now = new Date();
+            let streak = 0; const now = new Date();
             for (let i = 0; i < 12; i++) {
-                const y = now.getFullYear();
-                const m = now.getMonth() - i;
-                const realM = m < 0 ? 12 + m : m;
-                const realY = m < 0 ? y - 1 : y;
-                
+                const realM = now.getMonth() - i < 0 ? 12 + (now.getMonth() - i) : now.getMonth() - i;
+                const realY = now.getMonth() - i < 0 ? now.getFullYear() - 1 : now.getFullYear();
                 const ops = getFilteredOps(null, realY, realM);
-                const inc = ops.filter(o => o.type === 'income').reduce((s,o)=>s+o.amount,0);
-                const exp = ops.filter(o => o.type === 'expense').reduce((s,o)=>s+o.amount,0);
-                if (inc > exp) streak++;
-                else break;
+                const inc = ops.filter(o=>o.type==='income').reduce((s,o)=>s+o.amount,0);
+                const exp = ops.filter(o=>o.type==='expense').reduce((s,o)=>s+o.amount,0);
+                if (inc > exp) streak++; else break;
             }
             return streak >= ach.target;
         }
-
-        if (ach.type === 'time_range') {
-            return operations.some(op => {
-                const h = new Date(op.date).getHours();
-                return h >= ach.start && h < ach.end;
-            });
-        }
-
-        if (ach.type === 'single_expense') {
-            return operations.some(op => op.type === 'expense' && op.amount >= ach.target);
-        }
-
-        if (ach.type === 'exact_amount') {
-            if (ach.expenseOnly) return operations.some(op => op.type === 'expense' && op.amount === ach.target);
-            return operations.some(op => op.amount === ach.target);
-        }
-
-        if (ach.type === 'friday_expense') {
-            return operations.some(op => {
-                const d = new Date(op.date);
-                return d.getDay() === 5 && op.type === 'expense' && op.amount >= ach.target;
-            });
-        }
-
+        if (ach.type === 'time_range') return operations.some(op => { const h = new Date(op.date).getHours(); return h >= ach.start && h < ach.end; });
+        if (ach.type === 'single_expense') return operations.some(op => op.type === 'expense' && op.amount >= ach.target);
+        if (ach.type === 'exact_amount') return ach.expenseOnly ? operations.some(op => op.type === 'expense' && op.amount === ach.target) : operations.some(op => op.amount === ach.target);
+        if (ach.type === 'friday_expense') return operations.some(op => new Date(op.date).getDay() === 5 && op.type === 'expense' && op.amount >= ach.target);
         if (ach.type === 'day_equal') {
-            const daysMap = {};
-            operations.forEach(op => {
-                const dStr = new Date(op.date).toISOString().split('T')[0];
-                if (!daysMap[dStr]) daysMap[dStr] = { inc: 0, exp: 0 };
-                if (op.type === 'income') daysMap[dStr].inc += op.amount;
-                else daysMap[dStr].exp += op.amount;
-            });
-            return Object.values(daysMap).some(d => d.inc > 0 && d.exp > 0 && d.inc === d.exp);
+            const d = {}; operations.forEach(op => { const k = new Date(op.date).toISOString().split('T')[0]; if(!d[k]) d[k]={inc:0,exp:0}; if(op.type==='income') d[k].inc+=op.amount; else d[k].exp+=op.amount; });
+            return Object.values(d).some(x => x.inc > 0 && x.exp > 0 && x.inc === x.exp);
         }
-
         if (ach.type === 'day_expense') {
-            const daysMap = {};
-            operations.filter(op => op.type === 'expense').forEach(op => {
-                const dStr = new Date(op.date).toISOString().split('T')[0];
-                daysMap[dStr] = (daysMap[dStr] || 0) + op.amount;
-            });
-            return Object.values(daysMap).some(v => v >= ach.target);
+            const d = {}; operations.filter(op=>op.type==='expense').forEach(op => { const k = new Date(op.date).toISOString().split('T')[0]; d[k]=(d[k]||0)+op.amount; });
+            return Object.values(d).some(v => v >= ach.target);
         }
-
         if (ach.type === 'month_zero') {
-            const monthsMap = {};
-            operations.forEach(op => {
-                const d = new Date(op.date);
-                const key = `${d.getFullYear()}-${d.getMonth()}`;
-                if (!monthsMap[key]) monthsMap[key] = { inc: 0, exp: 0 };
-                if (op.type === 'income') monthsMap[key].inc += op.amount;
-                else monthsMap[key].exp += op.amount;
-            });
-            return Object.values(monthsMap).some(m => (m.inc > 0 || m.exp > 0) && m.inc === m.exp);
+            const m = {}; operations.forEach(op => { const k = `${new Date(op.date).getFullYear()}-${new Date(op.date).getMonth()}`; if(!m[k]) m[k]={inc:0,exp:0}; if(op.type==='income') m[k].inc+=op.amount; else m[k].exp+=op.amount; });
+            return Object.values(m).some(x => (x.inc>0 || x.exp>0) && x.inc === x.exp);
         }
-
         if (ach.type === 'duplicate_op') {
-            const seen = new Set();
-            for (const op of operations) {
-                const dStr = new Date(op.date).toISOString().split('T')[0];
-                const key = `${dStr}-${op.category}-${op.amount}`;
-                if (seen.has(key)) return true;
-                seen.add(key);
-            }
+            const s = new Set(); for(const op of operations) { const k = `${new Date(op.date).toISOString().split('T')[0]}-${op.category}-${op.amount}`; if(s.has(k)) return true; s.add(k); }
             return false;
         }
-
         if (ach.type === 'one_year_since_first') {
             if (operations.length === 0) return false;
             const first = new Date(Math.min(...operations.map(op => new Date(op.date))));
-            const now = new Date();
-            const diffYears = (now - first) / (1000 * 60 * 60 * 24 * 365);
-            return diffYears >= 1;
+            return (new Date() - first) / (1000*60*60*24*365) >= 1;
         }
-
-        if (ach.type === 'all_unlocked') {
-            return Object.keys(achievementsUnlocked).length >= 49;
-        }
-
+        if (ach.type === 'all_unlocked') return Object.keys(achievementsUnlocked).length >= 49;
         return false;
     }
-
     function checkAchievements() {
         let changed = false;
         ACHIEVEMENTS_LIST.forEach(ach => {
             if (!achievementsUnlocked[ach.id] && checkCondition(ach)) {
-                achievementsUnlocked[ach.id] = new Date().toISOString();
-                changed = true;
-                if (document.getElementById('achievementsScreen').classList.contains('active')) {
-                     haptic('success');
-                }
+                achievementsUnlocked[ach.id] = new Date().toISOString(); changed = true;
+                if (document.getElementById('achievementsScreen').classList.contains('active')) haptic('success');
             }
         });
         if (changed) saveData();
     }
-
     function renderAchievementsGrid() {
-        const grid = document.getElementById('achievementsGrid');
-        if(!grid) return;
-        grid.innerHTML = '';
-        
+        const grid = document.getElementById('achievementsGrid'); if(!grid) return; grid.innerHTML = '';
         const unlockedCount = Object.keys(achievementsUnlocked).length;
-        const counterEl = document.getElementById('achCounter');
-        const progEl = document.getElementById('achTotalProgress');
-        
+        const counterEl = document.getElementById('achCounter'), progEl = document.getElementById('achTotalProgress');
         if(counterEl) counterEl.textContent = `${unlockedCount}/50`;
         if(progEl) progEl.style.width = `${(unlockedCount / 50) * 100}%`;
-
         ACHIEVEMENTS_LIST.forEach(ach => {
             const isUnlocked = !!achievementsUnlocked[ach.id];
             const [cur, target] = getProgress(ach);
-            
             const card = document.createElement('div');
             card.className = `tarot-card ${isUnlocked ? 'opened' : 'closed'}`;
             card.onclick = () => openAchDetail(ach);
-            
-            let progressText = '';
-            let progressWidth = '0%';
-            
-            if (isUnlocked) {
-                progressText = '';
-            } else {
-                if (ach.type === 'count' || ach.type === 'goal' || ach.type === 'cat_year' || ach.type === 'uniq_cats' || ach.type === 'cat_count' || ach.type === 'recurring_count' || ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') {
+            let progressText = '', progressWidth = '0%';
+            if (!isUnlocked) {
+                if (['count','goal','cat_year','uniq_cats','cat_count','recurring_count','series_no_exp','series_no_exp_inc'].includes(ach.type)) {
                     const fmtCur = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(cur) : cur;
                     const fmtTarget = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(target) : target;
-                    progressText = `${fmtCur} / ${fmtTarget}`;
-                    progressWidth = `${Math.min(100, (cur / target) * 100)}%`;
-                } else {
-                    progressText = '???';
-                }
+                    progressText = `${fmtCur} / ${fmtTarget}`; progressWidth = `${Math.min(100, (cur / target) * 100)}%`;
+                } else progressText = '???';
             }
-
             card.innerHTML = `
-                <div class="tarot-canvas">
-                    <div class="tarot-emoji">${ach.emoji}</div>
-                    ${!isUnlocked ? `
-                        <div class="tarot-progress-overlay" style="font-size: ${progressText.length > 10 ? '8px' : '9px'}">${progressText}</div>
-                        <div class="tarot-progress-bar"><div class="tarot-progress-fill" style="width: ${progressWidth}"></div></div>
-                    ` : ''}
-                </div>
-                <div class="tarot-label">
-                    <div class="tarot-name">${ach.name}</div>
-                </div>
+                <div class="tarot-canvas"><div class="tarot-emoji">${ach.emoji}</div>${!isUnlocked ? `<div class="tarot-progress-overlay" style="font-size: ${progressText.length > 10 ? '8px' : '9px'}">${progressText}</div><div class="tarot-progress-bar"><div class="tarot-progress-fill" style="width: ${progressWidth}"></div></div>` : ''}</div>
+                <div class="tarot-label"><div class="tarot-name">${ach.name}</div></div>
             `;
             grid.appendChild(card);
         });
     }
-
     function openAchDetail(ach) {
         const isUnlocked = !!achievementsUnlocked[ach.id];
-        const [cur, target] = getProgress(ach);
-        
-        const cardContainer = document.getElementById('achDetailContent');
-        if(!cardContainer) return;
-
-        const isLargeUnlocked = isUnlocked;
-        let progressText = '';
-        let progressWidth = '0%';
-        
-        if (!isLargeUnlocked) {
-             if (ach.type === 'count' || ach.type === 'goal' || ach.type === 'cat_year' || ach.type === 'uniq_cats' || ach.type === 'cat_count' || ach.type === 'recurring_count' || ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') {
-                const fmtCur = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(cur) : cur;
-                const fmtTarget = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(target) : target;
-                progressText = `${fmtCur} / ${fmtTarget}`;
-                progressWidth = `${Math.min(100, (cur / target) * 100)}%`;
-            } else {
-                progressText = '???';
-            }
-        }
-
-        cardContainer.innerHTML = `
-            <div class="tarot-card ${isLargeUnlocked ? 'opened' : 'closed'}" style="width: 200px; margin-bottom: 20px;">
-                <div class="tarot-canvas">
-                    <div class="tarot-emoji">${ach.emoji}</div>
-                    ${!isLargeUnlocked ? `
-                        <div class="tarot-progress-overlay" style="font-size: ${progressText.length > 12 ? '7px' : '9px'}">${progressText}</div>
-                        <div class="tarot-progress-bar"><div class="tarot-progress-fill" style="width: ${progressWidth}"></div></div>
-                    ` : ''}
-                </div>
-                <div class="tarot-label">
-                    <div class="tarot-name">${ach.name}</div>
-                </div>
-            </div>
-        `;
-
         const nameEl = document.getElementById('achDetailName');
         const descEl = document.getElementById('achDetailDesc');
         const dateEl = document.getElementById('achDetailDate');
-
-        if(nameEl) nameEl.textContent = ach.name;
-        if(descEl) descEl.textContent = isUnlocked ? ach.desc : 'Условие скрыто';
-        
+        if (nameEl) nameEl.textContent = ach.name;
+        if (descEl) descEl.textContent = isUnlocked ? ach.desc : 'Условие скрыто';
         if (dateEl) {
             if (isUnlocked && achievementsUnlocked[ach.id]) {
-                const d = new Date(achievementsUnlocked[ach.id]);
-                dateEl.textContent = `Открыто ${d.toLocaleDateString('ru-RU')}`;
+                dateEl.textContent = 'Открыто ' + new Date(achievementsUnlocked[ach.id]).toLocaleDateString('ru-RU');
                 dateEl.style.display = 'block';
             } else {
                 dateEl.style.display = 'none';
             }
         }
-
+        // отрисовку самой карты в #achDetailCard оставь как была в текущем коде
+        const cardContainer = document.getElementById('achDetailCard');
+        if(cardContainer) {
+            const [cur, target] = getProgress(ach);
+            let progressText = '', progressWidth = '0%';
+            if (!isUnlocked) {
+                if (['count','goal','cat_year','uniq_cats','cat_count','recurring_count','series_no_exp','series_no_exp_inc'].includes(ach.type)) {
+                    const fmtCur = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(cur) : cur;
+                    const fmtTarget = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(target) : target;
+                    progressText = `${fmtCur} / ${fmtTarget}`; progressWidth = `${Math.min(100, (cur / target) * 100)}%`;
+                } else progressText = '???';
+            }
+            cardContainer.innerHTML = `
+                <div class="tarot-card ${isUnlocked ? 'opened' : 'closed'}" style="width: 200px; margin-bottom: 20px;">
+                    <div class="tarot-canvas"><div class="tarot-emoji">${ach.emoji}</div>${!isUnlocked ? `<div class="tarot-progress-overlay" style="font-size: ${progressText.length > 12 ? '7px' : '9px'}">${progressText}</div><div class="tarot-progress-bar"><div class="tarot-progress-fill" style="width: ${progressWidth}"></div></div>` : ''}</div>
+                    <div class="tarot-label"><div class="tarot-name">${ach.name}</div></div>
+                </div>
+            `;
+        }
         document.getElementById('modalOverlay').classList.add('active');
         document.getElementById('achDetailSheet').classList.add('active');
         haptic('light');
     }
-
-    function closeAchDetail() {
-        document.getElementById('modalOverlay').classList.remove('active');
-        document.getElementById('achDetailSheet').classList.remove('active');
-    }
+    function closeAchDetail() { document.getElementById('modalOverlay').classList.remove('active'); document.getElementById('achDetailSheet').classList.remove('active'); }
 
     function switchTab(tab) {
-        const finScr = document.getElementById('financesScreen');
-        const achScr = document.getElementById('achievementsScreen');
-        const navFin = document.getElementById('navFinances');
-        const navAch = document.getElementById('navAchievements');
+        const finScr = document.getElementById('financesScreen'), achScr = document.getElementById('achievementsScreen');
+        const navFin = document.getElementById('navFinances'), navAch = document.getElementById('navAchievements');
         const fab = document.getElementById('addBtn');
-
         if (tab === 'finances') {
-            if(finScr) finScr.classList.add('active');
-            if(achScr) achScr.classList.remove('active');
-            if(navFin) navFin.classList.add('active');
-            if(navAch) navAch.classList.remove('active');
+            if(finScr) finScr.classList.add('active'); if(achScr) achScr.classList.remove('active');
+            if(navFin) navFin.classList.add('active'); if(navAch) navAch.classList.remove('active');
             if(fab) fab.style.display = 'flex';
         } else {
-            if(finScr) finScr.classList.remove('active');
-            if(achScr) achScr.classList.add('active');
-            if(navFin) navFin.classList.remove('active');
-            if(navAch) navAch.classList.add('active');
-            if(fab) fab.style.display = 'none';
-            renderAchievementsGrid();
+            if(finScr) finScr.classList.remove('active'); if(achScr) achScr.classList.add('active');
+            if(navFin) navFin.classList.remove('active'); if(navAch) navAch.classList.add('active');
+            if(fab) fab.style.display = 'none'; renderAchievementsGrid();
         }
         haptic('light');
     }
 
     document.getElementById('addBtn').onclick = () => openModal();
-    
-    // Overlay click handlers
     document.getElementById('modalOverlay').onclick = closeAllSheets;
     document.getElementById('monthOverlay').onclick = closeAllSheets;
     document.getElementById('fullCalOverlay').onclick = closeAllSheets;
 
-    document.getElementById('incomeChartCard').onclick = () => {
-        haptic('medium');
-        const ops = getFilteredOps('income');
-        openDetails('income', ops);
-    };
-    document.getElementById('expenseChartCard').onclick = () => {
-        haptic('medium');
-        const ops = getFilteredOps('expense');
-        openDetails('expense', ops);
-    };
-    
+    document.getElementById('incomeChartCard').onclick = () => { haptic('medium'); openDetails('income', getFilteredOps('income')); };
+    document.getElementById('expenseChartCard').onclick = () => { haptic('medium'); openDetails('expense', getFilteredOps('expense')); };
     document.getElementById('goalCard').onclick = openGoal;
     document.getElementById('calendarCardBtn').onclick = openFullCalendar;
-
-    document.getElementById('prevMonth').onclick = () => {
-        haptic('light');
-        const newDate = new Date(viewState.year, viewState.month - 1, 1);
-        viewState.year = newDate.getFullYear();
-        viewState.month = newDate.getMonth();
-        updateUI();
-    };
-    document.getElementById('nextMonth').onclick = () => {
-        haptic('light');
-        const newDate = new Date(viewState.year, viewState.month + 1, 1);
-        viewState.year = newDate.getFullYear();
-        viewState.month = newDate.getMonth();
-        updateUI();
-    };
+    document.getElementById('prevMonth').onclick = () => { haptic('light'); const d = new Date(viewState.year, viewState.month - 1, 1); viewState.year = d.getFullYear(); viewState.month = d.getMonth(); updateUI(); };
+    document.getElementById('nextMonth').onclick = () => { haptic('light'); const d = new Date(viewState.year, viewState.month + 1, 1); viewState.year = d.getFullYear(); viewState.month = d.getMonth(); updateUI(); };
     document.getElementById('monthLabel').onclick = openMonthPicker;
-
     document.getElementById('prevYearBtn').onclick = () => { pickerYear--; renderMonthGrid(); haptic('light'); };
     document.getElementById('nextYearBtn').onclick = () => { pickerYear++; renderMonthGrid(); haptic('light'); };
 
     updateUI();
-
 </script>
 </body>
 </html>
