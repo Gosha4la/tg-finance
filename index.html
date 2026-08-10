@@ -116,7 +116,40 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* Balance Card (New) */
+        .balance-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
             margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            animation: fadeScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .balance-title {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .balance-amount {
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+
+        .balance-total {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 8px;
         }
 
         .chart-card {
@@ -374,6 +407,31 @@
         }
         .form-input:focus { border-color: var(--accent); }
 
+        /* Suggestions Container */
+        .suggestions-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+            max-height: 120px;
+            overflow-y: auto;
+            padding: 4px;
+        }
+        .suggestion-chip {
+            background-color: rgba(255,255,255,0.05);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .suggestion-chip:active {
+            background-color: rgba(255,255,255,0.15);
+        }
+
         /* Fixed Label Structure for Repeat Toggle */
         .repeat-toggle-container {
             display: flex;
@@ -393,7 +451,7 @@
             height: 28px;
             flex-shrink: 0;
             margin-left: 10px;
-            pointer-events: auto; /* Ensure switch itself is clickable */
+            pointer-events: auto;
         }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
@@ -503,6 +561,10 @@
         @keyframes fadeIn {
             from { opacity: 0; } to { opacity: 1; }
         }
+        @keyframes fadeScale {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
         .fade-enter { animation: fadeIn 0.3s ease forwards; }
 
         /* Scrollbar */
@@ -549,6 +611,13 @@
         </div>
     </div>
 
+    <!-- Balance Card (New) -->
+    <div class="balance-card" id="balanceCard">
+        <div class="balance-title">Остаток за месяц</div>
+        <div class="balance-amount" id="monthBalanceVal">0 ₽</div>
+        <div class="balance-total">Всего за всё время: <span id="totalBalanceVal">0</span> ₽</div>
+    </div>
+
     <!-- History -->
     <div class="section-title">
         История операций
@@ -588,8 +657,9 @@
 
         <div class="form-group">
             <label class="form-label">Категория / Название</label>
-            <input type="text" id="opCategory" class="form-input" placeholder="Например: Продукты" required list="catSuggestions" autocomplete="off">
-            <datalist id="catSuggestions"></datalist>
+            <input type="text" id="opCategory" class="form-input" placeholder="Например: Продукты" required autocomplete="off">
+            <!-- Custom Suggestions Container -->
+            <div class="suggestions-container" id="categorySuggestions" style="display: none;"></div>
         </div>
 
         <div class="form-group">
@@ -752,6 +822,28 @@
         const incomeOps = ops.filter(o => o.type === 'income');
         const expenseOps = ops.filter(o => o.type === 'expense');
 
+        // Balance Calculation
+        const monthIncome = incomeOps.reduce((sum, op) => sum + op.amount, 0);
+        const monthExpense = expenseOps.reduce((sum, op) => sum + op.amount, 0);
+        const monthBalance = monthIncome - monthExpense;
+        
+        const totalIncome = operations.filter(o => o.type === 'income').reduce((sum, op) => sum + op.amount, 0);
+        const totalExpense = operations.filter(o => o.type === 'expense').reduce((sum, op) => sum + op.amount, 0);
+        const totalBalance = totalIncome - totalExpense;
+
+        // Update Balance Card
+        const balanceEl = document.getElementById('monthBalanceVal');
+        balanceEl.textContent = (monthBalance >= 0 ? '+' : '') + formatMoney(monthBalance) + ' ₽';
+        balanceEl.style.color = monthBalance >= 0 ? 'var(--success)' : 'var(--danger)';
+        
+        // Trigger animation
+        const card = document.getElementById('balanceCard');
+        card.style.animation = 'none';
+        card.offsetHeight; /* trigger reflow */
+        card.style.animation = 'fadeScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+
+        document.getElementById('totalBalanceVal').textContent = formatMoney(totalBalance);
+
         // Lists
         renderList('opsList', ops);
         document.getElementById('historyCount').textContent = `${ops.length} записей`;
@@ -895,6 +987,7 @@
         toggleRepeatOptions();
         setPeriod('day', document.querySelector('.radio-card'));
         setType('expense');
+        hideSuggestions();
 
         if (editOp) {
             document.getElementById('opId').value = editOp.id;
@@ -909,17 +1002,13 @@
             }
         }
         
-        // Populate datalist
-        const cats = [...new Set(operations.map(o => o.category))];
-        const dl = document.getElementById('catSuggestions');
-        dl.innerHTML = cats.map(c => `<option value="${c}">`).join('');
-
         // NO Auto Focus to prevent keyboard shift issues on mobile
     }
 
     function closeModal() {
         document.getElementById('modalOverlay').classList.remove('active');
         document.getElementById('addSheet').classList.remove('active');
+        hideSuggestions();
         // Blur any active input to close keyboard
         if (document.activeElement) document.activeElement.blur();
     }
@@ -1012,6 +1101,63 @@
         haptic('light');
     };
 
+    // --- Category Suggestions Logic ---
+    const catInput = document.getElementById('opCategory');
+    const suggestionsContainer = document.getElementById('categorySuggestions');
+
+    function showSuggestions(filterText = '') {
+        const allCats = [...new Set(operations.map(o => o.category))];
+        // Get last used categories (reverse order)
+        const lastUsed = [...allCats].reverse().slice(0, 8);
+        
+        let filtered = [];
+        if (filterText.trim() === '') {
+            filtered = lastUsed;
+        } else {
+            filtered = allCats.filter(c => c.toLowerCase().includes(filterText.toLowerCase()));
+        }
+
+        if (filtered.length === 0) {
+            hideSuggestions();
+            return;
+        }
+
+        suggestionsContainer.innerHTML = '';
+        filtered.forEach(cat => {
+            const chip = document.createElement('div');
+            chip.className = 'suggestion-chip';
+            chip.textContent = cat;
+            chip.onclick = () => {
+                catInput.value = cat;
+                hideSuggestions();
+                haptic('light');
+            };
+            suggestionsContainer.appendChild(chip);
+        });
+        
+        suggestionsContainer.style.display = 'flex';
+    }
+
+    function hideSuggestions() {
+        suggestionsContainer.style.display = 'none';
+        suggestionsContainer.innerHTML = '';
+    }
+
+    catInput.addEventListener('focus', () => {
+        showSuggestions(catInput.value);
+    });
+
+    catInput.addEventListener('input', (e) => {
+        showSuggestions(e.target.value);
+    });
+
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!catInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+            hideSuggestions();
+        }
+    });
+
     // Save Button Handler
     const saveBtn = document.getElementById('saveBtn');
     saveBtn.onclick = (e) => {
@@ -1023,6 +1169,7 @@
         if (document.activeElement) {
             document.activeElement.blur();
         }
+        hideSuggestions();
 
         // Block button
         isSaving = true;
@@ -1052,7 +1199,7 @@
             const isRecurring = document.getElementById('opRepeatCheck').checked;
 
             if (id) {
-                // Edit existing (remove future recurrences if changed? For simplicity, just update this one)
+                // Edit existing
                 const idx = operations.findIndex(o => o.id == id);
                 if (idx > -1) {
                     operations[idx] = { ...operations[idx], amount, category, type: currentType, isRecurring, period: isRecurring ? currentPeriod : null };
@@ -1140,7 +1287,6 @@
             saveData();
             updateUI();
             haptic('success');
-            // If details sheet is open, refresh it or close it
             if (document.getElementById('detailsSheet').classList.contains('active')) {
                 closeDetails();
             }
