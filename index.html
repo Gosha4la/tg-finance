@@ -6,16 +6,15 @@
     <title>Мои Финансы</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Fonts for Tarot -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Dark Theme (Default) */
+            /* Dark Theme (Default) - Deep Night Blue Accent */
             --bg-color: #0f1115;
             --card-bg: #1a1d24;
             --text-primary: #ffffff;
             --text-secondary: #8e94a3;
-            --accent: #2962ff;
+            --accent: #2962ff; /* Глубокий ночной синий */
             --accent-text: #ffffff;
             --danger: #ff4b4b;
             --success: #2ecc71;
@@ -23,16 +22,7 @@
             --overlay: rgba(0, 0, 0, 0.6);
             --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             --safe-bottom: env(safe-area-inset-bottom, 20px);
-            
-            /* Tarot Card Constants (Always Dark) */
-            --tarot-border-dark: #2a1d10;
-            --tarot-border-ochre: #d9a05b;
-            --tarot-border-inner: #7a4d26;
-            --tarot-bg-start: #0d0f14;
-            --tarot-bg-end: #141a20;
-            --tarot-label-bg-start: #c99a63;
-            --tarot-label-bg-end: #b9854f;
-            --tarot-text: #3a2413;
+            --nav-height: 60px;
         }
 
         [data-theme="light"] {
@@ -58,7 +48,7 @@
             color: var(--text-primary);
             transition: background-color 0.3s ease, color 0.3s ease;
             overflow-x: hidden;
-            padding-bottom: calc(80px + var(--safe-bottom)); /* Space for FAB or Nav */
+            padding-bottom: calc(80px + var(--safe-bottom));
             -webkit-user-select: none;
             user-select: none;
         }
@@ -121,6 +111,7 @@
             padding: 20px 15px;
             max-width: 600px;
             margin: 0 auto;
+            padding-bottom: calc(var(--nav-height) + 20px); /* Space for bottom nav */
         }
 
         /* Charts Section */
@@ -137,7 +128,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin-bottom: 15px;
-            align-items: stretch; /* Make cards equal height */
+            align-items: stretch;
         }
 
         /* Balance Card */
@@ -166,7 +157,7 @@
             margin-bottom: 4px;
             transition: color 0.3s ease;
         }
-
+        
         .balance-carry {
             font-size: 11px;
             color: var(--text-secondary);
@@ -179,188 +170,118 @@
             margin-top: 8px;
         }
 
-        /* Generic Card Style */
-        .chart-card, .goal-card, .calendar-card {
+        /* Goal Card */
+        .goal-card {
             background-color: var(--card-bg);
             border-radius: 16px;
             padding: 15px;
             display: flex;
             flex-direction: column;
-            align-items: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            height: 100%; /* Equal height in grid */
-        }
-
-        .chart-card:active, .goal-card:active, .calendar-card:active { transform: scale(0.96); }
-
-        .chart-title, .goal-title, .cal-title {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            width: 100%;
-            text-align: left;
-        }
-
-        /* Goal Card Specifics */
-        .goal-content {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            margin-top: 10px;
-            flex-grow: 1;
-        }
-        
-        .goal-name {
-            font-weight: 600;
-            font-size: 15px;
-            margin-bottom: 8px;
-            width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .goal-progress-container {
-            width: 100%;
-            background: rgba(255,255,255,0.1);
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 6px;
-            position: relative;
-        }
-
-        .goal-progress-bar {
             height: 100%;
-            background: var(--accent);
-            width: 0%;
-            transition: width 0.5s ease;
-            border-radius: 3px;
+            transition: transform 0.2s;
         }
-
-        .goal-stats {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            font-size: 11px;
-            color: var(--text-secondary);
-        }
-
-        .goal-empty-state {
+        .goal-card:active { transform: scale(0.96); }
+        
+        .goal-content { display: flex; flex-direction: column; height: 100%; }
+        .goal-header { font-size: 14px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; text-align: center;}
+        .goal-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+        
+        .goal-empty {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100%;
-            width: 100%;
             color: var(--text-secondary);
             font-size: 13px;
             text-align: center;
-            margin-top: 20px;
         }
-        
-        .goal-add-btn {
+        .goal-empty span { font-size: 24px; margin-bottom: 5px; opacity: 0.5; }
+
+        .goal-name { font-weight: 700; font-size: 14px; margin-bottom: 8px; color: var(--text-primary); }
+        .goal-progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .goal-progress-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 3px;
+        }
+        .goal-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        .goal-achieved {
             margin-top: 8px;
-            font-size: 20px;
-            color: var(--accent);
-            font-weight: bold;
+            font-size: 12px;
+            color: var(--success);
+            font-weight: 700;
+            text-align: center;
+            animation: pulse 1s infinite;
         }
 
-        /* Calendar Specifics */
+        /* Calendar Card */
+        .calendar-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+            height: 100%;
+            transition: transform 0.2s;
+        }
+        .calendar-card:active { transform: scale(0.96); }
+        
+        .cal-header { font-size: 14px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; text-align: center; }
         .mini-cal-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
-            width: 100%;
-            margin-top: 10px;
+            gap: 2px;
+            flex-grow: 1;
+            align-content: start;
         }
-
-        .cal-day-header {
+        .cal-day-name {
             font-size: 9px;
             color: var(--text-secondary);
             text-align: center;
             font-weight: 600;
+            margin-bottom: 4px;
         }
-
         .cal-day-cell {
             aspect-ratio: 1;
             border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9px;
-            color: rgba(255,255,255,0.75);
+            font-size: 9px; /* Added font size */
+            color: rgba(255,255,255,0.75); /* Default dark theme color */
             position: relative;
-            cursor: pointer;
             transition: transform 0.1s;
         }
         [data-theme="light"] .cal-day-cell { color: rgba(0,0,0,0.6); }
         
         .cal-day-cell:active { transform: scale(0.8); }
-        
-        .cal-income-dot {
+        .cal-day-cell.has-income::after {
+            content: '';
             position: absolute;
-            top: 2px;
-            right: 2px;
-            width: 3px;
-            height: 3px;
-            background-color: var(--success);
+            top: 2px; right: 2px;
+            width: 3px; height: 3px;
+            background: var(--success);
             border-radius: 50%;
         }
-
-        /* Chart Card */
-        .chart-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-        }
-
-        .chart-center-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            font-weight: 700;
-            font-size: 16px;
-            line-height: 1.2;
-            pointer-events: none;
-            width: 100%;
-        }
-        
-        .chart-center-sub {
-            font-size: 10px;
-            color: var(--text-secondary);
-            font-weight: 400;
-        }
-
-        .legend-list {
-            width: 100%;
-            margin-top: 10px;
-            max-height: 100px;
-            overflow-y: auto;
-            font-size: 11px;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 4px;
-            padding: 2px 0;
-        }
-
-        .legend-left { display: flex; align-items: center; gap: 6px; overflow: hidden; }
-        .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .legend-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; }
-        .legend-val { font-weight: 600; flex-shrink: 0; }
 
         /* Operations List */
         .section-title {
@@ -418,14 +339,7 @@
 
         .op-details { flex-grow: 1; min-width: 0; }
         .op-name { font-weight: 600; font-size: 15px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .op-note { 
-            font-size: 12px; 
-            color: var(--text-secondary); 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            display: block;
-        }
+        .op-note { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .op-date { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; margin-top: 2px;}
         .auto-badge {
             font-size: 9px;
@@ -447,53 +361,11 @@
             font-size: 14px;
         }
 
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: calc(60px + var(--safe-bottom));
-            background-color: var(--card-bg);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            align-items: flex-start;
-            padding-top: 10px;
-            z-index: 90;
-            padding-bottom: var(--safe-bottom);
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            font-size: 10px;
-            gap: 4px;
-            cursor: pointer;
-            width: 50%;
-            height: 100%;
-            transition: color 0.2s;
-        }
-
-        .nav-item.active {
-            color: var(--accent);
-        }
-
-        .nav-icon svg {
-            width: 22px;
-            height: 22px;
-            stroke: currentColor;
-            stroke-width: 1.7;
-            fill: none;
-        }
-
         /* FAB */
         .fab {
             position: fixed;
-            bottom: calc(25px + var(--safe-bottom));
+            /* CHANGED: Bottom adjusted to be above the navigation bar (60px + 12px margin) */
+            bottom: calc(72px + var(--safe-bottom));
             right: 25px;
             width: 60px;
             height: 60px;
@@ -512,7 +384,53 @@
             border: none;
         }
         .fab:active { transform: scale(0.9); }
-        .fab.hidden { display: none; }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: calc(var(--nav-height) + var(--safe-bottom));
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            padding-top: 10px;
+            z-index: 80;
+            padding-bottom: var(--safe-bottom);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 10px;
+            cursor: pointer;
+            transition: color 0.2s;
+            width: 50%;
+            height: 100%;
+            padding-bottom: var(--safe-bottom); /* Ensure click area covers safe area if needed, though flex handles it */
+            margin-bottom: calc(-1 * var(--safe-bottom)); /* Visual correction */
+        }
+
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            margin-bottom: 4px;
+            stroke: currentColor;
+            stroke-width: 1.7;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+        }
 
         /* Bottom Sheet Modal */
         .modal-overlay {
@@ -543,8 +461,8 @@
         }
         .bottom-sheet.active { transform: translateY(0); }
         
-        /* Higher Z-Index for nested sheets like Day Details */
-        .bottom-sheet.higher-z {
+        /* Higher Z-Index for nested sheets (Day Details over Calendar) */
+        .bottom-sheet.super-layer {
             z-index: 1002;
         }
 
@@ -629,7 +547,7 @@
             background-color: rgba(255,255,255,0.15);
         }
 
-        /* Repeat Toggle */
+        /* Fixed Label Structure for Repeat Toggle */
         .repeat-toggle-container {
             display: flex;
             align-items: center;
@@ -751,43 +669,32 @@
         .year-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .btn-small { background: rgba(255,255,255,0.1); border: none; color: var(--text-primary); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
 
-        /* Tarot Card Styles */
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            padding-bottom: 20px;
-        }
-
+        /* Tarot Card Styles (Dark Theme Forced) */
         .tarot-card {
+            width: 170px;
             aspect-ratio: 1/2;
             border-radius: 8px;
             position: relative;
-            cursor: pointer;
-            transition: transform 0.2s, filter 0.3s;
+            margin: 0 auto;
+            /* Outer Border */
+            border: 3px solid #2a1d10;
+            outline: 6px solid #d9a05b;
+            outline-offset: -6px;
+            /* Inner Border simulated via padding or pseudo if needed, but outline works well for the "ochre" look */
+            /* Actually, let's use box-shadow for inner border to keep layout clean */
+            box-shadow: inset 0 0 0 2px #7a4d26;
+            background: linear-gradient(to bottom, #0d0f14, #141a20);
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            /* Borders layered */
-            border: 3px solid var(--tarot-border-dark);
-            outline: 6px solid var(--tarot-border-ochre);
-            outline-offset: -6px; /* Inner border effect handled by pseudo or just simple border logic */
-            /* Better border simulation */
-            box-shadow: 
-                0 0 0 3px var(--tarot-border-dark),
-                0 0 0 9px var(--tarot-border-ochre),
-                0 0 0 11px var(--tarot-border-inner);
-            background: linear-gradient(to bottom, var(--tarot-bg-start), var(--tarot-bg-end));
+            align-items: center;
+            transition: transform 0.3s, filter 0.3s, box-shadow 0.3s;
+            flex-shrink: 0;
         }
         
         .tarot-card.opened {
             filter: none;
-            box-shadow: 
-                0 0 12px rgba(217,160,91,0.25), 
-                0 6px 16px rgba(0,0,0,0.45),
-                0 0 0 3px var(--tarot-border-dark),
-                0 0 0 9px var(--tarot-border-ochre),
-                0 0 0 11px var(--tarot-border-inner);
+            box-shadow: 0 0 12px rgba(217,160,91,0.25), 0 6px 16px rgba(0,0,0,0.45), inset 0 0 0 2px #7a4d26;
         }
 
         .tarot-card.closed {
@@ -795,71 +702,87 @@
         }
 
         .tarot-canvas {
+            width: 100%;
             flex-grow: 1;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 4px);
+            /* Retro Texture */
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 4px);
         }
 
         .tarot-canvas::after {
             content: '';
             position: absolute;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: radial-gradient(circle at 50% 45%, rgba(217,160,91,0.18), transparent 60%);
             pointer-events: none;
         }
 
         .tarot-emoji {
             font-size: 52px;
-            filter: drop-shadow(0 0 6px rgba(255,180,80,.45));
             z-index: 2;
+            filter: drop-shadow(0 0 6px rgba(255,180,80,0.45));
+            transition: transform 0.5s;
+        }
+        
+        .tarot-card.opened .tarot-emoji {
+            transform: scale(1.1);
         }
 
         .tarot-progress-overlay {
             position: absolute;
-            bottom: 10px;
+            top: 10px;
             width: 70%;
             text-align: center;
             font-size: 9px;
-            color: rgba(255,255,255,0.7);
+            color: rgba(255,255,255,0.6);
             z-index: 3;
-            text-shadow: 0 1px 2px black;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
-        .tarot-progress-bar-mini {
-            height: 2px;
-            background: rgba(255,255,255,0.3);
-            margin-top: 4px;
-            border-radius: 1px;
+        .tarot-progress-bar {
+            position: absolute;
+            bottom: 18%; /* Just above label */
+            width: 70%;
+            height: 4px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 2px;
             overflow: hidden;
+            z-index: 3;
         }
-        .tarot-progress-fill-mini {
+        .tarot-progress-fill {
             height: 100%;
-            background: var(--tarot-border-ochre);
+            background: #d9a05b;
             width: 0%;
             transition: width 0.5s;
         }
 
         .tarot-label {
+            width: 100%;
             height: 18%;
-            background: linear-gradient(to bottom, var(--tarot-label-bg-start), var(--tarot-label-bg-end));
+            background: linear-gradient(to bottom, #c99a63, #b9854f);
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             padding: 4px;
+            box-sizing: border-box;
             border-top: 1px solid rgba(0,0,0,0.2);
+            z-index: 2;
+            flex-shrink: 0;
         }
 
         .tarot-name {
             font-family: 'Press Start 2P', cursive;
             font-size: 7px;
-            color: var(--tarot-text);
+            color: #3a2413;
             line-height: 1.4;
-            max-height: 2.8em;
+            max-height: 100%;
             overflow: hidden;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -867,14 +790,53 @@
             letter-spacing: 0.5px;
         }
 
+        /* Achievements Grid */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 10px;
+        }
+
+        .ach-header {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 10px;
+        }
+        .ach-progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .ach-progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
         /* Animations */
-        @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes fadeScale { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
-        @keyframes popGold { 0% { transform: scale(0.8); filter: brightness(0.5); } 50% { filter: brightness(1.5) drop-shadow(0 0 10px gold); } 100% { transform: scale(1); filter: brightness(1); } }
+        @keyframes slideIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; } to { opacity: 1; }
+        }
+        @keyframes fadeScale {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
 
         .fade-enter { animation: fadeIn 0.3s ease forwards; }
-        .tarot-card.newly-opened { animation: popGold 0.6s ease forwards; }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 4px; }
@@ -882,119 +844,130 @@
         ::-webkit-scrollbar-thumb { background: var(--text-secondary); border-radius: 2px; opacity: 0.3; }
 
         /* Screen Visibility */
-        .screen { display: none; }
-        .screen.active { display: block; animation: fadeIn 0.3s ease; }
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .screen.active {
+            display: block;
+        }
 
     </style>
 </head>
 <body>
 
-<!-- Header (Shared) -->
-<header>
-    <div class="month-nav">
-        <button class="nav-btn prev" id="prevMonth">‹</button>
-        <div class="current-month-label" id="monthLabel">Сентябрь 2023</div>
-        <button class="nav-btn next" id="nextMonth">›</button>
-    </div>
-</header>
-
 <!-- FINANCES SCREEN -->
-<div id="financesScreen" class="screen active container">
-    <!-- Charts -->
-    <div class="charts-wrapper">
-        <div class="chart-card" id="incomeChartCard">
-            <div class="chart-title">Доходы</div>
-            <div class="chart-container">
-                <canvas id="incomeChart"></canvas>
-                <div class="chart-center-text">
-                    <div id="totalIncomeVal">0</div>
-                    <div class="chart-center-sub">₽</div>
+<div id="financesScreen" class="screen active">
+    <header>
+        <div class="month-nav">
+            <button class="nav-btn prev" id="prevMonth">‹</button>
+            <div class="current-month-label" id="monthLabel">Сентябрь 2023</div>
+            <button class="nav-btn next" id="nextMonth">›</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Charts -->
+        <div class="charts-wrapper">
+            <div class="chart-card" id="incomeChartCard">
+                <div class="chart-title">Доходы</div>
+                <div class="chart-container">
+                    <canvas id="incomeChart"></canvas>
+                    <div class="chart-center-text">
+                        <div id="totalIncomeVal">0</div>
+                        <div class="chart-center-sub">₽</div>
+                    </div>
+                </div>
+                <div class="legend-list" id="incomeLegend"></div>
+            </div>
+            <div class="chart-card" id="expenseChartCard">
+                <div class="chart-title">Расходы</div>
+                <div class="chart-container">
+                    <canvas id="expenseChart"></canvas>
+                    <div class="chart-center-text">
+                        <div id="totalExpenseVal">0</div>
+                        <div class="chart-center-sub">₽</div>
+                    </div>
+                </div>
+                <div class="legend-list" id="expenseLegend"></div>
+            </div>
+        </div>
+
+        <!-- Under Charts Grid (Goal + Calendar) -->
+        <div class="under-charts-grid">
+            <!-- Goal Card -->
+            <div class="goal-card" id="goalCard">
+                <div class="goal-content">
+                    <div class="goal-header">Цель</div>
+                    <div class="goal-body" id="goalBody">
+                        <!-- Content injected via JS -->
+                    </div>
                 </div>
             </div>
-            <div class="legend-list" id="incomeLegend"></div>
-        </div>
-        <div class="chart-card" id="expenseChartCard">
-            <div class="chart-title">Расходы</div>
-            <div class="chart-container">
-                <canvas id="expenseChart"></canvas>
-                <div class="chart-center-text">
-                    <div id="totalExpenseVal">0</div>
-                    <div class="chart-center-sub">₽</div>
+
+            <!-- Calendar Card -->
+            <div class="calendar-card" id="calendarCardBtn">
+                <div class="cal-header">Календарь</div>
+                <div class="mini-cal-grid" id="miniCalGrid">
+                    <!-- Days injected via JS -->
                 </div>
             </div>
-            <div class="legend-list" id="expenseLegend"></div>
-        </div>
-    </div>
-
-    <!-- Under Charts Grid (Goal + Calendar) -->
-    <div class="under-charts-grid">
-        <!-- Goal Card -->
-        <div class="goal-card" id="goalCard">
-            <div class="goal-title">Цель</div>
-            <div class="goal-content" id="goalContent">
-                <!-- Injected via JS -->
-            </div>
         </div>
 
-        <!-- Mini Calendar Card -->
-        <div class="calendar-card" id="miniCalCard">
-            <div class="cal-title">Календарь</div>
-            <div class="mini-cal-grid" id="miniCalGrid">
-                <!-- Injected via JS -->
-            </div>
+        <!-- Balance Card (Moved after grid) -->
+        <div class="balance-card" id="balanceCard">
+            <div class="balance-title">Остаток за месяц</div>
+            <div class="balance-amount" id="monthBalanceVal">0 ₽</div>
+            <div class="balance-carry" id="balanceCarryVal"></div>
+            <div class="balance-total">Всего за всё время: <span id="totalBalanceVal">0</span> ₽</div>
         </div>
-    </div>
 
-    <!-- Balance Card (Moved after grid) -->
-    <div class="balance-card" id="balanceCard">
-        <div class="balance-title">Остаток за месяц</div>
-        <div class="balance-amount" id="monthBalanceVal">0 ₽</div>
-        <div class="balance-carry" id="balanceCarryVal"></div>
-        <div class="balance-total">Всего за всё время: <span id="totalBalanceVal">0</span> ₽</div>
-    </div>
-
-    <!-- History -->
-    <div class="section-title">
-        История операций
-        <span style="font-size: 12px; color: var(--text-secondary); font-weight: 400;" id="historyCount">0 записей</span>
-    </div>
-    <ul class="ops-list" id="opsList">
-        <!-- Items injected here -->
-    </ul>
-    <div id="emptyState" class="empty-state" style="display: none;">
-        В этом месяце пока нет операций.<br>Нажмите +, чтобы добавить.
+        <!-- History -->
+        <div class="section-title">
+            История операций
+            <span style="font-size: 12px; color: var(--text-secondary); font-weight: 400;" id="historyCount">0 записей</span>
+        </div>
+        <ul class="ops-list" id="opsList">
+            <!-- Items injected here -->
+        </ul>
+        <div id="emptyState" class="empty-state" style="display: none;">
+            В этом месяце пока нет операций.<br>Нажмите +, чтобы добавить.
+        </div>
     </div>
 </div>
 
 <!-- ACHIEVEMENTS SCREEN -->
-<div id="achievementsScreen" class="screen container">
-    <div class="section-title">
-        Достижения
-        <span style="font-size: 12px; color: var(--text-secondary); font-weight: 400;" id="achCount">0 из 50</span>
-    </div>
-    <div style="background:rgba(255,255,255,0.05); height:6px; border-radius:3px; margin-bottom:20px; overflow:hidden;">
-        <div id="achProgressBar" style="width:0%; height:100%; background:var(--accent); transition:width 0.5s;"></div>
-    </div>
-    <div class="achievements-grid" id="achievementsGrid">
-        <!-- Cards injected via JS -->
+<div id="achievementsScreen" class="screen">
+    <header>
+        <div class="month-nav" style="justify-content: space-between; padding: 0 10px;">
+            <div style="width: 40px;"></div> <!-- Spacer for alignment -->
+            <div class="current-month-label">Достижения</div>
+            <div style="width: 40px; text-align: right; font-size: 12px; color: var(--text-secondary);" id="achCounter">0/50</div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="ach-header">
+            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 5px;">Общий прогресс</div>
+            <div class="ach-progress-container">
+                <div class="ach-progress-fill" id="achTotalProgress"></div>
+            </div>
+        </div>
+        <div class="achievements-grid" id="achievementsGrid">
+            <!-- Cards injected via JS -->
+        </div>
     </div>
 </div>
 
-<!-- FAB (Only on Finances) -->
 <button class="fab" id="addBtn">+</button>
 
 <!-- Bottom Navigation -->
 <div class="bottom-nav">
     <div class="nav-item active" id="navFinances" onclick="switchTab('finances')">
-        <div class="nav-icon">
-            <svg viewBox="0 0 24 24"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M20 7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5"/><circle cx="17" cy="13.5" r="1.2" fill="currentColor" stroke="none"/></svg>
-        </div>
+        <svg viewBox="0 0 24 24"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M20 7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5"/><circle cx="17" cy="13.5" r="1.2" fill="currentColor" stroke="none"/></svg>
         <span>Финансы</span>
     </div>
     <div class="nav-item" id="navAchievements" onclick="switchTab('achievements')">
-        <div class="nav-icon">
-            <svg viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 5H4v1a4 4 0 0 0 4 4"/><path d="M17 5h3v1a4 4 0 0 1-4 4"/></svg>
-        </div>
+        <svg viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 5H4v1a4 4 0 0 0 4 4"/><path d="M17 5h3v1a4 4 0 0 1-4 4"/></svg>
         <span>Достижения</span>
     </div>
 </div>
@@ -1024,6 +997,7 @@
         <div class="form-group">
             <label class="form-label">Категория / Название</label>
             <input type="text" id="opCategory" class="form-input" placeholder="Например: Продукты" required autocomplete="off">
+            <!-- Custom Suggestions Container -->
             <div class="suggestions-container" id="categorySuggestions" style="display: none;"></div>
         </div>
 
@@ -1033,6 +1007,7 @@
         </div>
 
         <div class="form-group">
+            <!-- Changed from label to div to avoid nested labels -->
             <div class="repeat-toggle-container" id="repeatToggleContainer">
                 <span>Повторяющаяся операция</span>
                 <label class="switch">
@@ -1060,12 +1035,12 @@
         <div class="sheet-title">Операция</div>
         <button class="close-btn" onclick="closeOpDetail()">×</button>
     </div>
-    <div id="opDetailContent" style="margin-bottom: 20px;">
-        <!-- Filled dynamically -->
+    <div id="opDetailContent" style="padding-bottom: 20px;">
+        <!-- Content injected via JS -->
     </div>
-    <div style="display:flex; gap:10px; margin-top:20px;">
-        <button class="submit-btn" id="opEditBtn" style="background:var(--accent); flex:1;">Редактировать</button>
-        <button class="submit-btn" id="opDeleteBtn" style="background:var(--danger); flex:1;">Удалить</button>
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button class="submit-btn" style="background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border);" onclick="editCurrentOp()">Редактировать</button>
+        <button class="submit-btn" style="background: var(--danger); color: white;" onclick="deleteCurrentOp()">Удалить</button>
     </div>
 </div>
 
@@ -1097,30 +1072,41 @@
 </div>
 
 <!-- Full Calendar Modal -->
+<div class="modal-overlay" id="fullCalOverlay"></div>
 <div class="bottom-sheet" id="fullCalSheet">
     <div class="sheet-handle"></div>
-    <div class="sheet-header" style="display:grid; grid-template-columns: 40px 1fr 40px; align-items:center;">
-        <button class="btn-small" id="prevFullCalMonth" style="justify-self:start;">‹</button>
-        <div class="sheet-title" id="fullCalTitle" style="text-align:center; font-size:18px;"></div>
-        <button class="close-btn" onclick="closeFullCalendar()" style="justify-self:end;">×</button>
+    <div class="sheet-header" style="grid-template-columns: 40px 1fr 40px; align-items: center;">
+        <button class="btn-small" onclick="closeFullCalendar()" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;">‹</button>
+        <div class="sheet-title" id="fullCalTitle" style="text-align: center; font-size: 18px;">Календарь</div>
+        <button class="close-btn" onclick="closeFullCalendar()">×</button>
     </div>
-    <div class="mini-cal-grid" id="fullCalGrid" style="gap:8px; margin-top:15px;"></div>
+    <div class="year-nav">
+        <button class="btn-small" id="prevFullCalMonth">‹</button>
+        <span id="fullCalMonthLabel" style="font-weight: bold;"></span>
+        <button class="btn-small" id="nextFullCalMonth">›</button>
+    </div>
+    <div class="mini-cal-grid" id="fullCalGrid" style="gap: 4px;">
+        <!-- Days injected via JS -->
+    </div>
 </div>
 
-<!-- Day Details Modal (Higher Z-Index) -->
-<div class="bottom-sheet higher-z" id="dayDetailsSheet">
+<!-- Day Details Modal (Super Layer) -->
+<div class="bottom-sheet super-layer" id="dayDetailsSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
-        <button class="btn-small" onclick="closeDayDetails()" style="margin-right:10px;">‹ К календарю</button>
-        <div class="sheet-title" id="dayDetailsTitle" style="flex-grow:1; text-align:center;"></div>
+        <button class="btn-small" onclick="backToCalendar()" style="padding: 5px 10px;">‹ К календарю</button>
+        <div class="sheet-title" id="dayDetailsTitle" style="font-size: 18px;">День</div>
         <button class="close-btn" onclick="closeDayDetails()">×</button>
     </div>
-    <div style="text-align:center; margin-bottom:15px; font-size:14px; color:var(--text-secondary);">
-        <span id="dayIncomeSum" style="color:var(--success); font-weight:bold;"></span> / 
-        <span id="dayExpenseSum" style="color:var(--danger); font-weight:bold;"></span>
+    <div style="text-align: center; margin-bottom: 15px; font-size: 14px; color: var(--text-secondary);">
+        Итоги дня: <br>
+        <span id="dayIncomeSum" style="color: var(--success); font-weight: bold;"></span>
+        <span id="dayExpenseSum" style="color: var(--danger); font-weight: bold; margin-left: 10px;"></span>
     </div>
     <ul class="ops-list" id="dayDetailsList"></ul>
-    <div id="dayEmptyState" class="empty-state" style="display:none;">Нет операций за этот день</div>
+    <div id="dayEmptyState" class="empty-state" style="display: none;">
+        Нет операций за этот день.
+    </div>
 </div>
 
 <!-- Goal Modal -->
@@ -1130,28 +1116,26 @@
         <div class="sheet-title">Цель накоплений</div>
         <button class="close-btn" onclick="closeGoal()">×</button>
     </div>
-    <form id="goalForm">
+    <div id="goalFormContent">
         <div class="form-group">
             <label class="form-label">Название цели</label>
-            <input type="text" id="goalNameInput" class="form-input" placeholder="Например: Отпуск" required>
+            <input type="text" id="goalNameInput" class="form-input" placeholder="Например: Машина">
         </div>
         <div class="form-group">
             <label class="form-label">Целевая сумма</label>
-            <input type="number" id="goalTargetInput" class="form-input" placeholder="100000" required inputmode="decimal">
+            <input type="number" id="goalTargetInput" class="form-input" placeholder="0">
         </div>
-        <div class="form-group" id="goalCurrentGroup" style="display:none;">
+        <div class="form-group" id="goalCurrentGroup" style="display: none;">
             <label class="form-label">Накоплено</label>
-            <div style="font-size:18px; font-weight:bold; margin-bottom:10px;" id="goalSavedDisplay">0 ₽</div>
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;" id="goalSavedDisplay">0 ₽</div>
             <label class="form-label">Пополнить на сумму</label>
-            <div style="display:flex; gap:10px;">
-                <input type="number" id="goalAddAmount" class="form-input" placeholder="Сумма" inputmode="decimal">
-                <button type="button" class="submit-btn" id="goalAddBtn" style="width:auto; margin-top:0;">OK</button>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="goalAddAmount" class="form-input" placeholder="0">
+                <button class="submit-btn" style="width: auto; margin: 0;" onclick="addToGoal()">Пополнить</button>
             </div>
         </div>
-        <button type="submit" class="submit-btn">Сохранить цель</button>
-    </form>
-    <div id="goalAchievedMsg" style="text-align:center; color:var(--success); font-weight:bold; margin-top:15px; display:none;">
-        Цель достигнута! 🎉
+        <button class="submit-btn" onclick="saveGoalSettings()">Сохранить</button>
+        <button class="submit-btn" id="deleteGoalBtn" style="background: transparent; color: var(--danger); border: 1px solid var(--danger); margin-top: 10px;" onclick="deleteGoal()">Удалить цель</button>
     </div>
 </div>
 
@@ -1162,12 +1146,11 @@
         <div class="sheet-title">Достижение</div>
         <button class="close-btn" onclick="closeAchDetail()">×</button>
     </div>
-    <div id="achDetailContent" style="display:flex; flex-direction:column; align-items:center;">
-        <!-- Card rendered here exactly as in grid -->
-        <div id="achDetailCardContainer" style="width:170px; margin:0 auto 16px auto;"></div>
-        
-        <div id="achDetailDesc" style="margin-top:12px; padding:0 12px; line-height:1.5; font-size:13px; color:var(--text-secondary); text-align:center;"></div>
-        <div id="achDetailDate" style="margin-top:8px; font-size:12px; color:var(--text-secondary);"></div>
+    <div id="achDetailContent" style="display: flex; flex-direction: column; align-items: center;">
+        <!-- Card injected here -->
+        <div id="achDetailName" style="margin-top: 16px; font-weight: bold; font-size: 16px; text-align: center;"></div>
+        <div id="achDetailDesc" style="margin-top: 12px; padding: 0 12px; line-height: 1.5; font-size: 13px; color: var(--text-secondary); text-align: center;"></div>
+        <div id="achDetailDate" style="margin-top: 8px; font-size: 12px; color: var(--accent); font-weight: 600;"></div>
     </div>
 </div>
 
@@ -1198,7 +1181,11 @@
     if (tg) tg.onEvent('themeChanged', applyTheme);
 
     // State
-    let viewState = { year: new Date().getFullYear(), month: new Date().getMonth() };
+    let viewState = {
+        year: new Date().getFullYear(),
+        month: new Date().getMonth()
+    };
+    
     let operations = JSON.parse(localStorage.getItem('fin_ops')) || [];
     let categoryColors = JSON.parse(localStorage.getItem('fin_colors')) || {};
     let currentType = 'expense';
@@ -1207,15 +1194,22 @@
     let pickerYear = viewState.year;
     let isSaving = false;
     
+    // Goal State
+    let goalData = JSON.parse(localStorage.getItem('fin_goal')) || null;
+    
     // Achievements State
-    let achievementsData = JSON.parse(localStorage.getItem('fin_achievements')) || {}; // { id: dateOpened }
-    let goalData = JSON.parse(localStorage.getItem('fin_goal')) || null; // { name, target, saved }
+    let achievementsUnlocked = JSON.parse(localStorage.getItem('fin_achievements')) || {};
+    
+    // Current Op for Detail View
+    let currentOpDetail = null;
+    let pendingDeleteId = null;
 
     // Constants
     const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
     const fullMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
     const weekDays = ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'];
     
+    // Color Palettes
     const expensePalette = ['#ff4b4b', '#ff9f43', '#ffb142', '#feca57', '#54a0ff', '#5f27cd', '#c8d6e5'];
     const incomePalette = ['#2ecc71', '#1abc9c', '#48dbfb', '#0abde3', '#10ac84', '#26de81', '#badc58'];
 
@@ -1238,29 +1232,29 @@
         { id: 15, emoji: '💎', name: 'Сокровищница лича', desc: 'Накопи 800 000 ₽.', type: 'goal', target: 800000 },
         { id: 16, emoji: '🏰', name: 'Империя Тьмы', desc: 'Накопи 1 000 000 ₽.', type: 'goal', target: 1000000 },
         { id: 17, emoji: '👑', name: 'Владыка мира', desc: 'Накопи 10 000 000 ₽.', type: 'goal', target: 10000000 },
-        { id: 18, emoji: '🍞', name: 'Скромный ужин', desc: 'Потрать 50 000 ₽ на еду за год.', type: 'cat_year', catKeys: ['еда','продукты','кафе','ресторан'], target: 50000 },
-        { id: 19, emoji: '🍖', name: 'Пир во время чумы', desc: 'Потрать 100 000 ₽ на еду за год.', type: 'cat_year', catKeys: ['еда','продукты','кафе','ресторан'], target: 100000 },
-        { id: 20, emoji: '🍽️', name: 'Пожиратель миров', desc: 'Потрать 500 000 ₽ на еду за год.', type: 'cat_year', catKeys: ['еда','продукты','кафе','ресторан'], target: 500000 },
-        { id: 21, emoji: '🍷', name: 'Глоток забвения', desc: 'Потрать 10 000 ₽ на алкоголь за год.', type: 'cat_year', catKeys: ['алко','пиво','бар'], target: 10000 },
-        { id: 22, emoji: '🍺', name: 'Пьяный шабаш', desc: 'Потрать 50 000 ₽ на алкоголь за год.', type: 'cat_year', catKeys: ['алко','пиво','бар'], target: 50000 },
-        { id: 23, emoji: '🥃', name: 'Река хмеля', desc: 'Потрать 100 000 ₽ на алкоголь за год.', type: 'cat_year', catKeys: ['алко','пиво','бар'], target: 100000 },
-        { id: 24, emoji: '🃏', name: 'Шут короля', desc: 'Потрать 20 000 ₽ на развлечения за год.', type: 'cat_year', catKeys: ['развлеч','кино','игр'], target: 20000 },
-        { id: 25, emoji: '🎭', name: 'Безумный карнавал', desc: 'Потрать 100 000 ₽ на развлечения за год.', type: 'cat_year', catKeys: ['развлеч','кино','игр'], target: 100000 },
-        { id: 26, emoji: '🧥', name: 'Рваный плащ', desc: 'Потрать 20 000 ₽ на одежду за год.', type: 'cat_year', catKeys: ['одежд','обув'], target: 20000 },
-        { id: 27, emoji: '⚔️', name: 'Доспех тщеславия', desc: 'Потрать 100 000 ₽ на одежду за год.', type: 'cat_year', catKeys: ['одежд','обув'], target: 100000 },
-        { id: 28, emoji: '💚', name: 'Отвоёванный месяц', desc: 'Закрой месяц в плюс.', type: 'month_plus' },
-        { id: 29, emoji: '🏆', name: 'Чаша завоевателя', desc: 'Полностью накопи цель.', type: 'goal_full' },
-        { id: 30, emoji: '💰', name: 'Выкуп короля', desc: 'Получи разовый доход от 50 000 ₽.', type: 'one_income', target: 50000 },
+        { id: 18, emoji: '🍞', name: 'Скромный ужин', desc: 'Потрать 50 000 ₽ на еду за год.', type: 'cat_year', catKeys: ['еда', 'продукты', 'кафе', 'ресторан'], target: 50000 },
+        { id: 19, emoji: '🍖', name: 'Пир во время чумы', desc: 'Потрать 100 000 ₽ на еду за год.', type: 'cat_year', catKeys: ['еда', 'продукты', 'кафе', 'ресторан'], target: 100000 },
+        { id: 20, emoji: '🍽️', name: 'Пожиратель миров', desc: 'Потрать 500 000 ₽ на еду за год.', type: 'cat_year', catKeys: ['еда', 'продукты', 'кафе', 'ресторан'], target: 500000 },
+        { id: 21, emoji: '🍷', name: 'Глоток забвения', desc: 'Потрать 10 000 ₽ на алкоголь за год.', type: 'cat_year', catKeys: ['алко', 'пиво', 'бар', 'вино'], target: 10000 },
+        { id: 22, emoji: '🍺', name: 'Пьяный шабаш', desc: 'Потрать 50 000 ₽ на алкоголь за год.', type: 'cat_year', catKeys: ['алко', 'пиво', 'бар', 'вино'], target: 50000 },
+        { id: 23, emoji: '🥃', name: 'Река хмеля', desc: 'Потрать 100 000 ₽ на алкоголь за год.', type: 'cat_year', catKeys: ['алко', 'пиво', 'бар', 'вино'], target: 100000 },
+        { id: 24, emoji: '🃏', name: 'Шут короля', desc: 'Потрать 20 000 ₽ на развлечения за год.', type: 'cat_year', catKeys: ['развлеч', 'кино', 'игр', 'парк'], target: 20000 },
+        { id: 25, emoji: '🎭', name: 'Безумный карнавал', desc: 'Потрать 100 000 ₽ на развлечения за год.', type: 'cat_year', catKeys: ['развлеч', 'кино', 'игр', 'парк'], target: 100000 },
+        { id: 26, emoji: '🧥', name: 'Рваный плащ', desc: 'Потрать 20 000 ₽ на одежду за год.', type: 'cat_year', catKeys: ['одежд', 'обув', 'магазин'], target: 20000 },
+        { id: 27, emoji: '⚔️', name: 'Доспех тщеславия', desc: 'Потрать 100 000 ₽ на одежду за год.', type: 'cat_year', catKeys: ['одежд', 'обув', 'магазин'], target: 100000 },
+        { id: 28, emoji: '💚', name: 'Отвоёванный месяц', desc: 'Закрой месяц в плюс.', type: 'month_positive' },
+        { id: 29, emoji: '🏆', name: 'Чаша завоевателя', desc: 'Полностью накопи цель.', type: 'goal_completed' },
+        { id: 30, emoji: '💰', name: 'Выкуп короля', desc: 'Получи разовый доход от 50 000 ₽.', type: 'single_income', target: 50000 },
         { id: 31, emoji: '🌈', name: 'Семь печатей', desc: 'Используй 8 разных категорий.', type: 'uniq_cats', target: 8 },
         { id: 32, emoji: '🦄', name: 'Повелитель теней', desc: 'Используй 15 разных категорий.', type: 'uniq_cats', target: 15 },
-        { id: 33, emoji: '🎩', name: 'Лорд бюджета', desc: '3 месяца подряд в плюс.', type: 'months_plus_series', target: 3 },
+        { id: 33, emoji: '🎩', name: 'Лорд бюджета', desc: '3 месяца подряд в плюс.', type: 'months_positive_series', target: 3 },
         { id: 34, emoji: '📿', name: 'Коллекционер проклятий', desc: 'Используй 25 разных категорий.', type: 'uniq_cats', target: 25 },
         { id: 35, emoji: '🌙', name: 'Дитя ночи', desc: 'Добавь операцию с полуночи до 5 утра.', type: 'time_range', start: 0, end: 5 },
         { id: 36, emoji: '🦇', name: 'Ранняя пташка-нежить', desc: 'Добавь операцию с 5 до 6 утра.', type: 'time_range', start: 5, end: 6 },
-        { id: 37, emoji: '🤡', name: 'Щедрость безумца', desc: 'Соверши разовую трату от 10 000 ₽.', type: 'one_expense', target: 10000 },
-        { id: 38, emoji: '👺', name: 'Грошовый бес', desc: 'Потрать ровно 1 ₽.', type: 'exact_amount', target: 1 },
+        { id: 37, emoji: '🤡', name: 'Щедрость безумца', desc: 'Соверши разовую трату от 10 000 ₽.', type: 'single_expense', target: 10000 },
+        { id: 38, emoji: '👺', name: 'Грошовый бес', desc: 'Потрать ровно 1 ₽.', type: 'exact_amount', target: 1, expenseOnly: true },
         { id: 39, emoji: '☕', name: 'Повелитель кофе', desc: '10 операций с категорией „кофе".', type: 'cat_count', catKeys: ['кофе'], target: 10 },
-        { id: 40, emoji: '🚕', name: 'Таксист Преисподней', desc: '20 операций с категорией транспорта.', type: 'cat_count', catKeys: ['проезд','транспорт','такси','метро'], target: 20 },
+        { id: 40, emoji: '🚕', name: 'Таксист Преисподней', desc: '20 операций с категорией транспорта.', type: 'cat_count', catKeys: ['проезд', 'транспорт', 'такси', 'метро', 'авто'], target: 20 },
         { id: 41, emoji: '📜', name: 'Повелитель подписок', desc: '5 активных повторяющихся операций.', type: 'recurring_count', target: 5 },
         { id: 42, emoji: '🔢', name: 'Маг чисел', desc: 'Операция ровно на 666 ₽.', type: 'exact_amount', target: 666 },
         { id: 43, emoji: '🗡️', name: 'Рыцарь пятницы', desc: 'Потрать от 5 000 ₽ в пятницу.', type: 'friday_expense', target: 5000 },
@@ -1269,16 +1263,17 @@
         { id: 46, emoji: '🏴‍☠️', name: 'Чёрная метка', desc: 'Потрать от 20 000 ₽ за один день.', type: 'day_expense', target: 20000 },
         { id: 47, emoji: '🕸️', name: 'Нищий король', desc: 'Закрой месяц с нулевым балансом.', type: 'month_zero' },
         { id: 48, emoji: '🔁', name: 'Дежавю', desc: 'Две одинаковые операции (сумма и категория) в один день.', type: 'duplicate_op' },
-        { id: 49, emoji: '🕯️', name: 'Старожил', desc: 'Год с даты первой операции.', type: 'first_op_year' },
-        { id: 50, emoji: '🐲', name: 'Тёмный властелин', desc: 'Открой остальные 49 достижений.', type: 'all_open' }
+        { id: 49, emoji: '🕯️', name: 'Старожил', desc: 'Год с даты первой операции.', type: 'one_year_since_first' },
+        { id: 50, emoji: '🐲', name: 'Тёмный властелин', desc: 'Открой остальные 49 достижений.', type: 'all_unlocked' }
     ];
 
     // --- Helpers ---
     const saveData = () => {
         localStorage.setItem('fin_ops', JSON.stringify(operations));
         localStorage.setItem('fin_colors', JSON.stringify(categoryColors));
-        localStorage.setItem('fin_achievements', JSON.stringify(achievementsData));
-        localStorage.setItem('fin_goal', JSON.stringify(goalData));
+        if (goalData) localStorage.setItem('fin_goal', JSON.stringify(goalData));
+        else localStorage.removeItem('fin_goal');
+        localStorage.setItem('fin_achievements', JSON.stringify(achievementsUnlocked));
     };
 
     const getColorForCategory = (cat, type) => {
@@ -1304,7 +1299,7 @@
         }
     };
 
-    // Visual Viewport Handling
+    // Visual Viewport Handling for Mobile Keyboard
     const vv = window.visualViewport;
     if (vv) {
         const fit = () => {
@@ -1331,52 +1326,66 @@
         const year = viewState.year;
         const month = viewState.month;
         
+        // Header
         document.getElementById('monthLabel').textContent = `${fullMonths[month]} ${year}`;
         
         const ops = getFilteredOps();
         const incomeOps = ops.filter(o => o.type === 'income');
         const expenseOps = ops.filter(o => o.type === 'expense');
 
-        // Balance Calculation with Carry
+        // Balance Calculation with Carry Over
         const firstOfMonth = new Date(year, month, 1);
         const pastOps = operations.filter(op => new Date(op.date) < firstOfMonth);
+        
         const pastIncome = pastOps.filter(o => o.type === 'income').reduce((sum, op) => sum + op.amount, 0);
         const pastExpense = pastOps.filter(o => o.type === 'expense').reduce((sum, op) => sum + op.amount, 0);
         const carry = pastIncome - pastExpense;
 
         const monthIncome = incomeOps.reduce((sum, op) => sum + op.amount, 0);
         const monthExpense = expenseOps.reduce((sum, op) => sum + op.amount, 0);
+        
+        // Month Balance includes carry
         const monthBalance = carry + monthIncome - monthExpense;
         
         const totalIncome = operations.filter(o => o.type === 'income').reduce((sum, op) => sum + op.amount, 0);
         const totalExpense = operations.filter(o => o.type === 'expense').reduce((sum, op) => sum + op.amount, 0);
         const totalBalance = totalIncome - totalExpense;
 
+        // Update Balance Card
         const balanceEl = document.getElementById('monthBalanceVal');
         balanceEl.textContent = (monthBalance >= 0 ? '+' : '') + formatMoney(monthBalance) + ' ₽';
         balanceEl.style.color = monthBalance >= 0 ? 'var(--success)' : 'var(--danger)';
         
         const carryEl = document.getElementById('balanceCarryVal');
-        carryEl.textContent = `Перенос с прошлых месяцев: ${carry >= 0 ? '+' : ''}${formatMoney(carry)} ₽`;
+        if (carry !== 0) {
+            carryEl.textContent = `Перенос с прошлых месяцев: ${(carry >= 0 ? '+' : '') + formatMoney(carry)} ₽`;
+            carryEl.style.display = 'block';
+        } else {
+            carryEl.style.display = 'none';
+        }
 
+        // Trigger animation
         const card = document.getElementById('balanceCard');
         card.style.animation = 'none';
-        card.offsetHeight;
+        card.offsetHeight; /* trigger reflow */
         card.style.animation = 'fadeScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
 
         document.getElementById('totalBalanceVal').textContent = formatMoney(totalBalance);
 
+        // Lists
         renderList('opsList', ops);
         document.getElementById('historyCount').textContent = `${ops.length} записей`;
         document.getElementById('emptyState').style.display = ops.length === 0 ? 'block' : 'none';
 
+        // Charts
         renderChart('income', incomeOps);
         renderChart('expense', expenseOps);
         
+        // Goal & Calendar
         renderGoalCard();
         renderMiniCalendar();
         
-        // Check achievements
+        // Check Achievements
         checkAchievements();
         renderAchievementsGrid();
     }
@@ -1403,7 +1412,7 @@
             const amountClass = isInc ? 'income' : 'expense';
             const dateStr = new Date(op.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
             const autoBadge = op.isRecurring ? '<span class="auto-badge">AUTO</span>' : '';
-            const noteHtml = op.note ? `<span class="op-note">${op.note}</span>` : '';
+            const noteHtml = op.note ? `<div class="op-note">${op.note}</div>` : '';
 
             li.innerHTML = `
                 <div class="op-icon" style="color: ${color}">●</div>
@@ -1428,6 +1437,7 @@
         const total = ops.reduce((sum, op) => sum + op.amount, 0);
         document.getElementById(totalId).textContent = formatMoney(total);
 
+        // Group by category
         const groups = {};
         ops.forEach(op => {
             if (!groups[op.category]) groups[op.category] = 0;
@@ -1483,52 +1493,124 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 cutout: '75%',
-                plugins: { tooltip: { enabled: false }, legend: { display: false } },
-                animation: { animateScale: true, animateRotate: true }
+                plugins: {
+                    tooltip: { enabled: false },
+                    legend: { display: false }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
             }
         });
     }
 
     // --- Goal Logic ---
     function renderGoalCard() {
-        const container = document.getElementById('goalContent');
+        const container = document.getElementById('goalBody');
         if (!goalData || !goalData.name) {
             container.innerHTML = `
-                <div class="goal-empty-state">
+                <div class="goal-empty">
+                    <span>+</span>
                     <div>Создать цель</div>
-                    <div class="goal-add-btn" onclick="openGoal()">+</div>
                 </div>
             `;
-            document.getElementById('goalCard').onclick = () => openGoal();
             return;
         }
 
         const percent = Math.min(100, Math.round((goalData.saved / goalData.target) * 100));
         const left = goalData.target - goalData.saved;
-        
+        const isAchieved = goalData.saved >= goalData.target && goalData.target > 0;
+
         container.innerHTML = `
             <div class="goal-name">${goalData.name}</div>
-            <div class="goal-progress-container">
-                <div class="goal-progress-bar" style="width:${percent}%"></div>
+            <div class="goal-progress-bar-bg">
+                <div class="goal-progress-bar-fill" style="width: ${percent}%"></div>
             </div>
             <div class="goal-stats">
                 <span>${formatMoney(goalData.saved)} ₽</span>
                 <span>${percent}%</span>
             </div>
-            <div class="goal-stats" style="margin-top:4px;">
-                <span style="font-size:10px;">Осталось: ${formatMoney(left)} ₽</span>
+            <div class="goal-stats" style="margin-top: 4px; font-size: 10px;">
+                Осталось: ${formatMoney(left)} ₽
             </div>
+            ${isAchieved ? '<div class="goal-achieved">Цель достигнута 🎉</div>' : ''}
         `;
-        document.getElementById('goalCard').onclick = () => openGoal();
+    }
+
+    function openGoal() {
+        haptic('light');
+        if (goalData) {
+            document.getElementById('goalNameInput').value = goalData.name;
+            document.getElementById('goalTargetInput').value = goalData.target;
+            document.getElementById('goalSavedDisplay').textContent = formatMoney(goalData.saved) + ' ₽';
+            document.getElementById('goalCurrentGroup').style.display = 'block';
+            document.getElementById('deleteGoalBtn').style.display = 'block';
+        } else {
+            document.getElementById('goalFormContent').reset();
+            document.getElementById('goalCurrentGroup').style.display = 'none';
+            document.getElementById('deleteGoalBtn').style.display = 'none';
+        }
+        document.getElementById('modalOverlay').classList.add('active');
+        document.getElementById('goalSheet').classList.add('active');
+    }
+
+    function closeGoal() {
+        document.getElementById('modalOverlay').classList.remove('active');
+        document.getElementById('goalSheet').classList.remove('active');
+    }
+
+    function saveGoalSettings() {
+        const name = document.getElementById('goalNameInput').value.trim();
+        const target = parseFloat(document.getElementById('goalTargetInput').value);
+        
+        if (!name || !target) return;
+
+        if (!goalData) {
+            goalData = { name, target, saved: 0 };
+        } else {
+            goalData.name = name;
+            goalData.target = target;
+        }
+        saveData();
+        renderGoalCard();
+        closeGoal();
+        haptic('success');
+        checkAchievements();
+    }
+
+    function addToGoal() {
+        const amount = parseFloat(document.getElementById('goalAddAmount').value);
+        if (!amount || amount <= 0) return;
+        
+        goalData.saved += amount;
+        saveData();
+        renderGoalCard();
+        document.getElementById('goalAddAmount').value = '';
+        document.getElementById('goalSavedDisplay').textContent = formatMoney(goalData.saved) + ' ₽';
+        haptic('success');
+        checkAchievements();
+    }
+
+    function deleteGoal() {
+        if(confirm('Удалить цель?')) {
+            goalData = null;
+            saveData();
+            renderGoalCard();
+            closeGoal();
+            haptic('warning');
+        }
     }
 
     // --- Calendar Logic ---
     function renderMiniCalendar() {
         const grid = document.getElementById('miniCalGrid');
         grid.innerHTML = '';
+        
+        // Add weekday headers
         weekDays.forEach(d => {
             const el = document.createElement('div');
-            el.className = 'cal-day-header';
+            el.className = 'cal-day-name';
             el.textContent = d;
             grid.appendChild(el);
         });
@@ -1537,180 +1619,184 @@
         const month = viewState.month;
         const firstDay = new Date(year, month, 1);
         const lastDay = new Date(year, month + 1, 0);
-        const startOffset = (firstDay.getDay() + 6) % 7;
+        const startOffset = (firstDay.getDay() + 6) % 7; // Mon=0
         
-        // Data for heatmaps
-        const dailyStats = {};
-        const ops = getFilteredOps(null, year, month);
-        let maxExpenseDay = 0;
+        // Get expenses per day for heat map
+        const monthOps = getFilteredOps();
+        const dayExpenses = {};
+        const dayIncomes = {};
+        let maxExpense = 0;
 
-        ops.forEach(op => {
+        monthOps.forEach(op => {
             const d = new Date(op.date).getDate();
-            if (!dailyStats[d]) dailyStats[d] = { exp: 0, inc: 0 };
-            if (op.type === 'expense') dailyStats[d].exp += op.amount;
-            else dailyStats[d].inc += op.amount;
-            if (dailyStats[d].exp > maxExpenseDay) maxExpenseDay = dailyStats[d].exp;
+            if (op.type === 'expense') {
+                dayExpenses[d] = (dayExpenses[d] || 0) + op.amount;
+                if (dayExpenses[d] > maxExpense) maxExpense = dayExpenses[d];
+            } else {
+                dayIncomes[d] = true;
+            }
         });
 
+        // Empty cells before first day
         for (let i = 0; i < startOffset; i++) {
-            grid.appendChild(document.createElement('div'));
+            const cell = document.createElement('div');
+            grid.appendChild(cell);
         }
 
+        // Days
         for (let d = 1; d <= lastDay.getDate(); d++) {
             const cell = document.createElement('div');
             cell.className = 'cal-day-cell';
             cell.textContent = d; // Show number
             
-            const stats = dailyStats[d] || { exp: 0, inc: 0 };
-            if (stats.exp > 0) {
-                const intensity = 0.15 + (stats.exp / maxExpenseDay) * 0.85;
+            const exp = dayExpenses[d] || 0;
+            if (exp > 0) {
+                const intensity = 0.15 + (exp / maxExpense) * 0.85;
                 cell.style.backgroundColor = `rgba(255, 75, 75, ${intensity})`;
+                cell.style.color = '#fff';
             }
-            if (stats.inc > 0) {
-                const dot = document.createElement('div');
-                dot.className = 'cal-income-dot';
-                cell.appendChild(dot);
+            if (dayIncomes[d]) {
+                cell.classList.add('has-income');
             }
             
-            cell.onclick = () => openFullCalendar(d);
+            cell.onclick = () => openFullCalendar();
             grid.appendChild(cell);
         }
     }
 
-    let currentFullCalDay = null;
+    let currentFullCalDate = new Date(viewState.year, viewState.month, 1);
 
-    function openFullCalendar(selectedDay = null) {
-        currentFullCalDay = selectedDay;
+    function openFullCalendar() {
+        currentFullCalDate = new Date(viewState.year, viewState.month, 1);
         renderFullCalendar();
-        document.getElementById('modalOverlay').classList.add('active');
+        document.getElementById('fullCalOverlay').classList.add('active');
         document.getElementById('fullCalSheet').classList.add('active');
         haptic('light');
     }
 
+    function closeFullCalendar() {
+        document.getElementById('fullCalOverlay').classList.remove('active');
+        document.getElementById('fullCalSheet').classList.remove('active');
+        closeDayDetails(); // Close child if open
+    }
+
     function renderFullCalendar() {
+        const year = currentFullCalDate.getFullYear();
+        const month = currentFullCalDate.getMonth();
+        
+        document.getElementById('fullCalMonthLabel').textContent = `${fullMonths[month]} ${year}`;
+        
         const grid = document.getElementById('fullCalGrid');
-        const title = document.getElementById('fullCalTitle');
         grid.innerHTML = '';
-        title.textContent = `${fullMonths[viewState.month]} ${viewState.year}`;
         
         weekDays.forEach(d => {
             const el = document.createElement('div');
-            el.className = 'cal-day-header';
+            el.className = 'cal-day-name';
             el.textContent = d;
             grid.appendChild(el);
         });
 
-        const year = viewState.year;
-        const month = viewState.month;
         const firstDay = new Date(year, month, 1);
         const lastDay = new Date(year, month + 1, 0);
         const startOffset = (firstDay.getDay() + 6) % 7;
         const today = new Date();
 
-        const dailyStats = {};
-        const ops = getFilteredOps(null, year, month);
-        let maxExpenseDay = 0;
-
-        ops.forEach(op => {
-            const d = new Date(op.date).getDate();
-            if (!dailyStats[d]) dailyStats[d] = { exp: 0, inc: 0 };
-            if (op.type === 'expense') dailyStats[d].exp += op.amount;
-            else dailyStats[d].inc += op.amount;
-            if (dailyStats[d].exp > maxExpenseDay) maxExpenseDay = dailyStats[d].exp;
+        const monthOps = operations.filter(op => {
+            const d = new Date(op.date);
+            return d.getFullYear() === year && d.getMonth() === month;
         });
 
-        for (let i = 0; i < startOffset; i++) grid.appendChild(document.createElement('div'));
+        const dayExpenses = {};
+        const dayIncomes = {};
+        let maxExpense = 0;
+
+        monthOps.forEach(op => {
+            const d = new Date(op.date).getDate();
+            if (op.type === 'expense') {
+                dayExpenses[d] = (dayExpenses[d] || 0) + op.amount;
+                if (dayExpenses[d] > maxExpense) maxExpense = dayExpenses[d];
+            } else {
+                dayIncomes[d] = true;
+            }
+        });
+
+        for (let i = 0; i < startOffset; i++) {
+            const cell = document.createElement('div');
+            grid.appendChild(cell);
+        }
 
         for (let d = 1; d <= lastDay.getDate(); d++) {
             const cell = document.createElement('div');
             cell.className = 'cal-day-cell';
             cell.textContent = d;
             cell.style.fontSize = '12px';
-            cell.style.fontWeight = 'bold';
-
+            cell.style.width = '100%';
+            cell.style.height = '40px';
+            
+            const exp = dayExpenses[d] || 0;
+            if (exp > 0) {
+                const intensity = 0.15 + (exp / maxExpense) * 0.85;
+                cell.style.backgroundColor = `rgba(255, 75, 75, ${intensity})`;
+                cell.style.color = '#fff';
+            }
+            if (dayIncomes[d]) {
+                cell.classList.add('has-income');
+            }
+            
             if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
                 cell.style.border = `2px solid var(--accent)`;
+                cell.style.boxSizing = 'border-box';
             }
 
-            const stats = dailyStats[d] || { exp: 0, inc: 0 };
-            if (stats.exp > 0) {
-                const intensity = 0.15 + (stats.exp / maxExpenseDay) * 0.85;
-                cell.style.backgroundColor = `rgba(255, 75, 75, ${intensity})`;
-            }
-            if (stats.inc > 0) {
-                const dot = document.createElement('div');
-                dot.className = 'cal-income-dot';
-                cell.appendChild(dot);
-            }
-
-            cell.onclick = () => openDayDetails(d);
+            cell.onclick = () => openDayDetails(year, month, d);
             grid.appendChild(cell);
         }
     }
 
-    function closeFullCalendar() {
-        // Close both calendar and day details if open
-        document.getElementById('fullCalSheet').classList.remove('active');
-        document.getElementById('dayDetailsSheet').classList.remove('active');
-        document.getElementById('modalOverlay').classList.remove('active');
-    }
-
-    function openDayDetails(day) {
-        const ops = operations.filter(op => {
+    function openDayDetails(year, month, day) {
+        const dateStr = `${day} ${fullMonths[month]} ${year}`;
+        document.getElementById('dayDetailsTitle').textContent = dateStr;
+        
+        const dayOps = operations.filter(op => {
             const d = new Date(op.date);
-            return d.getFullYear() === viewState.year && d.getMonth() === viewState.month && d.getDate() === day;
+            return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
         }).sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        const title = document.getElementById('dayDetailsTitle');
-        title.textContent = `${day} ${fullMonths[viewState.month]}`;
-        
-        const list = document.getElementById('dayDetailsList');
-        const empty = document.getElementById('dayEmptyState');
-        list.innerHTML = '';
-        
-        let dInc = 0, dExp = 0;
-        ops.forEach(op => {
-            if(op.type === 'income') dInc += op.amount; else dExp += op.amount;
-            const color = getColorForCategory(op.category, op.type);
-            const li = document.createElement('li');
-            li.className = 'op-item';
-            li.style.setProperty('--cat-color', color);
-            const isInc = op.type === 'income';
-            const noteHtml = op.note ? `<span class="op-note">${op.note}</span>` : '';
-            li.innerHTML = `
-                <div class="op-icon" style="color: ${color}">●</div>
-                <div class="op-details">
-                    <div class="op-name">${op.category}</div>
-                    ${noteHtml}
-                </div>
-                <div class="op-amount ${isInc ? 'income' : 'expense'}">${isInc ? '+' : '-'}${formatMoney(op.amount)}</div>
-            `;
-            li.onclick = () => openOpDetail(op);
-            list.appendChild(li);
-        });
+        const inc = dayOps.filter(o => o.type === 'income').reduce((s, o) => s + o.amount, 0);
+        const exp = dayOps.filter(o => o.type === 'expense').reduce((s, o) => s + o.amount, 0);
 
-        document.getElementById('dayIncomeSum').textContent = '+' + formatMoney(dInc);
-        document.getElementById('dayExpenseSum').textContent = '-' + formatMoney(dExp);
-        
-        if (ops.length === 0) {
-            empty.style.display = 'block';
-            list.style.display = 'none';
-        } else {
-            empty.style.display = 'none';
-            list.style.display = 'block';
-        }
+        document.getElementById('dayIncomeSum').textContent = inc > 0 ? `+${formatMoney(inc)} ₽` : '';
+        document.getElementById('dayExpenseSum').textContent = exp > 0 ? `-${formatMoney(exp)} ₽` : '';
 
-        // Open Day Details OVER the calendar
+        renderList('dayDetailsList', dayOps);
+        document.getElementById('dayEmptyState').style.display = dayOps.length === 0 ? 'block' : 'none';
+
         document.getElementById('dayDetailsSheet').classList.add('active');
         haptic('light');
     }
 
     function closeDayDetails() {
-        // Close only day details, keep calendar open
         document.getElementById('dayDetailsSheet').classList.remove('active');
     }
 
+    function backToCalendar() {
+        closeDayDetails();
+        // Full calendar remains open
+    }
+
+    document.getElementById('prevFullCalMonth').onclick = () => {
+        currentFullCalDate.setMonth(currentFullCalDate.getMonth() - 1);
+        renderFullCalendar();
+        haptic('light');
+    };
+    document.getElementById('nextFullCalMonth').onclick = () => {
+        currentFullCalDate.setMonth(currentFullCalDate.getMonth() + 1);
+        renderFullCalendar();
+        haptic('light');
+    };
+
     // --- Modals & Forms ---
+
     function openModal(editOp = null) {
         haptic('light');
         document.getElementById('modalOverlay').classList.add('active');
@@ -1746,50 +1832,63 @@
         if (document.activeElement) document.activeElement.blur();
     }
 
-    function closeDetails() {
-        document.getElementById('modalOverlay').classList.remove('active');
-        document.getElementById('detailsSheet').classList.remove('active');
-    }
-
     // Operation Detail Modal
-    let currentOpForDetail = null;
     function openOpDetail(op) {
-        currentOpForDetail = op;
-        const content = document.getElementById('opDetailContent');
+        currentOpDetail = op;
         const isInc = op.type === 'income';
+        const sign = isInc ? '+' : '-';
+        const amountClass = isInc ? 'income' : 'expense';
+        const dateStr = new Date(op.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
         const noteHtml = op.note ? `<div style="margin-top:5px; color:var(--text-secondary); font-size:14px;">${op.note}</div>` : '';
-        const dateStr = new Date(op.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour:'2-digit', minute:'2-digit' });
-        
-        content.innerHTML = `
-            <div style="text-align:center; margin-bottom:15px;">
-                <div style="font-size:24px; font-weight:bold; color:${isInc ? 'var(--success)' : 'var(--danger)'}">
-                    ${isInc ? '+' : '-'}${formatMoney(op.amount)} ₽
+        const autoBadge = op.isRecurring ? '<span class="auto-badge">AUTO</span>' : '';
+
+        document.getElementById('opDetailContent').innerHTML = `
+            <div style="text-align:center; margin-bottom: 20px;">
+                <div style="font-size: 24px; font-weight: bold; color: var(${isInc ? '--success' : '--danger'}); margin-bottom: 5px;">
+                    ${sign}${formatMoney(op.amount)} ₽
                 </div>
-                <div style="font-weight:600; margin-top:5px;">${op.category}</div>
+                <div style="font-weight: 600; font-size: 16px;">${op.category} ${autoBadge}</div>
+                <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">${dateStr}</div>
                 ${noteHtml}
-                <div style="font-size:12px; color:var(--text-secondary); margin-top:5px;">${dateStr}</div>
-                ${op.isRecurring ? '<div style="margin-top:5px;"><span class="auto-badge">AUTO</span></div>' : ''}
             </div>
         `;
         
-        document.getElementById('opEditBtn').onclick = () => {
-            closeOpDetail();
-            openModal(op);
-        };
-        document.getElementById('opDeleteBtn').onclick = () => {
-            closeOpDetail();
-            showDeleteConfirm(op.id);
-        };
-
         document.getElementById('modalOverlay').classList.add('active');
         document.getElementById('opDetailSheet').classList.add('active');
         haptic('light');
     }
 
     function closeOpDetail() {
-        document.getElementById('opDetailSheet').classList.remove('active');
         document.getElementById('modalOverlay').classList.remove('active');
-        currentOpForDetail = null;
+        document.getElementById('opDetailSheet').classList.remove('active');
+        currentOpDetail = null;
+    }
+
+    function editCurrentOp() {
+        if (currentOpDetail) {
+            closeOpDetail();
+            setTimeout(() => openModal(currentOpDetail), 300);
+        }
+    }
+
+    function deleteCurrentOp() {
+        if (currentOpDetail) {
+            closeOpDetail();
+            showDeleteConfirm(currentOpDetail.id);
+        }
+    }
+
+    function openDetails(type, ops) {
+        const title = type === 'income' ? 'Доходы' : 'Расходы';
+        document.getElementById('detailsTitle').textContent = title;
+        renderList('detailsList', ops);
+        document.getElementById('modalOverlay').classList.add('active');
+        document.getElementById('detailsSheet').classList.add('active');
+    }
+
+    function closeDetails() {
+        document.getElementById('modalOverlay').classList.remove('active');
+        document.getElementById('detailsSheet').classList.remove('active');
     }
 
     // Month Picker
@@ -1871,11 +1970,18 @@
     function showSuggestions(filterText = '') {
         const allCats = [...new Set(operations.map(o => o.category))];
         const lastUsed = [...allCats].reverse().slice(0, 8);
+        
         let filtered = [];
-        if (filterText.trim() === '') filtered = lastUsed;
-        else filtered = allCats.filter(c => c.toLowerCase().includes(filterText.toLowerCase()));
+        if (filterText.trim() === '') {
+            filtered = lastUsed;
+        } else {
+            filtered = allCats.filter(c => c.toLowerCase().includes(filterText.toLowerCase()));
+        }
 
-        if (filtered.length === 0) { hideSuggestions(); return; }
+        if (filtered.length === 0) {
+            hideSuggestions();
+            return;
+        }
 
         suggestionsContainer.innerHTML = '';
         filtered.forEach(cat => {
@@ -1889,6 +1995,7 @@
             };
             suggestionsContainer.appendChild(chip);
         });
+        
         suggestionsContainer.style.display = 'flex';
     }
 
@@ -1903,7 +2010,7 @@
         if (!catInput.contains(e.target) && !suggestionsContainer.contains(e.target)) hideSuggestions();
     });
 
-    // Save Handler
+    // Save Button
     const saveBtn = document.getElementById('saveBtn');
     saveBtn.onclick = (e) => {
         e.preventDefault();
@@ -1928,6 +2035,7 @@
             }
 
             haptic('success');
+            
             const id = document.getElementById('opId').value;
             const amount = parseFloat(document.getElementById('opAmount').value);
             const category = document.getElementById('opCategory').value.trim();
@@ -1942,7 +2050,17 @@
             } else {
                 const baseId = Date.now() + '-' + Math.random().toString(36).slice(2);
                 const now = new Date();
-                operations.push({ id: baseId, date: now.toISOString(), type: currentType, amount, category, note, isRecurring, period: isRecurring ? currentPeriod : null });
+                
+                operations.push({
+                    id: baseId,
+                    date: now.toISOString(),
+                    type: currentType,
+                    amount,
+                    category,
+                    note,
+                    isRecurring,
+                    period: isRecurring ? currentPeriod : null
+                });
                 
                 if (isRecurring) {
                     let nextDate = new Date(now);
@@ -1951,8 +2069,13 @@
                         operations.push({
                             id: Date.now() + '-' + i + '-' + Math.random().toString(36).slice(2),
                             date: nextDate.toISOString(),
-                            type: currentType, amount, category, note,
-                            isRecurring: true, period: currentPeriod, parentId: baseId
+                            type: currentType,
+                            amount,
+                            category,
+                            note,
+                            isRecurring: true,
+                            period: currentPeriod,
+                            parentId: baseId
                         });
                     }
                 }
@@ -1961,11 +2084,13 @@
             saveData();
             updateUI();
             closeModal();
+            
             setTimeout(() => {
                 isSaving = false;
                 saveBtn.classList.remove('disabled');
                 saveBtn.textContent = 'Сохранить';
             }, 500);
+
         }, 100);
     };
 
@@ -1976,260 +2101,16 @@
         if (period === 'year') date.setFullYear(date.getFullYear() + 1);
     }
 
-    // Goal Modal Logic
-    function openGoal() {
-        if (goalData && goalData.name) {
-            document.getElementById('goalNameInput').value = goalData.name;
-            document.getElementById('goalTargetInput').value = goalData.target;
-            document.getElementById('goalSavedDisplay').textContent = formatMoney(goalData.saved) + ' ₽';
-            document.getElementById('goalCurrentGroup').style.display = 'block';
-            document.getElementById('goalAchievedMsg').style.display = goalData.saved >= goalData.target ? 'block' : 'none';
-        } else {
-            document.getElementById('goalForm').reset();
-            document.getElementById('goalCurrentGroup').style.display = 'none';
-            document.getElementById('goalAchievedMsg').style.display = 'none';
-        }
-        document.getElementById('modalOverlay').classList.add('active');
-        document.getElementById('goalSheet').classList.add('active');
-        haptic('light');
-    }
-
-    function closeGoal() {
-        document.getElementById('goalSheet').classList.remove('active');
-        document.getElementById('modalOverlay').classList.remove('active');
-    }
-
-    document.getElementById('goalForm').onsubmit = (e) => {
-        e.preventDefault();
-        const name = document.getElementById('goalNameInput').value.trim();
-        const target = parseFloat(document.getElementById('goalTargetInput').value);
-        if (!name || !target) return;
-
-        if (!goalData) goalData = { name, target, saved: 0 };
-        else { goalData.name = name; goalData.target = target; }
-        
-        saveData();
-        renderGoalCard();
-        closeGoal();
-        haptic('success');
-        updateUI();
-    };
-
-    document.getElementById('goalAddBtn').onclick = () => {
-        const amount = parseFloat(document.getElementById('goalAddAmount').value);
-        if (!amount || !goalData) return;
-        goalData.saved += amount;
-        saveData();
-        document.getElementById('goalSavedDisplay').textContent = formatMoney(goalData.saved) + ' ₽';
-        document.getElementById('goalAddAmount').value = '';
-        document.getElementById('goalAchievedMsg').style.display = goalData.saved >= goalData.target ? 'block' : 'none';
-        haptic('success');
-        updateUI();
-    };
-
-    // Achievements Logic
-    function getProgress(ach) {
-        // Returns [current, target]
-        if (ach.type === 'count') return [operations.length, ach.target];
-        if (ach.type === 'goal') return [goalData ? goalData.saved : 0, ach.target];
-        if (ach.type === 'goal_full') return [goalData && goalData.saved >= goalData.target && goalData.target > 0 ? 1 : 0, 1];
-        if (ach.type === 'cat_year') {
-            const now = new Date();
-            const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-            const sum = operations.filter(op => new Date(op.date) >= yearAgo && op.type === 'expense' && ach.catKeys.some(k => op.category.toLowerCase().includes(k)))
-                                  .reduce((s, op) => s + op.amount, 0);
-            return [sum, ach.target];
-        }
-        if (ach.type === 'uniq_cats') return [new Set(operations.map(o => o.category)).size, ach.target];
-        if (ach.type === 'cat_count') {
-            const count = operations.filter(op => ach.catKeys.some(k => op.category.toLowerCase().includes(k))).length;
-            return [count, ach.target];
-        }
-        if (ach.type === 'recurring_count') return [operations.filter(op => op.isRecurring).length, ach.target];
-        if (ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') {
-            // Simplified series check (consecutive days without expense)
-            // Real implementation would require sorting all dates and checking gaps
-            // Returning mock for structure
-            return [0, ach.target]; 
-        }
-        if (ach.type === 'month_plus') {
-             // Check if current month is plus (without carry for achievement)
-             const ops = getFilteredOps();
-             const inc = ops.filter(o=>o.type==='income').reduce((s,o)=>s+o.amount,0);
-             const exp = ops.filter(o=>o.type==='expense').reduce((s,o)=>s+o.amount,0);
-             return [inc > exp ? 1 : 0, 1];
-        }
-        if (ach.type === 'months_plus_series') return [0, ach.target]; // Complex
-        if (ach.type === 'time_range') {
-            const has = operations.some(op => { const h = new Date(op.date).getHours(); return h >= ach.start && h < ach.end; });
-            return [has ? 1 : 0, 1];
-        }
-        if (ach.type === 'one_income') return [operations.some(op => op.type === 'income' && op.amount >= ach.target) ? 1 : 0, 1];
-        if (ach.type === 'one_expense') return [operations.some(op => op.type === 'expense' && op.amount >= ach.target) ? 1 : 0, 1];
-        if (ach.type === 'exact_amount') return [operations.some(op => op.amount === ach.target) ? 1 : 0, 1];
-        if (ach.type === 'friday_expense') {
-            const has = operations.some(op => { const d = new Date(op.date); return d.getDay() === 5 && op.type === 'expense' && op.amount >= ach.target; });
-            return [has ? 1 : 0, 1];
-        }
-        if (ach.type === 'day_expense') {
-            // Group by day
-            const days = {};
-            operations.filter(op => op.type === 'expense').forEach(op => {
-                const d = op.date.split('T')[0];
-                days[d] = (days[d]||0) + op.amount;
-            });
-            return [Object.values(days).some(v => v >= ach.target) ? 1 : 0, 1];
-        }
-        if (ach.type === 'month_zero') {
-            const ops = getFilteredOps();
-            if(ops.length === 0) return [0, 1];
-            const inc = ops.filter(o=>o.type==='income').reduce((s,o)=>s+o.amount,0);
-            const exp = ops.filter(o=>o.type==='expense').reduce((s,o)=>s+o.amount,0);
-            return [inc === exp ? 1 : 0, 1];
-        }
-        if (ach.type === 'duplicate_op') {
-            const map = {};
-            let dup = false;
-            operations.forEach(op => {
-                const k = op.date.split('T')[0] + '|' + op.amount + '|' + op.category;
-                if(map[k]) dup = true;
-                map[k] = true;
-            });
-            return [dup ? 1 : 0, 1];
-        }
-        if (ach.type === 'first_op_year') {
-            if(operations.length === 0) return [0, 1];
-            const first = new Date(Math.min(...operations.map(op => new Date(op.date))));
-            const now = new Date();
-            const diffYears = (now - first) / (1000*60*60*24*365);
-            return [diffYears >= 1 ? 1 : 0, 1];
-        }
-        if (ach.type === 'all_open') return [Object.keys(achievementsData).length, 49];
-        
-        return ['???', ''];
-    }
-
-    function checkAchievements() {
-        let changed = false;
-        ACHIEVEMENTS_LIST.forEach(ach => {
-            if (achievementsData[ach.id]) return; // Already opened
-            
-            const [cur, target] = getProgress(ach);
-            let unlocked = false;
-            
-            if (typeof cur === 'number' && typeof target === 'number' && target > 0) {
-                if (cur >= target) unlocked = true;
-            } else if (cur === 1) {
-                unlocked = true;
-            }
-
-            if (unlocked) {
-                achievementsData[ach.id] = new Date().toISOString();
-                changed = true;
-                haptic('success');
-                // Show toast? (Simplified for single file)
-            }
-        });
-        if (changed) saveData();
-    }
-
-    function renderAchievementsGrid() {
-        const grid = document.getElementById('achievementsGrid');
-        const countEl = document.getElementById('achCount');
-        const barEl = document.getElementById('achProgressBar');
-        
-        const openedCount = Object.keys(achievementsData).length;
-        countEl.textContent = `${openedCount} из 50`;
-        barEl.style.width = `${(openedCount / 50) * 100}%`;
-
-        grid.innerHTML = '';
-        ACHIEVEMENTS_LIST.forEach(ach => {
-            const isOpened = !!achievementsData[ach.id];
-            const [cur, target] = getProgress(ach);
-            const progressText = (typeof cur === 'number' && typeof target === 'number') ? `${formatMoney(cur)} / ${formatMoney(target)}` : (cur !== '???' ? cur : '');
-            const progressPercent = (typeof cur === 'number' && typeof target === 'number' && target > 0) ? Math.min(100, (cur/target)*100) : 0;
-
-            const card = document.createElement('div');
-            card.className = `tarot-card ${isOpened ? 'opened' : 'closed'}`;
-            if (isOpened && !achievementsData[ach.id+'_viewed']) {
-                // Could add newly-opened class here if tracking viewed state
-            }
-            
-            card.innerHTML = `
-                <div class="tarot-canvas">
-                    <div class="tarot-emoji">${ach.emoji}</div>
-                    ${!isOpened ? `
-                    <div class="tarot-progress-overlay">
-                        <div>${progressText}</div>
-                        <div class="tarot-progress-bar-mini"><div class="tarot-progress-fill-mini" style="width:${progressPercent}%"></div></div>
-                    </div>` : ''}
-                </div>
-                <div class="tarot-label">
-                    <div class="tarot-name">${ach.name}</div>
-                </div>
-            `;
-            
-            card.onclick = () => openAchDetail(ach);
-            grid.appendChild(card);
-        });
-    }
-
-    function openAchDetail(ach) {
-        const isOpened = !!achievementsData[ach.id];
-        const container = document.getElementById('achDetailCardContainer');
-        const descEl = document.getElementById('achDetailDesc');
-        const dateEl = document.getElementById('achDetailDate');
-        
-        // Render card exactly as in grid
-        const [cur, target] = getProgress(ach);
-        const progressText = (typeof cur === 'number' && typeof target === 'number') ? `${formatMoney(cur)} / ${formatMoney(target)}` : '';
-        const progressPercent = (typeof cur === 'number' && typeof target === 'number' && target > 0) ? Math.min(100, (cur/target)*100) : 0;
-
-        container.innerHTML = `
-            <div class="tarot-card ${isOpened ? 'opened' : 'closed'}" style="cursor:default;">
-                <div class="tarot-canvas">
-                    <div class="tarot-emoji">${ach.emoji}</div>
-                    ${!isOpened ? `
-                    <div class="tarot-progress-overlay">
-                        <div style="font-size:${progressText.length > 15 ? '8px' : '9px'}">${progressText}</div>
-                        <div class="tarot-progress-bar-mini"><div class="tarot-progress-fill-mini" style="width:${progressPercent}%"></div></div>
-                    </div>` : ''}
-                </div>
-                <div class="tarot-label">
-                    <div class="tarot-name">${ach.name}</div>
-                </div>
-            </div>
-        `;
-
-        if (isOpened) {
-            descEl.textContent = ach.desc;
-            const d = new Date(achievementsData[ach.id]);
-            dateEl.textContent = `Открыто ${d.toLocaleDateString('ru-RU')}`;
-        } else {
-            descEl.textContent = 'Условие скрыто';
-            dateEl.textContent = '';
-        }
-
-        document.getElementById('modalOverlay').classList.add('active');
-        document.getElementById('achDetailSheet').classList.add('active');
-        haptic('light');
-    }
-
-    function closeAchDetail() {
-        document.getElementById('achDetailSheet').classList.remove('active');
-        document.getElementById('modalOverlay').classList.remove('active');
-    }
-
     // Confirm Dialog
-    let pendingDeleteId = null;
     const confirmOverlay = document.getElementById('confirmOverlay');
     const confirmDialog = document.getElementById('confirmDialog');
+    const confirmText = document.getElementById('confirmText');
     const confirmOkBtn = document.getElementById('confirmOkBtn');
     const confirmCancelBtn = document.getElementById('confirmCancelBtn');
 
     function showDeleteConfirm(id) {
         pendingDeleteId = id;
-        document.getElementById('confirmText').textContent = "Удалить операцию?";
+        confirmText.textContent = "Удалить операцию?";
         confirmOverlay.classList.add('active');
         confirmDialog.classList.add('active');
         haptic('warning');
@@ -2248,16 +2129,345 @@
             updateUI();
             haptic('success');
             if (document.getElementById('detailsSheet').classList.contains('active')) closeDetails();
-            if (document.getElementById('dayDetailsSheet').classList.contains('active')) {
-                 // Refresh day details if open
-                 const day = currentFullCalDay;
-                 if(day) openDayDetails(day);
-            }
+            if (document.getElementById('dayDetailsSheet').classList.contains('active')) closeDayDetails();
         }
         hideDeleteConfirm();
     };
+
     confirmCancelBtn.onclick = hideDeleteConfirm;
     confirmOverlay.onclick = hideDeleteConfirm;
+
+    // --- Achievements Logic ---
+    function getProgress(ach) {
+        // Returns [current, target]
+        if (ach.type === 'count') return [operations.length, ach.target];
+        if (ach.type === 'goal') return [goalData ? goalData.saved : 0, ach.target];
+        if (ach.type === 'cat_year') {
+            const now = new Date();
+            const yearAgo = new Date();
+            yearAgo.setFullYear(now.getFullYear() - 1);
+            const sum = operations.filter(op => {
+                const d = new Date(op.date);
+                return d >= yearAgo && op.type === 'expense' && ach.catKeys.some(k => op.category.toLowerCase().includes(k));
+            }).reduce((s, op) => s + op.amount, 0);
+            return [sum, ach.target];
+        }
+        if (ach.type === 'uniq_cats') {
+            const cats = new Set(operations.map(o => o.category));
+            return [cats.size, ach.target];
+        }
+        if (ach.type === 'cat_count') {
+            const count = operations.filter(op => ach.catKeys.some(k => op.category.toLowerCase().includes(k))).length;
+            return [count, ach.target];
+        }
+        if (ach.type === 'recurring_count') {
+            const count = operations.filter(op => op.isRecurring).length; // Simplified: counts all recurring instances
+            // Better: count unique parentIds or just distinct recurring rules? 
+            // For now, counting active recurring operations (approximated by all recurring entries in future/past)
+            // Let's count unique categories+amount+period combos that are recurring?
+            // Simplest: count operations marked isRecurring.
+            return [count, ach.target];
+        }
+        if (ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') {
+            // Complex series calculation
+            // Simplified: just return 0 for now if complex, or implement basic streak
+            // Implementing basic streak for no-expense
+            let streak = 0;
+            const today = new Date();
+            // Check backwards from yesterday
+            for (let i = 1; i < 100; i++) {
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                const dStr = d.toISOString().split('T')[0];
+                const hasExpense = operations.some(op => op.type === 'expense' && new Date(op.date).toISOString().startsWith(dStr));
+                const hasIncome = operations.some(op => op.type === 'income' && new Date(op.date).toISOString().startsWith(dStr));
+                
+                if (ach.type === 'series_no_exp') {
+                    if (hasExpense) break;
+                    streak++;
+                } else if (ach.type === 'series_no_exp_inc') {
+                    if (hasExpense || !hasIncome) break;
+                    streak++;
+                }
+            }
+            return [streak, ach.target];
+        }
+        return [0, 0];
+    }
+
+    function checkCondition(ach) {
+        const [cur, target] = getProgress(ach);
+        
+        if (ach.type === 'count' || ach.type === 'goal' || ach.type === 'cat_year' || 
+            ach.type === 'uniq_cats' || ach.type === 'cat_count' || ach.type === 'recurring_count' ||
+            ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') {
+            return cur >= target;
+        }
+        
+        if (ach.type === 'month_positive') {
+            // Check if ANY month was positive (pure income - expense)
+            // Group by month
+            const monthsMap = {};
+            operations.forEach(op => {
+                const d = new Date(op.date);
+                const key = `${d.getFullYear()}-${d.getMonth()}`;
+                if (!monthsMap[key]) monthsMap[key] = { inc: 0, exp: 0 };
+                if (op.type === 'income') monthsMap[key].inc += op.amount;
+                else monthsMap[key].exp += op.amount;
+            });
+            return Object.values(monthsMap).some(m => m.inc > m.exp);
+        }
+        
+        if (ach.type === 'goal_completed') {
+            return goalData && goalData.saved >= goalData.target && goalData.target > 0;
+        }
+
+        if (ach.type === 'single_income') {
+            return operations.some(op => op.type === 'income' && op.amount >= ach.target);
+        }
+
+        if (ach.type === 'months_positive_series') {
+            // Check last 3 months
+            // Simplified: check if current and previous 2 months are positive
+            let streak = 0;
+            const now = new Date();
+            for (let i = 0; i < 12; i++) {
+                const y = now.getFullYear();
+                const m = now.getMonth() - i;
+                // Adjust year/month
+                const realM = m < 0 ? 12 + m : m;
+                const realY = m < 0 ? y - 1 : y;
+                
+                const ops = getFilteredOps(null, realY, realM);
+                const inc = ops.filter(o => o.type === 'income').reduce((s,o)=>s+o.amount,0);
+                const exp = ops.filter(o => o.type === 'expense').reduce((s,o)=>s+o.amount,0);
+                if (inc > exp) streak++;
+                else break;
+            }
+            return streak >= ach.target;
+        }
+
+        if (ach.type === 'time_range') {
+            return operations.some(op => {
+                const h = new Date(op.date).getHours();
+                return h >= ach.start && h < ach.end;
+            });
+        }
+
+        if (ach.type === 'single_expense') {
+            return operations.some(op => op.type === 'expense' && op.amount >= ach.target);
+        }
+
+        if (ach.type === 'exact_amount') {
+            if (ach.expenseOnly) return operations.some(op => op.type === 'expense' && op.amount === ach.target);
+            return operations.some(op => op.amount === ach.target);
+        }
+
+        if (ach.type === 'friday_expense') {
+            return operations.some(op => {
+                const d = new Date(op.date);
+                return d.getDay() === 5 && op.type === 'expense' && op.amount >= ach.target;
+            });
+        }
+
+        if (ach.type === 'day_equal') {
+            const daysMap = {};
+            operations.forEach(op => {
+                const dStr = new Date(op.date).toISOString().split('T')[0];
+                if (!daysMap[dStr]) daysMap[dStr] = { inc: 0, exp: 0 };
+                if (op.type === 'income') daysMap[dStr].inc += op.amount;
+                else daysMap[dStr].exp += op.amount;
+            });
+            return Object.values(daysMap).some(d => d.inc > 0 && d.exp > 0 && d.inc === d.exp);
+        }
+
+        if (ach.type === 'day_expense') {
+            const daysMap = {};
+            operations.filter(op => op.type === 'expense').forEach(op => {
+                const dStr = new Date(op.date).toISOString().split('T')[0];
+                daysMap[dStr] = (daysMap[dStr] || 0) + op.amount;
+            });
+            return Object.values(daysMap).some(v => v >= ach.target);
+        }
+
+        if (ach.type === 'month_zero') {
+            const monthsMap = {};
+            operations.forEach(op => {
+                const d = new Date(op.date);
+                const key = `${d.getFullYear()}-${d.getMonth()}`;
+                if (!monthsMap[key]) monthsMap[key] = { inc: 0, exp: 0 };
+                if (op.type === 'income') monthsMap[key].inc += op.amount;
+                else monthsMap[key].exp += op.amount;
+            });
+            return Object.values(monthsMap).some(m => (m.inc > 0 || m.exp > 0) && m.inc === m.exp);
+        }
+
+        if (ach.type === 'duplicate_op') {
+            const seen = new Set();
+            for (const op of operations) {
+                const dStr = new Date(op.date).toISOString().split('T')[0];
+                const key = `${dStr}-${op.category}-${op.amount}`;
+                if (seen.has(key)) return true;
+                seen.add(key);
+            }
+            return false;
+        }
+
+        if (ach.type === 'one_year_since_first') {
+            if (operations.length === 0) return false;
+            const first = new Date(Math.min(...operations.map(op => new Date(op.date))));
+            const now = new Date();
+            const diffYears = (now - first) / (1000 * 60 * 60 * 24 * 365);
+            return diffYears >= 1;
+        }
+
+        if (ach.type === 'all_unlocked') {
+            return Object.keys(achievementsUnlocked).length >= 49;
+        }
+
+        return false;
+    }
+
+    function checkAchievements() {
+        let changed = false;
+        ACHIEVEMENTS_LIST.forEach(ach => {
+            if (!achievementsUnlocked[ach.id] && checkCondition(ach)) {
+                achievementsUnlocked[ach.id] = new Date().toISOString();
+                changed = true;
+                // Show toast?
+                if (document.getElementById('achievementsScreen').classList.contains('active')) {
+                     haptic('success');
+                }
+            }
+        });
+        if (changed) saveData();
+    }
+
+    function renderAchievementsGrid() {
+        const grid = document.getElementById('achievementsGrid');
+        grid.innerHTML = '';
+        
+        const unlockedCount = Object.keys(achievementsUnlocked).length;
+        document.getElementById('achCounter').textContent = `${unlockedCount}/50`;
+        document.getElementById('achTotalProgress').style.width = `${(unlockedCount / 50) * 100}%`;
+
+        ACHIEVEMENTS_LIST.forEach(ach => {
+            const isUnlocked = !!achievementsUnlocked[ach.id];
+            const [cur, target] = getProgress(ach);
+            
+            const card = document.createElement('div');
+            card.className = `tarot-card ${isUnlocked ? 'opened' : 'closed'}`;
+            card.onclick = () => openAchDetail(ach);
+            
+            let progressText = '';
+            let progressWidth = '0%';
+            
+            if (isUnlocked) {
+                progressText = ''; // No text on opened cards usually, or date
+            } else {
+                if (ach.type === 'count' || ach.type === 'goal' || ach.type === 'cat_year' || ach.type === 'uniq_cats' || ach.type === 'cat_count' || ach.type === 'recurring_count' || ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') {
+                    const fmtCur = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(cur) : cur;
+                    const fmtTarget = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(target) : target;
+                    progressText = `${fmtCur} / ${fmtTarget}`;
+                    progressWidth = `${Math.min(100, (cur / target) * 100)}%`;
+                } else {
+                    progressText = '???';
+                }
+            }
+
+            card.innerHTML = `
+                <div class="tarot-canvas">
+                    <div class="tarot-emoji">${ach.emoji}</div>
+                    ${!isUnlocked ? `
+                        <div class="tarot-progress-overlay" style="font-size: ${progressText.length > 10 ? '8px' : '9px'}">${progressText}</div>
+                        <div class="tarot-progress-bar"><div class="tarot-progress-fill" style="width: ${progressWidth}"></div></div>
+                    ` : ''}
+                </div>
+                <div class="tarot-label">
+                    <div class="tarot-name">${ach.name}</div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function openAchDetail(ach) {
+        const isUnlocked = !!achievementsUnlocked[ach.id];
+        const [cur, target] = getProgress(ach);
+        
+        const cardContainer = document.getElementById('achDetailContent');
+        // Re-render card exactly like grid but larger? Or just clone?
+        // Let's create a dedicated large card structure
+        const isLargeUnlocked = isUnlocked;
+        let progressText = '';
+        let progressWidth = '0%';
+        
+        if (!isLargeUnlocked) {
+             if (ach.type === 'count' || ach.type === 'goal' || ach.type === 'cat_year' || ach.type === 'uniq_cats' || ach.type === 'cat_count' || ach.type === 'recurring_count' || ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') {
+                const fmtCur = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(cur) : cur;
+                const fmtTarget = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(target) : target;
+                progressText = `${fmtCur} / ${fmtTarget}`;
+                progressWidth = `${Math.min(100, (cur / target) * 100)}%`;
+            } else {
+                progressText = '???';
+            }
+        }
+
+        cardContainer.innerHTML = `
+            <div class="tarot-card ${isLargeUnlocked ? 'opened' : 'closed'}" style="width: 200px; margin-bottom: 20px;">
+                <div class="tarot-canvas">
+                    <div class="tarot-emoji">${ach.emoji}</div>
+                    ${!isLargeUnlocked ? `
+                        <div class="tarot-progress-overlay" style="font-size: ${progressText.length > 12 ? '7px' : '9px'}">${progressText}</div>
+                        <div class="tarot-progress-bar"><div class="tarot-progress-fill" style="width: ${progressWidth}"></div></div>
+                    ` : ''}
+                </div>
+                <div class="tarot-label">
+                    <div class="tarot-name">${ach.name}</div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('achDetailName').textContent = ach.name;
+        document.getElementById('achDetailDesc').textContent = isUnlocked ? ach.desc : 'Условие скрыто';
+        
+        const dateEl = document.getElementById('achDetailDate');
+        if (isUnlocked && achievementsUnlocked[ach.id]) {
+            const d = new Date(achievementsUnlocked[ach.id]);
+            dateEl.textContent = `Открыто ${d.toLocaleDateString('ru-RU')}`;
+            dateEl.style.display = 'block';
+        } else {
+            dateEl.style.display = 'none';
+        }
+
+        document.getElementById('modalOverlay').classList.add('active');
+        document.getElementById('achDetailSheet').classList.add('active');
+        haptic('light');
+    }
+
+    function closeAchDetail() {
+        document.getElementById('modalOverlay').classList.remove('active');
+        document.getElementById('achDetailSheet').classList.remove('active');
+    }
+
+    // Tab Switching
+    function switchTab(tab) {
+        if (tab === 'finances') {
+            document.getElementById('financesScreen').classList.add('active');
+            document.getElementById('achievementsScreen').classList.remove('active');
+            document.getElementById('navFinances').classList.add('active');
+            document.getElementById('navAchievements').classList.remove('active');
+            document.getElementById('addBtn').style.display = 'flex';
+        } else {
+            document.getElementById('financesScreen').classList.remove('active');
+            document.getElementById('achievementsScreen').classList.add('active');
+            document.getElementById('navFinances').classList.remove('active');
+            document.getElementById('navAchievements').classList.add('active');
+            document.getElementById('addBtn').style.display = 'none';
+            renderAchievementsGrid();
+        }
+        haptic('light');
+    }
 
     // Event Listeners
     document.getElementById('addBtn').onclick = () => openModal();
@@ -2270,47 +2480,49 @@
             closeGoal();
             closeAchDetail();
             closeFullCalendar(); // Closes both calendar and day details
-            hideDeleteConfirm();
         }
     };
 
-    document.getElementById('incomeChartCard').onclick = () => { haptic('medium'); openDetails('income', getFilteredOps('income')); };
-    document.getElementById('expenseChartCard').onclick = () => { haptic('medium'); openDetails('expense', getFilteredOps('expense')); };
-    document.getElementById('miniCalCard').onclick = () => openFullCalendar();
+    document.getElementById('incomeChartCard').onclick = () => {
+        haptic('medium');
+        const ops = getFilteredOps('income');
+        openDetails('income', ops);
+    };
+    document.getElementById('expenseChartCard').onclick = () => {
+        haptic('medium');
+        const ops = getFilteredOps('expense');
+        openDetails('expense', ops);
+    };
+    
+    document.getElementById('goalCard').onclick = openGoal;
+    document.getElementById('calendarCardBtn').onclick = openFullCalendar;
 
-    document.getElementById('prevMonth').onclick = () => { haptic('light'); const d = new Date(viewState.year, viewState.month - 1, 1); viewState.year = d.getFullYear(); viewState.month = d.getMonth(); updateUI(); };
-    document.getElementById('nextMonth').onclick = () => { haptic('light'); const d = new Date(viewState.year, viewState.month + 1, 1); viewState.year = d.getFullYear(); viewState.month = d.getMonth(); updateUI(); };
+    document.getElementById('prevMonth').onclick = () => {
+        haptic('light');
+        const newDate = new Date(viewState.year, viewState.month - 1, 1);
+        viewState.year = newDate.getFullYear();
+        viewState.month = newDate.getMonth();
+        updateUI();
+    };
+    document.getElementById('nextMonth').onclick = () => {
+        haptic('light');
+        const newDate = new Date(viewState.year, viewState.month + 1, 1);
+        viewState.year = newDate.getFullYear();
+        viewState.month = newDate.getMonth();
+        updateUI();
+    };
     document.getElementById('monthLabel').onclick = openMonthPicker;
 
     document.getElementById('prevYearBtn').onclick = () => { pickerYear--; renderMonthGrid(); haptic('light'); };
     document.getElementById('nextYearBtn').onclick = () => { pickerYear++; renderMonthGrid(); haptic('light'); };
-    
-    document.getElementById('prevFullCalMonth').onclick = () => { const d = new Date(viewState.year, viewState.month - 1, 1); viewState.year = d.getFullYear(); viewState.month = d.getMonth(); renderFullCalendar(); haptic('light'); };
-    // Next month in full cal can be added similarly if needed, or rely on main nav
 
     document.querySelectorAll('.form-input').forEach(input => {
-        input.addEventListener('focus', function() { setTimeout(() => this.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300); });
+        input.addEventListener('focus', function() {
+            setTimeout(() => {
+                this.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }, 300);
+        });
     });
-
-    // Tab Switching
-    function switchTab(tab) {
-        if (tab === 'finances') {
-            document.getElementById('financesScreen').classList.add('active');
-            document.getElementById('achievementsScreen').classList.remove('active');
-            document.getElementById('navFinances').classList.add('active');
-            document.getElementById('navAchievements').classList.remove('active');
-            document.getElementById('addBtn').classList.remove('hidden');
-            document.querySelector('header').style.display = 'flex';
-        } else {
-            document.getElementById('financesScreen').classList.remove('active');
-            document.getElementById('achievementsScreen').classList.add('active');
-            document.getElementById('navFinances').classList.remove('active');
-            document.getElementById('navAchievements').classList.add('active');
-            document.getElementById('addBtn').classList.add('hidden');
-            document.querySelector('header').style.display = 'none'; // Hide month nav on achievements
-        }
-        haptic('light');
-    }
 
     // Initial Render
     updateUI();
