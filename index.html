@@ -35,7 +35,7 @@
             --overlay: rgba(0, 0, 0, 0.3);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         
         body {
             margin: 0;
@@ -46,6 +46,8 @@
             transition: background-color 0.3s ease, color 0.3s ease;
             overflow-x: hidden;
             padding-bottom: 80px;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         /* Header & Month Navigation */
@@ -68,6 +70,8 @@
             gap: 15px;
             font-weight: 600;
             font-size: 18px;
+            width: 100%;
+            justify-content: center;
         }
 
         .nav-btn {
@@ -76,21 +80,23 @@
             color: var(--text-primary);
             font-size: 24px;
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 5px 15px;
             border-radius: 50%;
             transition: background 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 101;
         }
 
         .nav-btn:active { background-color: var(--card-bg); transform: scale(0.9); }
 
         .current-month-label {
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 5px 15px;
             border-radius: 8px;
             transition: background 0.2s;
+            white-space: nowrap;
         }
         .current-month-label:active { background-color: var(--card-bg); }
 
@@ -135,8 +141,8 @@
 
         .chart-container {
             position: relative;
-            width: 120px;
-            height: 120px;
+            width: 110px;
+            height: 110px;
         }
 
         .chart-center-text {
@@ -146,9 +152,10 @@
             transform: translate(-50%, -50%);
             text-align: center;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 14px;
             line-height: 1.2;
             pointer-events: none;
+            width: 100%;
         }
         
         .chart-center-sub {
@@ -160,22 +167,23 @@
         .legend-list {
             width: 100%;
             margin-top: 10px;
-            max-height: 100px;
+            max-height: 80px;
             overflow-y: auto;
-            font-size: 11px;
+            font-size: 10px;
+            padding-right: 2px;
         }
         
         .legend-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             padding: 2px 0;
         }
 
-        .legend-left { display: flex; align-items: center; gap: 6px; overflow: hidden; }
-        .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .legend-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; }
+        .legend-left { display: flex; align-items: center; gap: 5px; overflow: hidden; }
+        .legend-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .legend-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60px; }
         .legend-val { font-weight: 600; flex-shrink: 0; }
 
         /* Operations List */
@@ -207,6 +215,7 @@
             transform: translateY(10px);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .op-item::before {
@@ -220,15 +229,16 @@
         }
 
         .op-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             background-color: rgba(255,255,255,0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             flex-shrink: 0;
+            color: var(--cat-color);
         }
 
         .op-details { flex-grow: 1; min-width: 0; }
@@ -242,6 +252,7 @@
             border-radius: 4px;
             font-weight: 700;
             text-transform: uppercase;
+            margin-left: 5px;
         }
         .op-amount { font-weight: 700; font-size: 15px; white-space: nowrap; }
         .op-amount.income { color: var(--success); }
@@ -252,6 +263,7 @@
             padding: 40px 20px;
             color: var(--text-secondary);
             font-size: 14px;
+            line-height: 1.5;
         }
 
         /* FAB */
@@ -259,8 +271,8 @@
             position: fixed;
             bottom: 25px;
             right: 25px;
-            width: 60px;
-            height: 60px;
+            width: 56px;
+            height: 56px;
             background-color: var(--accent);
             color: var(--accent-text);
             border-radius: 50%;
@@ -274,6 +286,7 @@
             z-index: 90;
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: none;
+            touch-action: manipulation;
         }
         .fab:active { transform: scale(0.9); }
 
@@ -302,6 +315,7 @@
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+            -webkit-overflow-scrolling: touch;
         }
         .bottom-sheet.active { transform: translateY(0); }
 
@@ -321,7 +335,20 @@
             margin-bottom: 20px;
         }
         .sheet-title { font-size: 20px; font-weight: 700; }
-        .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; padding: 5px; }
+        .close-btn { 
+            background: none; 
+            border: none; 
+            color: var(--text-secondary); 
+            font-size: 28px; 
+            cursor: pointer; 
+            padding: 0; 
+            width: 30px; 
+            height: 30px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+        .close-btn:active { color: var(--text-primary); }
 
         /* Form Styles */
         .segment-control {
@@ -333,7 +360,7 @@
         }
         .segment-btn {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border: none;
             background: transparent;
             color: var(--text-secondary);
@@ -341,6 +368,7 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 14px;
         }
         .segment-btn.active.income { background-color: var(--success); color: #fff; box-shadow: 0 2px 8px rgba(46, 204, 113, 0.4); }
         .segment-btn.active.expense { background-color: var(--danger); color: #fff; box-shadow: 0 2px 8px rgba(255, 75, 75, 0.4); }
@@ -357,6 +385,7 @@
             font-size: 16px;
             outline: none;
             transition: border 0.2s;
+            -webkit-appearance: none;
         }
         .form-input:focus { border-color: var(--accent); }
 
@@ -368,6 +397,7 @@
             background-color: rgba(255,255,255,0.05);
             border-radius: 12px;
             cursor: pointer;
+            user-select: none;
         }
         .switch {
             position: relative;
@@ -413,6 +443,7 @@
             font-size: 13px;
             cursor: pointer;
             border: 2px solid transparent;
+            user-select: none;
         }
         .radio-card.selected { border-color: var(--accent); background: rgba(255, 221, 45, 0.1); }
 
@@ -428,6 +459,7 @@
             margin-top: 10px;
             cursor: pointer;
             transition: transform 0.1s;
+            touch-action: manipulation;
         }
         .submit-btn:active { transform: scale(0.98); }
 
@@ -445,10 +477,12 @@
             text-align: center;
             cursor: pointer;
             font-size: 14px;
+            user-select: none;
         }
         .month-cell.active { background: var(--accent); color: #000; font-weight: bold; }
         .year-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .btn-small { background: rgba(255,255,255,0.1); border: none; color: var(--text-primary); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+        .btn-small { background: rgba(255,255,255,0.1); border: none; color: var(--text-primary); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .btn-small:active { background: rgba(255,255,255,0.2); }
 
         /* Animations */
         @keyframes slideIn {
@@ -527,7 +561,7 @@
         <button class="close-btn" onclick="closeModal()">×</button>
     </div>
 
-    <form id="opForm">
+    <form id="opForm" onsubmit="handleFormSubmit(event)">
         <input type="hidden" id="opId">
         
         <div class="segment-control">
@@ -542,12 +576,12 @@
 
         <div class="form-group">
             <label class="form-label">Категория / Название</label>
-            <input type="text" id="opCategory" class="form-input" placeholder="Например: Продукты" required list="catSuggestions">
+            <input type="text" id="opCategory" class="form-input" placeholder="Например: Продукты" required list="catSuggestions" autocomplete="off">
             <datalist id="catSuggestions"></datalist>
         </div>
 
         <div class="form-group">
-            <label class="repeat-toggle">
+            <label class="repeat-toggle" onclick="toggleRepeatOptions()">
                 <span>Повторяющаяся операция</span>
                 <label class="switch">
                     <input type="checkbox" id="opRepeatCheck" onchange="toggleRepeatOptions()">
@@ -599,11 +633,17 @@
     const tg = window.Telegram.WebApp;
     tg.ready();
     tg.expand();
+    tg.enableClosingConfirmation();
 
     // Theme Handling
     function applyTheme() {
         const theme = tg.colorScheme === 'light' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', theme);
+        if(theme === 'light') {
+            Chart.defaults.color = '#8e94a3';
+        } else {
+            Chart.defaults.color = '#8e94a3';
+        }
     }
     applyTheme();
     tg.onEvent('themeChanged', applyTheme);
@@ -643,13 +683,19 @@
     };
 
     const formatMoney = (num) => new Intl.NumberFormat('ru-RU').format(num);
-    const haptic = (style = 'light') => { if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred(style); };
+    
+    const haptic = (style = 'light') => { 
+        if(tg.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred(style);
+        }
+    };
 
     // --- Core Logic ---
 
     function getFilteredOps(type = null, year = currentDate.getFullYear(), month = currentDate.getMonth()) {
         return operations.filter(op => {
             const d = new Date(op.date);
+            // Fix timezone issue by comparing UTC parts or local parts consistently
             const matchDate = d.getFullYear() === year && d.getMonth() === month;
             const matchType = type ? op.type === type : true;
             return matchDate && matchType;
@@ -682,7 +728,7 @@
         container.innerHTML = '';
         
         if (data.length === 0) {
-            if(containerId === 'opsList') return; // Empty state handled separately
+            if(containerId === 'opsList') return; 
             container.innerHTML = '<li class="empty-state">Нет операций</li>';
             return;
         }
@@ -697,11 +743,12 @@
             const isInc = op.type === 'income';
             const sign = isInc ? '+' : '-';
             const amountClass = isInc ? 'income' : 'expense';
-            const dateStr = new Date(op.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+            const dateObj = new Date(op.date);
+            const dateStr = dateObj.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
             const autoBadge = op.isRecurring ? '<span class="auto-badge">AUTO</span>' : '';
 
             li.innerHTML = `
-                <div class="op-icon" style="color: ${color}">●</div>
+                <div class="op-icon">●</div>
                 <div class="op-details">
                     <div class="op-name">${op.category} ${autoBadge}</div>
                     <div class="op-date">${dateStr}</div>
@@ -709,14 +756,18 @@
                 <div class="op-amount ${amountClass}">${sign}${formatMoney(op.amount)}</div>
             `;
             
-            // Delete action (long press or simple click with confirm for now, let's do simple click delete for mobile ease in list view? No, let's add a small delete btn on hover or just alert. 
-            // Better: Click opens detail? No, request said tap chart opens list. Let's make list items clickable to delete with confirmation.
             li.onclick = () => {
+                haptic('medium');
                 if(confirm(`Удалить операцию "${op.category}"?`)) {
-                    haptic('rigid');
                     operations = operations.filter(o => o.id !== op.id);
+                    // Also remove recurring children if deleting parent? 
+                    // For simplicity, we just remove by ID. If parentId logic is needed, filter that too.
+                    if(op.parentId) {
+                         // Optional: remove parent too? Usually no, just this instance.
+                    }
                     saveData();
                     updateUI();
+                    if(containerId === 'detailsList') closeDetails();
                 }
             };
             container.appendChild(li);
@@ -749,20 +800,23 @@
         // Legend
         const legendContainer = document.getElementById(legendId);
         legendContainer.innerHTML = '';
-        labels.forEach((lab, i) => {
-            const pct = ((data[i] / total) * 100).toFixed(0);
-            if(total === 0) return;
-            const div = document.createElement('div');
-            div.className = 'legend-item';
-            div.innerHTML = `
-                <div class="legend-left">
-                    <div class="legend-dot" style="background:${colors[i]}"></div>
-                    <div class="legend-name">${lab}</div>
-                </div>
-                <div class="legend-val">${pct}%</div>
-            `;
-            legendContainer.appendChild(div);
-        });
+        if (total > 0) {
+            labels.forEach((lab, i) => {
+                const pct = ((data[i] / total) * 100).toFixed(0);
+                const div = document.createElement('div');
+                div.className = 'legend-item';
+                div.innerHTML = `
+                    <div class="legend-left">
+                        <div class="legend-dot" style="background:${colors[i]}"></div>
+                        <div class="legend-name">${lab}</div>
+                    </div>
+                    <div class="legend-val">${pct}%</div>
+                `;
+                legendContainer.appendChild(div);
+            });
+        } else {
+            legendContainer.innerHTML = '<div style="text-align:center; color:var(--text-secondary); font-size:10px;">Нет данных</div>';
+        }
 
         // Chart.js
         const ctx = document.getElementById(ctxId).getContext('2d');
@@ -771,8 +825,8 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    data: data,
-                    backgroundColor: colors,
+                    data: data.length ? data : [1],
+                    backgroundColor: data.length ? colors : ['rgba(255,255,255,0.1)'],
                     borderWidth: 0,
                     hoverOffset: 10
                 }]
@@ -788,13 +842,19 @@
                 animation: {
                     animateScale: true,
                     animateRotate: true
-                }
+                },
+                events: [] // Disable default interactions to use custom tap
             }
         });
 
         // Tap Event
         const card = document.getElementById(cardId);
-        card.onclick = () => {
+        // Remove old listener clone
+        const newCard = card.cloneNode(true);
+        card.parentNode.replaceChild(newCard, card);
+        
+        newCard.onclick = () => {
+            if (total === 0) return;
             haptic('medium');
             openDetails(type, ops);
         };
@@ -814,19 +874,25 @@
             setType(editOp.type);
             document.getElementById('opRepeatCheck').checked = editOp.isRecurring || false;
             toggleRepeatOptions();
-            if(editOp.period) setPeriod(editOp.period, document.querySelector(`.radio-card[onclick*="${editOp.period}"]`));
+            if(editOp.period) {
+                const el = document.querySelector(`.radio-card[onclick*="${editOp.period}"]`);
+                if(el) setPeriod(editOp.period, el);
+            }
         } else {
             document.getElementById('opForm').reset();
             document.getElementById('opId').value = '';
             setType('expense');
             toggleRepeatOptions();
-            setPeriod('day', document.querySelector('.radio-card')); // reset to first
+            setPeriod('day', document.querySelector('.radio-card')); 
         }
         
         // Populate datalist
         const cats = [...new Set(operations.map(o => o.category))];
         const dl = document.getElementById('catSuggestions');
         dl.innerHTML = cats.map(c => `<option value="${c}">`).join('');
+        
+        // Focus first input after animation
+        setTimeout(() => document.getElementById('opAmount').focus(), 300);
     }
 
     function closeModal() {
@@ -910,8 +976,11 @@
         haptic('light');
     }
 
-    document.getElementById('opForm').onsubmit = (e) => {
+    // Global handler for form submit to ensure mobile compatibility
+    window.handleFormSubmit = function(e) {
         e.preventDefault();
+        e.stopPropagation();
+        
         haptic('success');
         
         const id = document.getElementById('opId').value;
@@ -920,37 +989,40 @@
         const isRecurring = document.getElementById('opRepeatCheck').checked;
 
         if (id) {
-            // Edit
+            // Edit existing (only single instance for simplicity in this version)
             const idx = operations.findIndex(o => o.id == id);
             if (idx > -1) {
                 operations[idx] = { ...operations[idx], amount, category, type: currentType, isRecurring, period: isRecurring ? currentPeriod : null };
             }
         } else {
-            // New
-            operations.push({
+            // New Operation
+            const now = new Date();
+            const baseOp = {
                 id: Date.now(),
-                date: new Date().toISOString(),
+                date: now.toISOString(),
                 type: currentType,
                 amount,
                 category,
                 isRecurring,
                 period: isRecurring ? currentPeriod : null
-            });
+            };
+            operations.push(baseOp);
             
-            // Process Recurring Logic (Add future occurrences for next 1 year roughly)
+            // Generate future occurrences
             if (isRecurring) {
-                let nextDate = new Date();
-                for(let i=0; i<12; i++) { // Generate 12 future instances
+                let nextDate = new Date(now);
+                // Generate for 1 year ahead
+                for(let i=0; i<12; i++) {
                     incrementDate(nextDate, currentPeriod);
                     operations.push({
-                        id: Date.now() + i + 1,
+                        id: Date.now() + i + 1 + Math.random(), // Unique ID
                         date: nextDate.toISOString(),
                         type: currentType,
                         amount,
                         category,
                         isRecurring: true,
                         period: currentPeriod,
-                        parentId: operations[operations.length-1].id // Link to original if needed
+                        parentId: baseOp.id
                     });
                 }
             }
@@ -969,7 +1041,11 @@
     }
 
     // --- Event Listeners ---
-    document.getElementById('addBtn').onclick = () => openModal();
+    document.getElementById('addBtn').onclick = (e) => {
+        e.preventDefault();
+        openModal();
+    };
+    
     document.getElementById('modalOverlay').onclick = (e) => {
         if(e.target === document.getElementById('modalOverlay')) {
             closeModal();
