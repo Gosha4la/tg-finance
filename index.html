@@ -8,17 +8,18 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            /* Dark Theme (Default) */
+            /* Dark Theme (Default) - Deep Night Blue Accent */
             --bg-color: #0f1115;
             --card-bg: #1a1d24;
             --text-primary: #ffffff;
             --text-secondary: #8e94a3;
-            --accent: #ffdd2d;
-            --accent-text: #000000;
+            --accent: #2962ff; /* Глубокий ночной синий */
+            --accent-hover: #1c44b8;
+            --accent-text: #ffffff;
             --danger: #ff4b4b;
-            --success: #2ecc71;
+            --success: #00c853;
             --border: #2c303a;
-            --overlay: rgba(0, 0, 0, 0.6);
+            --overlay: rgba(0, 0, 0, 0.7);
             --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
@@ -26,21 +27,21 @@
             --bg-color: #f2f3f5;
             --card-bg: #ffffff;
             --text-primary: #000000;
-            --text-secondary: #8e94a3;
-            --accent: #ffdd2d;
-            --accent-text: #000000;
-            --danger: #ff4b4b;
-            --success: #2ecc71;
+            --text-secondary: #707579;
+            --accent: #2962ff;
+            --accent-hover: #1c44b8;
+            --accent-text: #ffffff;
+            --danger: #d32f2f;
+            --success: #2e7d32;
             --border: #e0e0e0;
-            --overlay: rgba(0, 0, 0, 0.3);
+            --overlay: rgba(0, 0, 0, 0.4);
         }
 
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
             -webkit-touch-callout: none;
-            user-select: none;
-            -webkit-user-select: none;
+            user-select: none; /* Запрет выделения текста для ощущения нативности */
         }
         
         body {
@@ -52,7 +53,13 @@
             transition: background-color 0.3s ease, color 0.3s ease;
             overflow-x: hidden;
             padding-bottom: 80px;
-            touch-action: manipulation;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Разрешаем выделение текста только в полях ввода */
+        input, textarea {
+            user-select: text;
+            -webkit-user-select: text;
         }
 
         /* Header & Month Navigation */
@@ -66,8 +73,8 @@
             justify-content: space-between;
             align-items: center;
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
-            padding-top: max(15px, env(safe-area-inset-top));
         }
 
         .month-nav {
@@ -78,7 +85,6 @@
             font-size: 18px;
             width: 100%;
             justify-content: center;
-            position: relative;
         }
 
         .nav-btn {
@@ -87,28 +93,25 @@
             color: var(--text-primary);
             font-size: 24px;
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 8px;
             border-radius: 50%;
             transition: background 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 2;
         }
-        .nav-btn:first-child { left: 0; }
-        .nav-btn:last-child { right: 0; }
+        .nav-btn.prev { left: 10px; }
+        .nav-btn.next { right: 10px; }
 
-        .nav-btn:active { background-color: var(--card-bg); transform: translateY(-50%) scale(0.9); }
+        .nav-btn:active { background-color: var(--card-bg); transform: scale(0.9); }
 
         .current-month-label {
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 8px;
             transition: background 0.2s;
-            text-align: center;
+            white-space: nowrap;
         }
         .current-month-label:active { background-color: var(--card-bg); }
 
@@ -139,23 +142,23 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            touch-action: manipulation;
         }
 
         .chart-card:active { transform: scale(0.96); }
 
         .chart-title {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-secondary);
             margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: 600;
         }
 
         .chart-container {
             position: relative;
-            width: 120px;
-            height: 120px;
+            width: 110px;
+            height: 110px;
         }
 
         .chart-center-text {
@@ -165,46 +168,50 @@
             transform: translate(-50%, -50%);
             text-align: center;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1.2;
             pointer-events: none;
+            width: 100%;
         }
         
         .chart-center-sub {
-            font-size: 10px;
+            font-size: 9px;
             color: var(--text-secondary);
             font-weight: 400;
+            margin-top: 2px;
         }
 
         .legend-list {
             width: 100%;
             margin-top: 10px;
-            max-height: 100px;
+            max-height: 80px;
             overflow-y: auto;
-            font-size: 11px;
+            font-size: 10px;
+            padding-right: 2px;
         }
         
         .legend-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             padding: 2px 0;
         }
 
-        .legend-left { display: flex; align-items: center; gap: 6px; overflow: hidden; }
-        .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .legend-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; }
-        .legend-val { font-weight: 600; flex-shrink: 0; }
+        .legend-left { display: flex; align-items: center; gap: 5px; overflow: hidden; }
+        .legend-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .legend-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60px; color: var(--text-secondary); }
+        .legend-val { font-weight: 600; flex-shrink: 0; color: var(--text-primary); }
 
         /* Operations List */
         .section-title {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 600;
             margin-bottom: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0 5px;
         }
 
         .ops-list {
@@ -221,7 +228,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            animation: slideIn 0.3s ease forwards;
+            animation: slideIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
             opacity: 0;
             transform: translateY(10px);
             position: relative;
@@ -240,28 +247,31 @@
         }
 
         .op-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
             background-color: rgba(255,255,255,0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             flex-shrink: 0;
+            color: var(--cat-color);
         }
 
         .op-details { flex-grow: 1; min-width: 0; }
         .op-name { font-weight: 600; font-size: 15px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .op-date { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; }
+        .op-date { font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; }
         .auto-badge {
             font-size: 9px;
             background: var(--accent);
-            color: #000;
+            color: #fff;
             padding: 1px 4px;
             border-radius: 4px;
             font-weight: 700;
             text-transform: uppercase;
+            margin-left: 5px;
+            vertical-align: middle;
         }
         .op-amount { font-weight: 700; font-size: 15px; white-space: nowrap; }
         .op-amount.income { color: var(--success); }
@@ -272,6 +282,7 @@
             padding: 40px 20px;
             color: var(--text-secondary);
             font-size: 14px;
+            line-height: 1.5;
         }
 
         /* FAB */
@@ -279,24 +290,25 @@
             position: fixed;
             bottom: 25px;
             right: 25px;
-            width: 60px;
-            height: 60px;
+            width: 56px;
+            height: 56px;
             background-color: var(--accent);
             color: var(--accent-text);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 300;
-            box-shadow: 0 4px 15px rgba(255, 221, 45, 0.4);
+            box-shadow: 0 4px 15px rgba(41, 98, 255, 0.4);
             cursor: pointer;
             z-index: 90;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s;
             border: none;
-            touch-action: manipulation;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
         }
-        .fab:active { transform: scale(0.9); }
+        .fab:active { transform: scale(0.9); background-color: var(--accent-hover); }
 
         /* Bottom Sheet Modal */
         .modal-overlay {
@@ -307,7 +319,8 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
-            backdrop-filter: blur(2px);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
         .modal-overlay.active { opacity: 1; visibility: visible; }
 
@@ -322,8 +335,8 @@
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
-            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.3);
+            -webkit-overflow-scrolling: touch;
         }
         .bottom-sheet.active { transform: translateY(0); }
 
@@ -334,6 +347,7 @@
             border-radius: 2px;
             margin: 0 auto 20px;
             opacity: 0.3;
+            flex-shrink: 0;
         }
 
         .sheet-header {
@@ -343,7 +357,21 @@
             margin-bottom: 20px;
         }
         .sheet-title { font-size: 20px; font-weight: 700; }
-        .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; padding: 5px; }
+        .close-btn { 
+            background: none; 
+            border: none; 
+            color: var(--text-secondary); 
+            font-size: 28px; 
+            cursor: pointer; 
+            padding: 0; 
+            width: 30px; 
+            height: 30px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            line-height: 1;
+        }
+        .close-btn:active { color: var(--text-primary); }
 
         /* Form Styles */
         .segment-control {
@@ -355,7 +383,7 @@
         }
         .segment-btn {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border: none;
             background: transparent;
             color: var(--text-secondary);
@@ -363,12 +391,14 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 14px;
+            -webkit-tap-highlight-color: transparent;
         }
-        .segment-btn.active.income { background-color: var(--success); color: #fff; box-shadow: 0 2px 8px rgba(46, 204, 113, 0.4); }
-        .segment-btn.active.expense { background-color: var(--danger); color: #fff; box-shadow: 0 2px 8px rgba(255, 75, 75, 0.4); }
+        .segment-btn.active.income { background-color: var(--success); color: #fff; box-shadow: 0 2px 8px rgba(0, 200, 83, 0.3); }
+        .segment-btn.active.expense { background-color: var(--danger); color: #fff; box-shadow: 0 2px 8px rgba(255, 75, 75, 0.3); }
 
         .form-group { margin-bottom: 15px; }
-        .form-label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+        .form-label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500; }
         .form-input {
             width: 100%;
             padding: 14px;
@@ -376,14 +406,15 @@
             border: 1px solid transparent;
             border-radius: 12px;
             color: var(--text-primary);
-            font-size: 16px;
+            font-size: 16px; /* Prevents zoom on iOS */
             outline: none;
-            transition: border 0.2s;
+            transition: border 0.2s, background 0.2s;
             -webkit-appearance: none;
-            user-select: text;
-            -webkit-user-select: text;
         }
-        .form-input:focus { border-color: var(--accent); }
+        .form-input:focus { 
+            border-color: var(--accent); 
+            background-color: rgba(255,255,255,0.08);
+        }
 
         .repeat-toggle {
             display: flex;
@@ -393,13 +424,14 @@
             background-color: rgba(255,255,255,0.05);
             border-radius: 12px;
             cursor: pointer;
-            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
         .switch {
             position: relative;
             display: inline-block;
             width: 50px;
             height: 28px;
+            flex-shrink: 0;
         }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
@@ -420,6 +452,7 @@
             background-color: white;
             transition: .4s;
             border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         input:checked + .slider { background-color: var(--accent); }
         input:checked + .slider:before { transform: translateX(22px); }
@@ -433,15 +466,22 @@
         .repeat-options.show { display: grid; }
         .radio-card {
             background: rgba(255,255,255,0.05);
-            padding: 10px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 10px;
             text-align: center;
             font-size: 13px;
             cursor: pointer;
             border: 2px solid transparent;
-            user-select: none;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .radio-card.selected { border-color: var(--accent); background: rgba(255, 221, 45, 0.1); }
+        .radio-card.selected { 
+            border-color: var(--accent); 
+            background: rgba(41, 98, 255, 0.15); 
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .radio-card:active { transform: scale(0.96); }
 
         .submit-btn {
             width: 100%;
@@ -454,10 +494,14 @@
             font-weight: 700;
             margin-top: 10px;
             cursor: pointer;
-            transition: transform 0.1s;
-            touch-action: manipulation;
+            transition: transform 0.1s, background-color 0.2s;
+            box-shadow: 0 4px 12px rgba(41, 98, 255, 0.3);
+            -webkit-tap-highlight-color: transparent;
         }
-        .submit-btn:active { transform: scale(0.98); }
+        .submit-btn:active { 
+            transform: scale(0.98); 
+            background-color: var(--accent-hover);
+        }
 
         /* Month Picker Modal */
         .month-picker-grid {
@@ -467,17 +511,31 @@
             margin-top: 20px;
         }
         .month-cell {
-            padding: 12px;
+            padding: 15px;
             background: rgba(255,255,255,0.05);
-            border-radius: 8px;
+            border-radius: 10px;
             text-align: center;
             cursor: pointer;
             font-size: 14px;
-            user-select: none;
+            font-weight: 500;
+            transition: background 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .month-cell.active { background: var(--accent); color: #000; font-weight: bold; }
-        .year-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .btn-small { background: rgba(255,255,255,0.1); border: none; color: var(--text-primary); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+        .month-cell:active { background: rgba(255,255,255,0.1); }
+        .month-cell.active { background: var(--accent); color: #fff; font-weight: bold; box-shadow: 0 4px 10px rgba(41, 98, 255, 0.4); }
+        
+        .year-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .btn-small { 
+            background: rgba(255,255,255,0.1); 
+            border: none; 
+            color: var(--text-primary); 
+            padding: 8px 12px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 14px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-small:active { background: rgba(255,255,255,0.2); transform: scale(0.95); }
 
         /* Animations */
         @keyframes slideIn {
@@ -499,9 +557,9 @@
 
 <header>
     <div class="month-nav">
-        <button class="nav-btn" id="prevMonth">‹</button>
+        <button class="nav-btn prev" id="prevMonth">‹</button>
         <div class="current-month-label" id="monthLabel">Сентябрь 2023</div>
-        <button class="nav-btn" id="nextMonth">›</button>
+        <button class="nav-btn next" id="nextMonth">›</button>
     </div>
 </header>
 
@@ -556,8 +614,7 @@
         <button class="close-btn" onclick="closeModal()">×</button>
     </div>
 
-    <!-- Removed form tag to prevent default submit behavior issues on Android -->
-    <div id="opForm">
+    <form id="opForm" onsubmit="return false;">
         <input type="hidden" id="opId">
         
         <div class="segment-control">
@@ -577,7 +634,7 @@
         </div>
 
         <div class="form-group">
-            <label class="repeat-toggle" onclick="toggleRepeatOptionsManual()">
+            <label class="repeat-toggle" onclick="toggleRepeatOptions()">
                 <span>Повторяющаяся операция</span>
                 <label class="switch">
                     <input type="checkbox" id="opRepeatCheck" onchange="toggleRepeatOptions()">
@@ -593,8 +650,9 @@
             </div>
         </div>
 
+        <!-- Кнопка теперь обрабатывается через onclick вместо submit формы -->
         <button type="button" class="submit-btn" id="saveBtn">Сохранить</button>
-    </div>
+    </form>
 </div>
 
 <!-- Details Modal (Chart Tap) -->
@@ -627,16 +685,26 @@
 <script>
     // --- Init & Config ---
     const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+    
+    // Инициализация Telegram WebApp
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        // Установка цветов хедера под тему
+        tg.setHeaderColor(getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim());
+    }
 
     // Theme Handling
     function applyTheme() {
-        const theme = tg.colorScheme === 'light' ? 'light' : 'dark';
+        const theme = (tg && tg.colorScheme === 'light') ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', theme);
+        if(tg) {
+             const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim();
+             tg.setHeaderColor(bg);
+        }
     }
     applyTheme();
-    tg.onEvent('themeChanged', applyTheme);
+    if(tg) tg.onEvent('themeChanged', applyTheme);
 
     // State
     let currentDate = new Date();
@@ -651,9 +719,9 @@
     const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
     const fullMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
     
-    // Color Palettes
-    const expensePalette = ['#ff4b4b', '#ff9f43', '#ffdd2d', '#feca57', '#54a0ff', '#5f27cd', '#c8d6e5'];
-    const incomePalette = ['#2ecc71', '#1abc9c', '#48dbfb', '#0abde3', '#10ac84', '#26de81', '#badc58'];
+    // Color Palettes (Updated for better contrast with dark blue theme)
+    const expensePalette = ['#ff5252', '#ff7043', '#ffa726', '#ffee58', '#ab47bc', '#ec407a', '#7e57c2'];
+    const incomePalette = ['#66bb6a', '#26a69a', '#42a5f5', '#29b6f6', '#00897b', '#66bb6a', '#9ccc65'];
 
     // --- Helpers ---
     const saveData = () => {
@@ -673,7 +741,12 @@
     };
 
     const formatMoney = (num) => new Intl.NumberFormat('ru-RU').format(num);
-    const haptic = (style = 'light') => { if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred(style); };
+    
+    const haptic = (style = 'light') => { 
+        if(tg && tg.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred(style);
+        }
+    };
 
     // --- Core Logic ---
 
@@ -731,7 +804,7 @@
             const autoBadge = op.isRecurring ? '<span class="auto-badge">AUTO</span>' : '';
 
             li.innerHTML = `
-                <div class="op-icon" style="color: ${color}">●</div>
+                <div class="op-icon">●</div>
                 <div class="op-details">
                     <div class="op-name">${op.category} ${autoBadge}</div>
                     <div class="op-date">${dateStr}</div>
@@ -760,6 +833,7 @@
         const total = ops.reduce((sum, op) => sum + op.amount, 0);
         document.getElementById(totalId).textContent = formatMoney(total);
 
+        // Group by category
         const groups = {};
         ops.forEach(op => {
             if (!groups[op.category]) groups[op.category] = 0;
@@ -770,13 +844,14 @@
         const data = Object.values(groups);
         const colors = labels.map(l => getColorForCategory(l, type));
 
+        // Destroy old
         if (charts[type]) charts[type].destroy();
 
+        // Legend
         const legendContainer = document.getElementById(legendId);
         legendContainer.innerHTML = '';
         labels.forEach((lab, i) => {
-            const pct = ((data[i] / total) * 100).toFixed(0);
-            if(total === 0) return;
+            const pct = total > 0 ? ((data[i] / total) * 100).toFixed(0) : 0;
             const div = document.createElement('div');
             div.className = 'legend-item';
             div.innerHTML = `
@@ -789,6 +864,7 @@
             legendContainer.appendChild(div);
         });
 
+        // Chart.js
         const ctx = document.getElementById(ctxId).getContext('2d');
         charts[type] = new Chart(ctx, {
             type: 'doughnut',
@@ -816,8 +892,9 @@
             }
         });
 
+        // Tap Event
         const card = document.getElementById(cardId);
-        // Remove old listener by cloning node to avoid double firing on some devices
+        // Удаляем старые слушатели клонированием элемента (простой способ)
         const newCard = card.cloneNode(true);
         card.parentNode.replaceChild(newCard, card);
         
@@ -843,23 +920,20 @@
             toggleRepeatOptions();
             if(editOp.period) setPeriod(editOp.period, document.querySelector(`.radio-card[onclick*="${editOp.period}"]`));
         } else {
-            document.getElementById('opForm').reset(); // Resets inputs but not our custom state
+            document.getElementById('opForm').reset();
             document.getElementById('opId').value = '';
-            document.getElementById('opAmount').value = '';
-            document.getElementById('opCategory').value = '';
             setType('expense');
             toggleRepeatOptions();
             setPeriod('day', document.querySelector('.radio-card')); 
         }
         
+        // Populate datalist
         const cats = [...new Set(operations.map(o => o.category))];
         const dl = document.getElementById('catSuggestions');
         dl.innerHTML = cats.map(c => `<option value="${c}">`).join('');
         
-        // Focus first input after animation
-        setTimeout(() => {
-            document.getElementById('opAmount').focus();
-        }, 300);
+        // Фокус на поле суммы для удобства
+        setTimeout(() => document.getElementById('opAmount').focus(), 100);
     }
 
     function closeModal() {
@@ -935,15 +1009,6 @@
         if (checked) opts.classList.add('show');
         else opts.classList.remove('show');
     }
-    
-    // Wrapper for label click to ensure checkbox toggles correctly on Android
-    function toggleRepeatOptionsManual() {
-        const chk = document.getElementById('opRepeatCheck');
-        // Small delay to let the click register before checking state
-        setTimeout(() => {
-            toggleRepeatOptions();
-        }, 10);
-    }
 
     function setPeriod(p, el) {
         currentPeriod = p;
@@ -952,51 +1017,61 @@
         haptic('light');
     }
 
-    // Explicit Save Handler for Android reliability
-    document.getElementById('saveBtn').onclick = () => {
-        const amountVal = document.getElementById('opAmount').value;
-        const categoryVal = document.getElementById('opCategory').value.trim();
+    // ОБРАБОТЧИК СОХРАНЕНИЯ (ИСПРАВЛЕННЫЙ ДЛЯ ANDROID)
+    document.getElementById('saveBtn').onclick = function(e) {
+        e.preventDefault(); // Гарантированно предотвращаем любую стандартную форму
         
-        if (!amountVal || !categoryVal) {
+        const amountInput = document.getElementById('opAmount');
+        const categoryInput = document.getElementById('opCategory');
+        
+        if (!amountInput.value || !categoryInput.value.trim()) {
             haptic('error');
-            alert('Заполните сумму и название категории');
+            amountInput.focus();
             return;
         }
 
         haptic('success');
         
         const id = document.getElementById('opId').value;
-        const amount = parseFloat(amountVal);
+        const amount = parseFloat(amountInput.value);
+        const category = categoryInput.value.trim();
         const isRecurring = document.getElementById('opRepeatCheck').checked;
 
         if (id) {
+            // Edit existing
             const idx = operations.findIndex(o => o.id == id);
             if (idx > -1) {
-                operations[idx] = { ...operations[idx], amount, category: categoryVal, type: currentType, isRecurring, period: isRecurring ? currentPeriod : null };
+                // If editing a recurring series parent, we might want to update future ones too, 
+                // but for simplicity let's just update this record or the series logic can be complex.
+                // Here we update the specific record found by ID.
+                operations[idx] = { ...operations[idx], amount, category, type: currentType, isRecurring, period: isRecurring ? currentPeriod : null };
             }
         } else {
+            // New Operation
+            const now = new Date();
             const baseOp = {
                 id: Date.now(),
-                date: new Date().toISOString(),
+                date: now.toISOString(),
                 type: currentType,
                 amount,
-                category: categoryVal,
+                category,
                 isRecurring,
                 period: isRecurring ? currentPeriod : null
             };
             operations.push(baseOp);
             
+            // Generate future occurrences if recurring
             if (isRecurring) {
-                let nextDate = new Date();
-                // Generate 12 future instances
+                let nextDate = new Date(now);
+                // Generate next 12 occurrences
                 for(let i=0; i<12; i++) {
                     incrementDate(nextDate, currentPeriod);
                     operations.push({
-                        id: Date.now() + i + 1,
+                        id: Date.now() + i + 1, // Unique ID
                         date: nextDate.toISOString(),
                         type: currentType,
                         amount,
-                        category: categoryVal,
+                        category,
                         isRecurring: true,
                         period: currentPeriod,
                         parentId: baseOp.id
