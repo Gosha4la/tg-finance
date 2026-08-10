@@ -852,6 +852,31 @@
             display: block;
         }
 
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: calc(var(--nav-height) + 80px);
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--danger);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            max-width: 90%;
+            text-align: center;
+        }
+        #toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
     </style>
 </head>
 <body>
@@ -981,7 +1006,7 @@
         <button class="close-btn" onclick="closeModal()">×</button>
     </div>
 
-    <form id="opForm">
+    <form id="opForm" onsubmit="return false;">
         <input type="hidden" id="opId">
         
         <div class="segment-control">
@@ -991,12 +1016,12 @@
 
         <div class="form-group">
             <label class="form-label">Сумма</label>
-            <input type="number" id="opAmount" class="form-input" placeholder="0" required inputmode="decimal" autocomplete="off">
+            <input type="number" id="opAmount" class="form-input" placeholder="0" required inputmode="decimal" autocomplete="off" enterkeyhint="done">
         </div>
 
         <div class="form-group">
             <label class="form-label">Категория / Название</label>
-            <input type="text" id="opCategory" class="form-input" placeholder="Например: Продукты" required autocomplete="off">
+            <input type="text" id="opCategory" class="form-input" placeholder="Например: Продукты" required autocomplete="off" enterkeyhint="done">
             <!-- Custom Suggestions Container -->
             <div class="suggestions-container" id="categorySuggestions" style="display: none;"></div>
         </div>
@@ -1024,7 +1049,7 @@
             </div>
         </div>
 
-        <button type="submit" class="submit-btn" id="saveBtn">Сохранить</button>
+        <button type="button" class="submit-btn" id="saveBtn">Сохранить</button>
     </form>
 </div>
 
@@ -1164,7 +1189,22 @@
     </div>
 </div>
 
+<!-- Toast Notification -->
+<div id="toast">
+    <div id="toastMsg"></div>
+</div>
+
 <script>
+    // --- Global Error Handler ---
+    window.onerror = (msg) => {
+        const t = document.getElementById('toast');
+        if (t) {
+            document.getElementById('toastMsg').textContent = 'ERR: ' + msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+    };
+
     // --- Init & Config ---
     const tg = window.Telegram.WebApp;
     if (tg) {
@@ -2010,11 +2050,12 @@
         if (!catInput.contains(e.target) && !suggestionsContainer.contains(e.target)) hideSuggestions();
     });
 
-    // Save Button
+    // Save Button Handler (Fixed)
     const saveBtn = document.getElementById('saveBtn');
-    saveBtn.onclick = (e) => {
-        e.preventDefault();
+    saveBtn.addEventListener('click', () => {
         if (isSaving) return;
+        
+        // Close keyboard
         if (document.activeElement) document.activeElement.blur();
         hideSuggestions();
 
@@ -2023,76 +2064,78 @@
         saveBtn.textContent = 'Сохранение...';
 
         setTimeout(() => {
-            const form = document.getElementById('opForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                const invalid = form.querySelector(':invalid');
-                if (invalid) invalid.scrollIntoView({ block: 'center', behavior: 'smooth' });
-                isSaving = false;
-                saveBtn.classList.remove('disabled');
-                saveBtn.textContent = 'Сохранить';
-                return;
-            }
-
-            haptic('success');
-            
-            const id = document.getElementById('opId').value;
-            const amount = parseFloat(document.getElementById('opAmount').value);
-            const category = document.getElementById('opCategory').value.trim();
-            const note = document.getElementById('opNote').value.trim();
-            const isRecurring = document.getElementById('opRepeatCheck').checked;
-
-            if (id) {
-                const idx = operations.findIndex(o => o.id == id);
-                if (idx > -1) {
-                    operations[idx] = { ...operations[idx], amount, category, note, type: currentType, isRecurring, period: isRecurring ? currentPeriod : null };
+            try {
+                const form = document.getElementById('opForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    const invalid = form.querySelector(':invalid');
+                    if (invalid) invalid.focus();
+                    throw new Error('Проверьте поля формы');
                 }
-            } else {
-                const baseId = Date.now() + '-' + Math.random().toString(36).slice(2);
-                const now = new Date();
+
+                haptic('success');
                 
-                operations.push({
-                    id: baseId,
-                    date: now.toISOString(),
-                    type: currentType,
-                    amount,
-                    category,
-                    note,
-                    isRecurring,
-                    period: isRecurring ? currentPeriod : null
-                });
-                
-                if (isRecurring) {
-                    let nextDate = new Date(now);
-                    for(let i=0; i<12; i++) {
-                        incrementDate(nextDate, currentPeriod);
-                        operations.push({
-                            id: Date.now() + '-' + i + '-' + Math.random().toString(36).slice(2),
-                            date: nextDate.toISOString(),
-                            type: currentType,
-                            amount,
-                            category,
-                            note,
-                            isRecurring: true,
-                            period: currentPeriod,
-                            parentId: baseId
-                        });
+                const id = document.getElementById('opId').value;
+                const amount = parseFloat(document.getElementById('opAmount').value);
+                const category = document.getElementById('opCategory').value.trim();
+                const note = document.getElementById('opNote').value.trim();
+                const isRecurring = document.getElementById('opRepeatCheck').checked;
+
+                if (id) {
+                    const idx = operations.findIndex(o => o.id == id);
+                    if (idx > -1) {
+                        operations[idx] = { ...operations[idx], amount, category, note, type: currentType, isRecurring, period: isRecurring ? currentPeriod : null };
+                    }
+                } else {
+                    const baseId = Date.now() + '-' + Math.random().toString(36).slice(2);
+                    const now = new Date();
+                    
+                    operations.push({
+                        id: baseId,
+                        date: now.toISOString(),
+                        type: currentType,
+                        amount,
+                        category,
+                        note,
+                        isRecurring,
+                        period: isRecurring ? currentPeriod : null
+                    });
+                    
+                    if (isRecurring) {
+                        let nextDate = new Date(now);
+                        for(let i=0; i<12; i++) {
+                            incrementDate(nextDate, currentPeriod);
+                            operations.push({
+                                id: Date.now() + '-' + i + '-' + Math.random().toString(36).slice(2),
+                                date: nextDate.toISOString(),
+                                type: currentType,
+                                amount,
+                                category,
+                                note,
+                                isRecurring: true,
+                                period: currentPeriod,
+                                parentId: baseId
+                            });
+                        }
                     }
                 }
-            }
 
-            saveData();
-            updateUI();
-            closeModal();
-            
-            setTimeout(() => {
+                saveData();
+                updateUI();
+                closeModal();
+                
+            } catch (err) {
+                document.getElementById('toastMsg').textContent = 'Ошибка: ' + err.message;
+                document.getElementById('toast').classList.add('show');
+                setTimeout(() => document.getElementById('toast').classList.remove('show'), 3000);
+            } finally {
                 isSaving = false;
                 saveBtn.classList.remove('disabled');
                 saveBtn.textContent = 'Сохранить';
-            }, 500);
+            }
 
         }, 100);
-    };
+    });
 
     function incrementDate(date, period) {
         if (period === 'day') date.setDate(date.getDate() + 1);
@@ -2161,20 +2204,12 @@
             return [count, ach.target];
         }
         if (ach.type === 'recurring_count') {
-            const count = operations.filter(op => op.isRecurring).length; // Simplified: counts all recurring instances
-            // Better: count unique parentIds or just distinct recurring rules? 
-            // For now, counting active recurring operations (approximated by all recurring entries in future/past)
-            // Let's count unique categories+amount+period combos that are recurring?
-            // Simplest: count operations marked isRecurring.
+            const count = operations.filter(op => op.isRecurring).length;
             return [count, ach.target];
         }
         if (ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') {
-            // Complex series calculation
-            // Simplified: just return 0 for now if complex, or implement basic streak
-            // Implementing basic streak for no-expense
             let streak = 0;
             const today = new Date();
-            // Check backwards from yesterday
             for (let i = 1; i < 100; i++) {
                 const d = new Date(today);
                 d.setDate(d.getDate() - i);
@@ -2205,8 +2240,6 @@
         }
         
         if (ach.type === 'month_positive') {
-            // Check if ANY month was positive (pure income - expense)
-            // Group by month
             const monthsMap = {};
             operations.forEach(op => {
                 const d = new Date(op.date);
@@ -2227,14 +2260,11 @@
         }
 
         if (ach.type === 'months_positive_series') {
-            // Check last 3 months
-            // Simplified: check if current and previous 2 months are positive
             let streak = 0;
             const now = new Date();
             for (let i = 0; i < 12; i++) {
                 const y = now.getFullYear();
                 const m = now.getMonth() - i;
-                // Adjust year/month
                 const realM = m < 0 ? 12 + m : m;
                 const realY = m < 0 ? y - 1 : y;
                 
@@ -2334,7 +2364,6 @@
             if (!achievementsUnlocked[ach.id] && checkCondition(ach)) {
                 achievementsUnlocked[ach.id] = new Date().toISOString();
                 changed = true;
-                // Show toast?
                 if (document.getElementById('achievementsScreen').classList.contains('active')) {
                      haptic('success');
                 }
@@ -2363,7 +2392,7 @@
             let progressWidth = '0%';
             
             if (isUnlocked) {
-                progressText = ''; // No text on opened cards usually, or date
+                progressText = '';
             } else {
                 if (ach.type === 'count' || ach.type === 'goal' || ach.type === 'cat_year' || ach.type === 'uniq_cats' || ach.type === 'cat_count' || ach.type === 'recurring_count' || ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') {
                     const fmtCur = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(cur) : cur;
@@ -2396,8 +2425,6 @@
         const [cur, target] = getProgress(ach);
         
         const cardContainer = document.getElementById('achDetailContent');
-        // Re-render card exactly like grid but larger? Or just clone?
-        // Let's create a dedicated large card structure
         const isLargeUnlocked = isUnlocked;
         let progressText = '';
         let progressWidth = '0%';
@@ -2479,7 +2506,7 @@
             closeMonthPicker();
             closeGoal();
             closeAchDetail();
-            closeFullCalendar(); // Closes both calendar and day details
+            closeFullCalendar();
         }
     };
 
@@ -2515,14 +2542,6 @@
 
     document.getElementById('prevYearBtn').onclick = () => { pickerYear--; renderMonthGrid(); haptic('light'); };
     document.getElementById('nextYearBtn').onclick = () => { pickerYear++; renderMonthGrid(); haptic('light'); };
-
-    document.querySelectorAll('.form-input').forEach(input => {
-        input.addEventListener('focus', function() {
-            setTimeout(() => {
-                this.scrollIntoView({ block: 'center', behavior: 'smooth' });
-            }, 300);
-        });
-    });
 
     // Initial Render
     updateUI();
