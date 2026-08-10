@@ -14,35 +14,29 @@
             --text-primary: #ffffff;
             --text-secondary: #8e94a3;
             --accent: #2962ff; /* Глубокий ночной синий */
-            --accent-hover: #1c44b8;
             --accent-text: #ffffff;
             --danger: #ff4b4b;
-            --success: #00c853;
+            --success: #2ecc71;
             --border: #2c303a;
-            --overlay: rgba(0, 0, 0, 0.7);
+            --overlay: rgba(0, 0, 0, 0.6);
             --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
         }
 
         [data-theme="light"] {
             --bg-color: #f2f3f5;
             --card-bg: #ffffff;
             --text-primary: #000000;
-            --text-secondary: #707579;
+            --text-secondary: #8e94a3;
             --accent: #2962ff;
-            --accent-hover: #1c44b8;
             --accent-text: #ffffff;
-            --danger: #d32f2f;
-            --success: #2e7d32;
+            --danger: #ff4b4b;
+            --success: #2ecc71;
             --border: #e0e0e0;
-            --overlay: rgba(0, 0, 0, 0.4);
+            --overlay: rgba(0, 0, 0, 0.3);
         }
 
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            -webkit-touch-callout: none;
-            user-select: none; /* Запрет выделения текста для ощущения нативности */
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
         
         body {
             margin: 0;
@@ -52,14 +46,9 @@
             color: var(--text-primary);
             transition: background-color 0.3s ease, color 0.3s ease;
             overflow-x: hidden;
-            padding-bottom: 80px;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Разрешаем выделение текста только в полях ввода */
-        input, textarea {
-            user-select: text;
-            -webkit-user-select: text;
+            padding-bottom: calc(80px + var(--safe-bottom));
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         /* Header & Month Navigation */
@@ -73,8 +62,8 @@
             justify-content: space-between;
             align-items: center;
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
+            padding-top: max(15px, env(safe-area-inset-top));
         }
 
         .month-nav {
@@ -93,7 +82,7 @@
             color: var(--text-primary);
             font-size: 24px;
             cursor: pointer;
-            padding: 8px;
+            padding: 5px 10px;
             border-radius: 50%;
             transition: background 0.2s;
             display: flex;
@@ -108,7 +97,7 @@
 
         .current-month-label {
             cursor: pointer;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 8px;
             transition: background 0.2s;
             white-space: nowrap;
@@ -147,18 +136,17 @@
         .chart-card:active { transform: scale(0.96); }
 
         .chart-title {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-secondary);
             margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            font-weight: 600;
         }
 
         .chart-container {
             position: relative;
-            width: 110px;
-            height: 110px;
+            width: 120px;
+            height: 120px;
         }
 
         .chart-center-text {
@@ -168,50 +156,47 @@
             transform: translate(-50%, -50%);
             text-align: center;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 16px;
             line-height: 1.2;
             pointer-events: none;
             width: 100%;
         }
         
         .chart-center-sub {
-            font-size: 9px;
+            font-size: 10px;
             color: var(--text-secondary);
             font-weight: 400;
-            margin-top: 2px;
         }
 
         .legend-list {
             width: 100%;
             margin-top: 10px;
-            max-height: 80px;
+            max-height: 100px;
             overflow-y: auto;
-            font-size: 10px;
-            padding-right: 2px;
+            font-size: 11px;
         }
         
         .legend-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
             padding: 2px 0;
         }
 
-        .legend-left { display: flex; align-items: center; gap: 5px; overflow: hidden; }
-        .legend-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-        .legend-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60px; color: var(--text-secondary); }
-        .legend-val { font-weight: 600; flex-shrink: 0; color: var(--text-primary); }
+        .legend-left { display: flex; align-items: center; gap: 6px; overflow: hidden; }
+        .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .legend-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; }
+        .legend-val { font-weight: 600; flex-shrink: 0; }
 
         /* Operations List */
         .section-title {
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 600;
             margin-bottom: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 5px;
         }
 
         .ops-list {
@@ -228,12 +213,12 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            animation: slideIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            animation: slideIn 0.3s ease forwards;
             opacity: 0;
             transform: translateY(10px);
             position: relative;
             overflow: hidden;
-            touch-action: manipulation;
+            cursor: pointer;
         }
 
         .op-item::before {
@@ -247,21 +232,20 @@
         }
 
         .op-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             background-color: rgba(255,255,255,0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
             flex-shrink: 0;
-            color: var(--cat-color);
         }
 
         .op-details { flex-grow: 1; min-width: 0; }
         .op-name { font-weight: 600; font-size: 15px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .op-date { font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; }
+        .op-date { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; }
         .auto-badge {
             font-size: 9px;
             background: var(--accent);
@@ -270,8 +254,6 @@
             border-radius: 4px;
             font-weight: 700;
             text-transform: uppercase;
-            margin-left: 5px;
-            vertical-align: middle;
         }
         .op-amount { font-weight: 700; font-size: 15px; white-space: nowrap; }
         .op-amount.income { color: var(--success); }
@@ -282,33 +264,30 @@
             padding: 40px 20px;
             color: var(--text-secondary);
             font-size: 14px;
-            line-height: 1.5;
         }
 
         /* FAB */
         .fab {
             position: fixed;
-            bottom: 25px;
+            bottom: calc(25px + var(--safe-bottom));
             right: 25px;
-            width: 56px;
-            height: 56px;
+            width: 60px;
+            height: 60px;
             background-color: var(--accent);
             color: var(--accent-text);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 300;
             box-shadow: 0 4px 15px rgba(41, 98, 255, 0.4);
             cursor: pointer;
             z-index: 90;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: none;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
         }
-        .fab:active { transform: scale(0.9); background-color: var(--accent-hover); }
+        .fab:active { transform: scale(0.9); }
 
         /* Bottom Sheet Modal */
         .modal-overlay {
@@ -319,8 +298,7 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(2px);
         }
         .modal-overlay.active { opacity: 1; visibility: visible; }
 
@@ -335,8 +313,8 @@
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.3);
-            -webkit-overflow-scrolling: touch;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+            padding-bottom: calc(20px + var(--safe-bottom));
         }
         .bottom-sheet.active { transform: translateY(0); }
 
@@ -347,7 +325,6 @@
             border-radius: 2px;
             margin: 0 auto 20px;
             opacity: 0.3;
-            flex-shrink: 0;
         }
 
         .sheet-header {
@@ -357,21 +334,7 @@
             margin-bottom: 20px;
         }
         .sheet-title { font-size: 20px; font-weight: 700; }
-        .close-btn { 
-            background: none; 
-            border: none; 
-            color: var(--text-secondary); 
-            font-size: 28px; 
-            cursor: pointer; 
-            padding: 0; 
-            width: 30px; 
-            height: 30px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            line-height: 1;
-        }
-        .close-btn:active { color: var(--text-primary); }
+        .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; padding: 5px; }
 
         /* Form Styles */
         .segment-control {
@@ -383,7 +346,7 @@
         }
         .segment-btn {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border: none;
             background: transparent;
             color: var(--text-secondary);
@@ -391,14 +354,12 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 14px;
-            -webkit-tap-highlight-color: transparent;
         }
-        .segment-btn.active.income { background-color: var(--success); color: #fff; box-shadow: 0 2px 8px rgba(0, 200, 83, 0.3); }
-        .segment-btn.active.expense { background-color: var(--danger); color: #fff; box-shadow: 0 2px 8px rgba(255, 75, 75, 0.3); }
+        .segment-btn.active.income { background-color: var(--success); color: #fff; box-shadow: 0 2px 8px rgba(46, 204, 113, 0.4); }
+        .segment-btn.active.expense { background-color: var(--danger); color: #fff; box-shadow: 0 2px 8px rgba(255, 75, 75, 0.4); }
 
         .form-group { margin-bottom: 15px; }
-        .form-label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500; }
+        .form-label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
         .form-input {
             width: 100%;
             padding: 14px;
@@ -406,17 +367,15 @@
             border: 1px solid transparent;
             border-radius: 12px;
             color: var(--text-primary);
-            font-size: 16px; /* Prevents zoom on iOS */
+            font-size: 16px;
             outline: none;
-            transition: border 0.2s, background 0.2s;
+            transition: border 0.2s;
             -webkit-appearance: none;
         }
-        .form-input:focus { 
-            border-color: var(--accent); 
-            background-color: rgba(255,255,255,0.08);
-        }
+        .form-input:focus { border-color: var(--accent); }
 
-        .repeat-toggle {
+        /* Fixed Label Structure for Repeat Toggle */
+        .repeat-toggle-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -424,14 +383,17 @@
             background-color: rgba(255,255,255,0.05);
             border-radius: 12px;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
+            margin-bottom: 0; 
         }
+        
         .switch {
             position: relative;
             display: inline-block;
             width: 50px;
             height: 28px;
             flex-shrink: 0;
+            margin-left: 10px;
+            pointer-events: auto; /* Ensure switch itself is clickable */
         }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
@@ -452,7 +414,6 @@
             background-color: white;
             transition: .4s;
             border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         input:checked + .slider { background-color: var(--accent); }
         input:checked + .slider:before { transform: translateX(22px); }
@@ -466,22 +427,15 @@
         .repeat-options.show { display: grid; }
         .radio-card {
             background: rgba(255,255,255,0.05);
-            padding: 12px;
-            border-radius: 10px;
+            padding: 10px;
+            border-radius: 8px;
             text-align: center;
             font-size: 13px;
             cursor: pointer;
             border: 2px solid transparent;
-            transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
-        .radio-card.selected { 
-            border-color: var(--accent); 
-            background: rgba(41, 98, 255, 0.15); 
-            color: var(--accent);
-            font-weight: 600;
-        }
-        .radio-card:active { transform: scale(0.96); }
+        .radio-card.selected { border-color: var(--accent); background: rgba(41, 98, 255, 0.15); }
 
         .submit-btn {
             width: 100%;
@@ -494,14 +448,34 @@
             font-weight: 700;
             margin-top: 10px;
             cursor: pointer;
-            transition: transform 0.1s, background-color 0.2s;
-            box-shadow: 0 4px 12px rgba(41, 98, 255, 0.3);
-            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.1s, opacity 0.2s;
         }
-        .submit-btn:active { 
-            transform: scale(0.98); 
-            background-color: var(--accent-hover);
+        .submit-btn:active { transform: scale(0.98); }
+        .submit-btn.disabled { opacity: 0.6; pointer-events: none; }
+
+        /* Custom Confirm Dialog */
+        .confirm-dialog {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
+            width: 85%;
+            max-width: 320px;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
         }
+        .confirm-dialog.active { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+        .confirm-text { margin-bottom: 20px; font-size: 16px; color: var(--text-primary); }
+        .confirm-actions { display: flex; gap: 10px; }
+        .btn-confirm { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .btn-cancel { background: rgba(255,255,255,0.1); color: var(--text-primary); }
+        .btn-delete { background: var(--danger); color: white; }
 
         /* Month Picker Modal */
         .month-picker-grid {
@@ -511,31 +485,16 @@
             margin-top: 20px;
         }
         .month-cell {
-            padding: 15px;
+            padding: 12px;
             background: rgba(255,255,255,0.05);
-            border-radius: 10px;
+            border-radius: 8px;
             text-align: center;
             cursor: pointer;
             font-size: 14px;
-            font-weight: 500;
-            transition: background 0.2s;
-            -webkit-tap-highlight-color: transparent;
         }
-        .month-cell:active { background: rgba(255,255,255,0.1); }
-        .month-cell.active { background: var(--accent); color: #fff; font-weight: bold; box-shadow: 0 4px 10px rgba(41, 98, 255, 0.4); }
-        
-        .year-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .btn-small { 
-            background: rgba(255,255,255,0.1); 
-            border: none; 
-            color: var(--text-primary); 
-            padding: 8px 12px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 14px;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .btn-small:active { background: rgba(255,255,255,0.2); transform: scale(0.95); }
+        .month-cell.active { background: var(--accent); color: #fff; font-weight: bold; }
+        .year-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .btn-small { background: rgba(255,255,255,0.1); border: none; color: var(--text-primary); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
 
         /* Animations */
         @keyframes slideIn {
@@ -614,7 +573,7 @@
         <button class="close-btn" onclick="closeModal()">×</button>
     </div>
 
-    <form id="opForm" onsubmit="return false;">
+    <form id="opForm">
         <input type="hidden" id="opId">
         
         <div class="segment-control">
@@ -634,13 +593,14 @@
         </div>
 
         <div class="form-group">
-            <label class="repeat-toggle" onclick="toggleRepeatOptions()">
+            <!-- Changed from label to div to avoid nested labels -->
+            <div class="repeat-toggle-container" id="repeatToggleContainer">
                 <span>Повторяющаяся операция</span>
                 <label class="switch">
                     <input type="checkbox" id="opRepeatCheck" onchange="toggleRepeatOptions()">
                     <span class="slider"></span>
                 </label>
-            </label>
+            </div>
             
             <div class="repeat-options" id="repeatOptions">
                 <div class="radio-card selected" onclick="setPeriod('day', this)">Ежедневно</div>
@@ -650,8 +610,7 @@
             </div>
         </div>
 
-        <!-- Кнопка теперь обрабатывается через onclick вместо submit формы -->
-        <button type="button" class="submit-btn" id="saveBtn">Сохранить</button>
+        <button type="submit" class="submit-btn" id="saveBtn">Сохранить</button>
     </form>
 </div>
 
@@ -682,46 +641,53 @@
     <button class="submit-btn" style="margin-top: 20px; background: rgba(255,255,255,0.1); color: var(--text-primary);" onclick="goToCurrentMonth()">Текущий месяц</button>
 </div>
 
+<!-- Custom Confirm Dialog -->
+<div class="modal-overlay" id="confirmOverlay" style="z-index: 1999;"></div>
+<div class="confirm-dialog" id="confirmDialog">
+    <div class="confirm-text" id="confirmText">Удалить операцию?</div>
+    <div class="confirm-actions">
+        <button class="btn-confirm btn-cancel" id="confirmCancelBtn">Отмена</button>
+        <button class="btn-confirm btn-delete" id="confirmOkBtn">Удалить</button>
+    </div>
+</div>
+
 <script>
     // --- Init & Config ---
     const tg = window.Telegram.WebApp;
-    
-    // Инициализация Telegram WebApp
     if (tg) {
         tg.ready();
         tg.expand();
-        // Установка цветов хедера под тему
-        tg.setHeaderColor(getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim());
     }
 
     // Theme Handling
     function applyTheme() {
-        const theme = (tg && tg.colorScheme === 'light') ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', theme);
-        if(tg) {
-             const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim();
-             tg.setHeaderColor(bg);
-        }
+        const scheme = (tg && tg.colorScheme) ? tg.colorScheme : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', scheme);
     }
     applyTheme();
-    if(tg) tg.onEvent('themeChanged', applyTheme);
+    if (tg) tg.onEvent('themeChanged', applyTheme);
 
     // State
-    let currentDate = new Date();
+    let viewState = {
+        year: new Date().getFullYear(),
+        month: new Date().getMonth()
+    };
+    
     let operations = JSON.parse(localStorage.getItem('fin_ops')) || [];
     let categoryColors = JSON.parse(localStorage.getItem('fin_colors')) || {};
     let currentType = 'expense';
     let currentPeriod = 'day';
     let charts = { income: null, expense: null };
-    let pickerYear = currentDate.getFullYear();
+    let pickerYear = viewState.year;
+    let isSaving = false;
 
     // Constants
     const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
     const fullMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
     
-    // Color Palettes (Updated for better contrast with dark blue theme)
-    const expensePalette = ['#ff5252', '#ff7043', '#ffa726', '#ffee58', '#ab47bc', '#ec407a', '#7e57c2'];
-    const incomePalette = ['#66bb6a', '#26a69a', '#42a5f5', '#29b6f6', '#00897b', '#66bb6a', '#9ccc65'];
+    // Color Palettes
+    const expensePalette = ['#ff4b4b', '#ff9f43', '#ffb142', '#feca57', '#54a0ff', '#5f27cd', '#c8d6e5'];
+    const incomePalette = ['#2ecc71', '#1abc9c', '#48dbfb', '#0abde3', '#10ac84', '#26de81', '#badc58'];
 
     // --- Helpers ---
     const saveData = () => {
@@ -742,15 +708,31 @@
 
     const formatMoney = (num) => new Intl.NumberFormat('ru-RU').format(num);
     
-    const haptic = (style = 'light') => { 
-        if(tg && tg.HapticFeedback) {
-            tg.HapticFeedback.impactOccurred(style);
+    const haptic = (style) => {
+        if (tg && tg.HapticFeedback) {
+            if (['success', 'error', 'warning'].includes(style)) {
+                tg.HapticFeedback.notificationOccurred(style);
+            } else {
+                tg.HapticFeedback.impactOccurred(style);
+            }
         }
     };
 
+    // Visual Viewport Handling for Mobile Keyboard
+    const vv = window.visualViewport;
+    if (vv) {
+        const fit = () => {
+            document.querySelectorAll('.bottom-sheet').forEach(s => {
+                s.style.maxHeight = vv.height + 'px';
+            });
+        };
+        vv.addEventListener('resize', fit);
+        fit();
+    }
+
     // --- Core Logic ---
 
-    function getFilteredOps(type = null, year = currentDate.getFullYear(), month = currentDate.getMonth()) {
+    function getFilteredOps(type = null, year = viewState.year, month = viewState.month) {
         return operations.filter(op => {
             const d = new Date(op.date);
             const matchDate = d.getFullYear() === year && d.getMonth() === month;
@@ -760,8 +742,8 @@
     }
 
     function updateUI() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
+        const year = viewState.year;
+        const month = viewState.month;
         
         // Header
         document.getElementById('monthLabel').textContent = `${fullMonths[month]} ${year}`;
@@ -804,7 +786,7 @@
             const autoBadge = op.isRecurring ? '<span class="auto-badge">AUTO</span>' : '';
 
             li.innerHTML = `
-                <div class="op-icon">●</div>
+                <div class="op-icon" style="color: ${color}">●</div>
                 <div class="op-details">
                     <div class="op-name">${op.category} ${autoBadge}</div>
                     <div class="op-date">${dateStr}</div>
@@ -812,14 +794,7 @@
                 <div class="op-amount ${amountClass}">${sign}${formatMoney(op.amount)}</div>
             `;
             
-            li.onclick = () => {
-                if(confirm(`Удалить операцию "${op.category}"?`)) {
-                    haptic('rigid');
-                    operations = operations.filter(o => o.id !== op.id);
-                    saveData();
-                    updateUI();
-                }
-            };
+            li.onclick = () => showDeleteConfirm(op.id);
             container.appendChild(li);
         });
     }
@@ -828,8 +803,7 @@
         const ctxId = type === 'income' ? 'incomeChart' : 'expenseChart';
         const totalId = type === 'income' ? 'totalIncomeVal' : 'totalExpenseVal';
         const legendId = type === 'income' ? 'incomeLegend' : 'expenseLegend';
-        const cardId = type === 'income' ? 'incomeChartCard' : 'expenseChartCard';
-
+        
         const total = ops.reduce((sum, op) => sum + op.amount, 0);
         document.getElementById(totalId).textContent = formatMoney(total);
 
@@ -842,36 +816,50 @@
 
         const labels = Object.keys(groups);
         const data = Object.values(groups);
-        const colors = labels.map(l => getColorForCategory(l, type));
+        
+        let colors = [];
+        if (labels.length === 0) {
+            // Placeholder for empty chart
+            colors = [getComputedStyle(document.documentElement).getPropertyValue('--border').trim()];
+        } else {
+            colors = labels.map(l => getColorForCategory(l, type));
+        }
 
         // Destroy old
-        if (charts[type]) charts[type].destroy();
+        if (charts[type]) {
+            charts[type].destroy();
+        }
 
         // Legend
         const legendContainer = document.getElementById(legendId);
         legendContainer.innerHTML = '';
-        labels.forEach((lab, i) => {
-            const pct = total > 0 ? ((data[i] / total) * 100).toFixed(0) : 0;
-            const div = document.createElement('div');
-            div.className = 'legend-item';
-            div.innerHTML = `
-                <div class="legend-left">
-                    <div class="legend-dot" style="background:${colors[i]}"></div>
-                    <div class="legend-name">${lab}</div>
-                </div>
-                <div class="legend-val">${pct}%</div>
-            `;
-            legendContainer.appendChild(div);
-        });
+        
+        if (labels.length > 0) {
+            labels.forEach((lab, i) => {
+                const pct = ((data[i] / total) * 100).toFixed(0);
+                const div = document.createElement('div');
+                div.className = 'legend-item';
+                div.innerHTML = `
+                    <div class="legend-left">
+                        <div class="legend-dot" style="background:${colors[i]}"></div>
+                        <div class="legend-name">${lab}</div>
+                    </div>
+                    <div class="legend-val">${pct}%</div>
+                `;
+                legendContainer.appendChild(div);
+            });
+        } else {
+            legendContainer.innerHTML = '<div style="text-align:center; color:var(--text-secondary); font-size:10px;">Нет данных</div>';
+        }
 
         // Chart.js
         const ctx = document.getElementById(ctxId).getContext('2d');
         charts[type] = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: labels,
+                labels: labels.length ? labels : [''],
                 datasets: [{
-                    data: data,
+                    data: data.length ? data : [1],
                     backgroundColor: colors,
                     borderWidth: 0,
                     hoverOffset: 10
@@ -891,17 +879,6 @@
                 }
             }
         });
-
-        // Tap Event
-        const card = document.getElementById(cardId);
-        // Удаляем старые слушатели клонированием элемента (простой способ)
-        const newCard = card.cloneNode(true);
-        card.parentNode.replaceChild(newCard, card);
-        
-        newCard.onclick = () => {
-            haptic('medium');
-            openDetails(type, ops);
-        };
     }
 
     // --- Modals & Forms ---
@@ -911,6 +888,14 @@
         document.getElementById('modalOverlay').classList.add('active');
         document.getElementById('addSheet').classList.add('active');
         
+        // Reset form state
+        document.getElementById('opForm').reset();
+        document.getElementById('opId').value = '';
+        document.getElementById('opRepeatCheck').checked = false;
+        toggleRepeatOptions();
+        setPeriod('day', document.querySelector('.radio-card'));
+        setType('expense');
+
         if (editOp) {
             document.getElementById('opId').value = editOp.id;
             document.getElementById('opAmount').value = editOp.amount;
@@ -918,27 +903,25 @@
             setType(editOp.type);
             document.getElementById('opRepeatCheck').checked = editOp.isRecurring || false;
             toggleRepeatOptions();
-            if(editOp.period) setPeriod(editOp.period, document.querySelector(`.radio-card[onclick*="${editOp.period}"]`));
-        } else {
-            document.getElementById('opForm').reset();
-            document.getElementById('opId').value = '';
-            setType('expense');
-            toggleRepeatOptions();
-            setPeriod('day', document.querySelector('.radio-card')); 
+            if(editOp.period) {
+                const radio = document.querySelector(`.radio-card[onclick*="${editOp.period}"]`);
+                if(radio) setPeriod(editOp.period, radio);
+            }
         }
         
         // Populate datalist
         const cats = [...new Set(operations.map(o => o.category))];
         const dl = document.getElementById('catSuggestions');
         dl.innerHTML = cats.map(c => `<option value="${c}">`).join('');
-        
-        // Фокус на поле суммы для удобства
-        setTimeout(() => document.getElementById('opAmount').focus(), 100);
+
+        // NO Auto Focus to prevent keyboard shift issues on mobile
     }
 
     function closeModal() {
         document.getElementById('modalOverlay').classList.remove('active');
         document.getElementById('addSheet').classList.remove('active');
+        // Blur any active input to close keyboard
+        if (document.activeElement) document.activeElement.blur();
     }
 
     function openDetails(type, ops) {
@@ -957,7 +940,7 @@
     // Month Picker
     function openMonthPicker() {
         haptic('light');
-        pickerYear = currentDate.getFullYear();
+        pickerYear = viewState.year;
         renderMonthGrid();
         document.getElementById('monthOverlay').classList.add('active');
         document.getElementById('monthSheet').classList.add('active');
@@ -974,11 +957,11 @@
         grid.innerHTML = '';
         months.forEach((m, idx) => {
             const div = document.createElement('div');
-            div.className = `month-cell ${idx === currentDate.getMonth() && pickerYear === currentDate.getFullYear() ? 'active' : ''}`;
+            div.className = `month-cell ${idx === viewState.month && pickerYear === viewState.year ? 'active' : ''}`;
             div.textContent = m;
             div.onclick = () => {
-                currentDate.setFullYear(pickerYear);
-                currentDate.setMonth(idx);
+                viewState.year = pickerYear;
+                viewState.month = idx;
                 updateUI();
                 closeMonthPicker();
                 haptic('medium');
@@ -989,7 +972,8 @@
 
     function goToCurrentMonth() {
         const now = new Date();
-        currentDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        viewState.year = now.getFullYear();
+        viewState.month = now.getMonth();
         updateUI();
         closeMonthPicker();
         haptic('medium');
@@ -1017,72 +1001,108 @@
         haptic('light');
     }
 
-    // ОБРАБОТЧИК СОХРАНЕНИЯ (ИСПРАВЛЕННЫЙ ДЛЯ ANDROID)
-    document.getElementById('saveBtn').onclick = function(e) {
-        e.preventDefault(); // Гарантированно предотвращаем любую стандартную форму
+    // Handle Repeat Toggle Container Click
+    document.getElementById('repeatToggleContainer').onclick = (e) => {
+        // Prevent double firing if clicking directly on the switch
+        if (e.target.closest('.switch')) return;
         
-        const amountInput = document.getElementById('opAmount');
-        const categoryInput = document.getElementById('opCategory');
+        const checkbox = document.getElementById('opRepeatCheck');
+        checkbox.checked = !checkbox.checked;
+        toggleRepeatOptions();
+        haptic('light');
+    };
+
+    // Save Button Handler
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.onclick = (e) => {
+        e.preventDefault();
         
-        if (!amountInput.value || !categoryInput.value.trim()) {
-            haptic('error');
-            amountInput.focus();
-            return;
+        if (isSaving) return;
+        
+        // Close keyboard first
+        if (document.activeElement) {
+            document.activeElement.blur();
         }
 
-        haptic('success');
-        
-        const id = document.getElementById('opId').value;
-        const amount = parseFloat(amountInput.value);
-        const category = categoryInput.value.trim();
-        const isRecurring = document.getElementById('opRepeatCheck').checked;
+        // Block button
+        isSaving = true;
+        saveBtn.classList.add('disabled');
+        saveBtn.textContent = 'Сохранение...';
 
-        if (id) {
-            // Edit existing
-            const idx = operations.findIndex(o => o.id == id);
-            if (idx > -1) {
-                // If editing a recurring series parent, we might want to update future ones too, 
-                // but for simplicity let's just update this record or the series logic can be complex.
-                // Here we update the specific record found by ID.
-                operations[idx] = { ...operations[idx], amount, category, type: currentType, isRecurring, period: isRecurring ? currentPeriod : null };
+        setTimeout(() => {
+            const form = document.getElementById('opForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                // Scroll to invalid field
+                const invalid = form.querySelector(':invalid');
+                if (invalid) {
+                    invalid.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                }
+                isSaving = false;
+                saveBtn.classList.remove('disabled');
+                saveBtn.textContent = 'Сохранить';
+                return;
             }
-        } else {
-            // New Operation
-            const now = new Date();
-            const baseOp = {
-                id: Date.now(),
-                date: now.toISOString(),
-                type: currentType,
-                amount,
-                category,
-                isRecurring,
-                period: isRecurring ? currentPeriod : null
-            };
-            operations.push(baseOp);
+
+            haptic('success');
             
-            // Generate future occurrences if recurring
-            if (isRecurring) {
-                let nextDate = new Date(now);
-                // Generate next 12 occurrences
-                for(let i=0; i<12; i++) {
-                    incrementDate(nextDate, currentPeriod);
-                    operations.push({
-                        id: Date.now() + i + 1, // Unique ID
-                        date: nextDate.toISOString(),
-                        type: currentType,
-                        amount,
-                        category,
-                        isRecurring: true,
-                        period: currentPeriod,
-                        parentId: baseOp.id
-                    });
+            const id = document.getElementById('opId').value;
+            const amount = parseFloat(document.getElementById('opAmount').value);
+            const category = document.getElementById('opCategory').value.trim();
+            const isRecurring = document.getElementById('opRepeatCheck').checked;
+
+            if (id) {
+                // Edit existing (remove future recurrences if changed? For simplicity, just update this one)
+                const idx = operations.findIndex(o => o.id == id);
+                if (idx > -1) {
+                    operations[idx] = { ...operations[idx], amount, category, type: currentType, isRecurring, period: isRecurring ? currentPeriod : null };
+                }
+            } else {
+                // New
+                const baseId = Date.now() + '-' + Math.random().toString(36).slice(2);
+                const now = new Date();
+                
+                operations.push({
+                    id: baseId,
+                    date: now.toISOString(),
+                    type: currentType,
+                    amount,
+                    category,
+                    isRecurring,
+                    period: isRecurring ? currentPeriod : null
+                });
+                
+                // Process Recurring Logic
+                if (isRecurring) {
+                    let nextDate = new Date(now);
+                    for(let i=0; i<12; i++) {
+                        incrementDate(nextDate, currentPeriod);
+                        operations.push({
+                            id: Date.now() + '-' + i + '-' + Math.random().toString(36).slice(2),
+                            date: nextDate.toISOString(),
+                            type: currentType,
+                            amount,
+                            category,
+                            isRecurring: true,
+                            period: currentPeriod,
+                            parentId: baseId
+                        });
+                    }
                 }
             }
-        }
 
-        saveData();
-        updateUI();
-        closeModal();
+            saveData();
+            updateUI();
+            closeModal();
+            
+            // Reset button state
+            setTimeout(() => {
+                isSaving = false;
+                saveBtn.classList.remove('disabled');
+                saveBtn.textContent = 'Сохранить';
+            }, 500);
+
+        }, 100);
     };
 
     function incrementDate(date, period) {
@@ -1092,32 +1112,95 @@
         if (period === 'year') date.setFullYear(date.getFullYear() + 1);
     }
 
+    // Custom Confirm Dialog Logic
+    let pendingDeleteId = null;
+    const confirmOverlay = document.getElementById('confirmOverlay');
+    const confirmDialog = document.getElementById('confirmDialog');
+    const confirmText = document.getElementById('confirmText');
+    const confirmOkBtn = document.getElementById('confirmOkBtn');
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+
+    function showDeleteConfirm(id) {
+        pendingDeleteId = id;
+        confirmText.textContent = "Удалить эту операцию?";
+        confirmOverlay.classList.add('active');
+        confirmDialog.classList.add('active');
+        haptic('warning');
+    }
+
+    function hideDeleteConfirm() {
+        pendingDeleteId = null;
+        confirmOverlay.classList.remove('active');
+        confirmDialog.classList.remove('active');
+    }
+
+    confirmOkBtn.onclick = () => {
+        if (pendingDeleteId) {
+            operations = operations.filter(o => o.id !== pendingDeleteId && o.parentId !== pendingDeleteId);
+            saveData();
+            updateUI();
+            haptic('success');
+            // If details sheet is open, refresh it or close it
+            if (document.getElementById('detailsSheet').classList.contains('active')) {
+                closeDetails();
+            }
+        }
+        hideDeleteConfirm();
+    };
+
+    confirmCancelBtn.onclick = hideDeleteConfirm;
+    confirmOverlay.onclick = hideDeleteConfirm;
+
     // --- Event Listeners ---
     document.getElementById('addBtn').onclick = () => openModal();
     
-    const overlay = document.getElementById('modalOverlay');
-    overlay.onclick = (e) => {
-        if(e.target === overlay) {
+    document.getElementById('modalOverlay').onclick = (e) => {
+        if(e.target === document.getElementById('modalOverlay')) {
             closeModal();
             closeDetails();
             closeMonthPicker();
         }
     };
 
+    // Chart Click Handlers (Attached once)
+    document.getElementById('incomeChartCard').onclick = () => {
+        haptic('medium');
+        const ops = getFilteredOps('income');
+        openDetails('income', ops);
+    };
+    document.getElementById('expenseChartCard').onclick = () => {
+        haptic('medium');
+        const ops = getFilteredOps('expense');
+        openDetails('expense', ops);
+    };
+
     document.getElementById('prevMonth').onclick = () => {
         haptic('light');
-        currentDate.setMonth(currentDate.getMonth() - 1);
+        const newDate = new Date(viewState.year, viewState.month - 1, 1);
+        viewState.year = newDate.getFullYear();
+        viewState.month = newDate.getMonth();
         updateUI();
     };
     document.getElementById('nextMonth').onclick = () => {
         haptic('light');
-        currentDate.setMonth(currentDate.getMonth() + 1);
+        const newDate = new Date(viewState.year, viewState.month + 1, 1);
+        viewState.year = newDate.getFullYear();
+        viewState.month = newDate.getMonth();
         updateUI();
     };
     document.getElementById('monthLabel').onclick = openMonthPicker;
 
     document.getElementById('prevYearBtn').onclick = () => { pickerYear--; renderMonthGrid(); haptic('light'); };
     document.getElementById('nextYearBtn').onclick = () => { pickerYear++; renderMonthGrid(); haptic('light'); };
+
+    // Input focus scroll handler
+    document.querySelectorAll('.form-input').forEach(input => {
+        input.addEventListener('focus', function() {
+            setTimeout(() => {
+                this.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }, 300);
+        });
+    });
 
     // Initial Render
     updateUI();
