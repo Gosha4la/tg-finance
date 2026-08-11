@@ -1087,6 +1087,11 @@
         settings.accent = 'blue';
         settings.bg = 'standard';
         localStorage.setItem('fin_settings', JSON.stringify(settings));
+        document.documentElement.style.removeProperty('--accent');
+        document.documentElement.style.removeProperty('--accent-text');
+        document.documentElement.style.removeProperty('--accent-glow');
+        document.documentElement.style.removeProperty('--bg-color');
+        document.documentElement.style.removeProperty('--card-bg');
         applyAppearance();
         haptic('success');
     }
@@ -1671,7 +1676,7 @@
         const grid = document.getElementById('fullCalGrid'); if(!grid) return; grid.innerHTML = '';
         weekDays.forEach(d => { const el = document.createElement('div'); el.className = 'cal-day-name'; el.textContent = d; grid.appendChild(el); });
         const firstDay = new Date(year, month, 1), lastDay = new Date(year, month + 1, 0);
-        const startOffset = (firstDay.getDay() + 6) % 7; const today = new Date();
+        const today = new Date();
         const monthOps = operations.filter(op => { const d = new Date(op.date); return d.getFullYear() === year && d.getMonth() === month; });
         const dayExpenses = {}, dayIncomes = {}; let maxExpense = 0;
         monthOps.forEach(op => {
@@ -2373,12 +2378,35 @@
     }
 
     async function doRestore() {
-        if (!tg || !tg.CloudStorage) return;
-        if (!confirm('Восстановить данные из облака? Текущие данные будут перезаписаны.')) return;
+        if (!tg || !tg.CloudStorage) {
+            alert('Доступно только в Telegram');
+            return;
+        }
         
+        // Use custom confirm dialog instead of native confirm
+        showDeleteConfirm('RESTORE_TRIGGER', 'restore');
+    }
+
+    // Handle restore confirmation via custom dialog
+    if(confirmOkBtn) {
+        const originalRestoreHandler = confirmOkBtn.onclick;
+        confirmOkBtn.onclick = () => {
+            if (pendingDeleteAction === 'restore') {
+                performRestore();
+                hideDeleteConfirm();
+            } else if (originalRestoreHandler) {
+                originalRestoreHandler();
+            }
+        };
+    }
+
+    async function performRestore() {
         try {
             const meta = await new Promise(resolve => tg.CloudStorage.getItem('fin_bk_meta', resolve));
-            if (!meta) return;
+            if (!meta) {
+                alert('Нет резервной копии в облаке');
+                return;
+            }
             const { chunks } = JSON.parse(meta);
             let json = '';
             for (let i = 0; i < chunks; i++) {
@@ -2396,7 +2424,7 @@
             
             location.reload();
         } catch (e) {
-            alert('Ошибка восстановления');
+            alert('Ошибка восстановления: ' + e.message);
         }
     }
 
