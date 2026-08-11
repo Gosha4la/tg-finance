@@ -916,8 +916,8 @@
         </label>
     </div>
     <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
-    <button class="btn-block btn-danger" onclick="confirmReset(false)">Удалить все данные</button>
-    <button class="btn-block btn-danger" style="background: #900;" onclick="confirmReset(true)">Полный сброс (включая достижения)</button>
+    <button class="btn-block btn-danger" onclick="confirmReset()">Удалить все данные</button>
+    <button class="btn-block btn-danger" style="background: #900;" onclick="confirmFullReset()">Полный сброс (включая достижения)</button>
     <div style="font-size: 11px; color: var(--text-secondary); text-align: center; margin-top: 10px;">
         Сброс удалит всё локально. Облачные копии не затрагиваются.
     </div>
@@ -940,8 +940,8 @@
     function applyTheme() {
         const scheme = (tg && tg.colorScheme === 'light') ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', scheme);
-        // Redraw analytics charts on theme change
-        if(document.getElementById('analyticsScreen').classList.contains('active')) {
+        // Redraw analytics if visible to update chart colors
+        if (document.getElementById('analyticsScreen').classList.contains('active')) {
             renderAnalytics();
         }
     }
@@ -1076,9 +1076,6 @@
         }
     };
 
-    // Helper: Check if operation is in the past or present
-    const isPast = (op) => new Date(op.date) <= new Date();
-
     const vv = window.visualViewport;
     if (vv) {
         const fit = () => document.querySelectorAll('.bottom-sheet').forEach(s => s.style.maxHeight = vv.height + 'px');
@@ -1102,6 +1099,9 @@
         }).sort((a, b) => new Date(b.date) - new Date(a.date));
     }
 
+    // Helper for Analytics: Only past operations
+    const isPast = op => new Date(op.date) <= new Date();
+
     function updateUI() {
         const year = viewState.year;
         const month = viewState.month;
@@ -1122,7 +1122,9 @@
         const monthExpense = expenseOps.reduce((sum, op) => sum + op.amount, 0);
         const monthBalance = carry + monthIncome - monthExpense;
         
-        // Total balance uses ALL operations (including future planned ones for context)
+        // Total balance considers ALL time (including future planned? No, usually total is real)
+        // But requirement says "Total" in main screen should show planned too if they are in the list?
+        // Let's stick to standard: Total is all operations in DB.
         const totalIncome = operations.filter(o => o.type === 'income').reduce((sum, op) => sum + op.amount, 0);
         const totalExpense = operations.filter(o => o.type === 'expense').reduce((sum, op) => sum + op.amount, 0);
         const totalBalance = totalIncome - totalExpense;
@@ -1220,6 +1222,20 @@
         });
     }
 
+    function setupCanvasHighDPI(canvasId, cssHeight) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return null;
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const w = Math.round(rect.width * dpr);
+        const h = Math.round(cssHeight * dpr);
+        canvas.width = w;
+        canvas.height = h;
+        canvas.style.width = '100%';
+        canvas.style.height = cssHeight + 'px';
+        return dpr;
+    }
+
     function renderChart(type, ops) {
         const ctxId = type === 'income' ? 'incomeChart' : 'expenseChart';
         const totalId = type === 'income' ? 'totalIncomeVal' : 'totalExpenseVal';
@@ -1248,7 +1264,7 @@
 
         let colors = [];
         if (labels.length === 0) colors = [getComputedStyle(document.documentElement).getPropertyValue('--border').trim()];
-        else colors = labels.map(l => l === 'Прочее' ? 'var(--text-secondary)' : getColorForCategory(l, type));
+        else colors = labels.map(l => l === 'Прочее' ? getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim() : getColorForCategory(l, type));
 
         const legendContainer = document.getElementById(legendId);
         if(legendContainer) {
@@ -1266,14 +1282,11 @@
             }
         }
 
-        const ctx = document.getElementById(ctxId)?.getContext('2d');
-        if(!ctx) return;
-
-        // Handle High DPI
-        const dpr = window.devicePixelRatio || 1;
         const canvas = document.getElementById(ctxId);
-        canvas.width = 120 * dpr;
-        canvas.height = 120 * dpr;
+        if(!canvas) return;
+        
+        const dpr = setupCanvasHighDPI(ctxId, 120);
+        const ctx = canvas.getContext('2d');
 
         if (charts[type]) {
             charts[type].data.labels = labels.length ? labels : [''];
@@ -1283,7 +1296,7 @@
         } else {
             charts[type] = new Chart(ctx, {
                 type: 'doughnut',
-                 { labels: labels.length ? labels : [''], datasets: [{  data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }] },
+                data: { labels: labels.length ? labels : [''], datasets: [{ data: data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }] },
                 options: { responsive: false, maintainAspectRatio: false, devicePixelRatio: dpr, cutout: '75%', plugins: { tooltip: { enabled: false }, legend: { display: false } }, animation: false }
             });
         }
@@ -1725,21 +1738,17 @@
     }
 
     function renderBarChart() {
-        const ctx = document.getElementById('barChart')?.getContext('2d');
-        if(!ctx) return;
-        
-        const dpr = window.devicePixelRatio || 1;
         const canvas = document.getElementById('barChart');
-        const w = canvas.parentElement.clientWidth;
-        canvas.width = Math.round(w * dpr);
-        canvas.height = Math.round(220 * dpr);
-
-        // Resolve colors
-        const cs = getComputedStyle(document.documentElement);
-        const successColor = cs.getPropertyValue('--success').trim();
-        const dangerColor = cs.getPropertyValue('--danger').trim();
-        const textColor = cs.getPropertyValue('--text-secondary').trim();
-
+        if(!canvas) return;
+        
+        const dpr = setupCanvasHighDPI('barChart', 220);
+        const ctx = canvas.getContext('2d');
+        
+        const rootStyles = getComputedStyle(document.documentElement);
+        const successColor = rootStyles.getPropertyValue('--success').trim();
+        const dangerColor = rootStyles.getPropertyValue('--danger').trim();
+        const textColor = rootStyles.getPropertyValue('--text-secondary').trim();
+        
         const now = new Date();
         const labels = [];
         const incData = [];
@@ -1752,7 +1761,7 @@
             labels.push(fullMonths[d.getMonth()].substring(0, 3));
             last6MonthsData.push({ year: d.getFullYear(), month: d.getMonth() });
             
-            // ONLY PAST OPERATIONS FOR ANALYTICS
+            // Only count PAST operations for analytics
             const ops = getFilteredOps(null, d.getFullYear(), d.getMonth()).filter(isPast);
             incData.push(ops.filter(o => o.type === 'income').reduce((s,o)=>s+o.amount, 0));
             expData.push(ops.filter(o => o.type === 'expense').reduce((s,o)=>s+o.amount, 0));
@@ -1762,11 +1771,11 @@
         
         charts.bar = new Chart(ctx, {
             type: 'bar',
-             {
+            data: {
                 labels: labels,
                 datasets: [
-                    { label: 'Доходы',  incData, backgroundColor: successColor, borderRadius: 6, maxBarThickness: 16 },
-                    { label: 'Расходы',  expData, backgroundColor: dangerColor, borderRadius: 6, maxBarThickness: 16 }
+                    { label: 'Доходы', data: incData, backgroundColor: successColor, borderRadius: 6, maxBarThickness: 16 },
+                    { label: 'Расходы', data: expData, backgroundColor: dangerColor, borderRadius: 6, maxBarThickness: 16 }
                 ]
             },
             options: {
@@ -1777,10 +1786,10 @@
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: cs.getPropertyValue('--card-bg').trim(),
-                        borderColor: cs.getPropertyValue('--border').trim(),
+                        backgroundColor: rootStyles.getPropertyValue('--card-bg').trim(),
+                        borderColor: rootStyles.getPropertyValue('--border').trim(),
                         borderWidth: 1,
-                        titleColor: cs.getPropertyValue('--text-primary').trim(),
+                        titleColor: rootStyles.getPropertyValue('--text-primary').trim(),
                         bodyColor: textColor,
                         padding: 10,
                         callbacks: {
@@ -1865,7 +1874,7 @@
         const totals = [0,0,0,0,0,0,0];
         const counts = [0,0,0,0,0,0,0];
         
-        // ONLY PAST OPERATIONS
+        // Only count PAST operations
         operations.filter(op => op.type === 'expense' && isPast(op)).forEach(op => {
             const d = new Date(op.date);
             const dayIdx = (d.getDay() + 6) % 7;
@@ -1894,7 +1903,7 @@
         if(!container) return;
         
         const year = new Date().getFullYear();
-        // ONLY PAST OPERATIONS
+        // Only count PAST operations in current year
         const ops = operations.filter(op => new Date(op.date).getFullYear() === year && isPast(op));
         const inc = ops.filter(o => o.type === 'income').reduce((s,o)=>s+o.amount, 0);
         const exp = ops.filter(o => o.type === 'expense').reduce((s,o)=>s+o.amount, 0);
@@ -2205,31 +2214,34 @@
         haptic('light');
     }
 
-    function confirmReset(full) {
+    function confirmReset() {
         const text = document.getElementById('confirmText');
+        if(text) text.textContent = "Удалить ВСЕ данные, КРОМЕ достижений?";
         const okBtn = document.getElementById('confirmOkBtn');
-        
-        if (full) {
-            text.textContent = "Стереть ВСЁ, включая достижения?";
-        } else {
-            text.textContent = "Удалить все данные (кроме достижений)?";
-        }
-
         if(okBtn) {
             okBtn.onclick = () => {
                 Object.keys(localStorage).forEach(k => {
-                    if (k.startsWith('fin_')) {
-                        if (full) {
-                            localStorage.removeItem(k);
-                        } else {
-                            if (k !== 'fin_achievements') localStorage.removeItem(k);
-                        }
-                    }
+                    if (k.startsWith('fin_') && k !== 'fin_achievements') localStorage.removeItem(k);
                 });
                 location.reload();
             };
         }
         showDeleteConfirm('RESET_TRIGGER');
+    }
+
+    function confirmFullReset() {
+        const text = document.getElementById('confirmText');
+        if(text) text.textContent = "Стереть ВСЁ, включая достижения?";
+        const okBtn = document.getElementById('confirmOkBtn');
+        if(okBtn) {
+            okBtn.onclick = () => {
+                Object.keys(localStorage).forEach(k => {
+                    if (k.startsWith('fin_')) localStorage.removeItem(k);
+                });
+                location.reload();
+            };
+        }
+        showDeleteConfirm('FULL_RESET_TRIGGER');
     }
 
     function openData() {
@@ -2244,24 +2256,22 @@
     }
 
     function getProgress(ach) {
-        // Achievements also use only past operations for fairness
-        const pastOps = operations.filter(isPast);
-        if (ach.type === 'count') return [pastOps.length, ach.target];
+        if (ach.type === 'count') return [operations.length, ach.target];
         if (ach.type === 'goal') return [goals.reduce((s,g)=>s+g.saved,0), ach.target];
         if (ach.type === 'cat_year') {
             const now = new Date(); const yearAgo = new Date(); yearAgo.setFullYear(now.getFullYear() - 1);
-            const sum = pastOps.filter(op => { const d = new Date(op.date); return d >= yearAgo && op.type === 'expense' && ach.catKeys.some(k => op.category.toLowerCase().includes(k)); }).reduce((s, op) => s + op.amount, 0);
+            const sum = operations.filter(op => { const d = new Date(op.date); return d >= yearAgo && op.type === 'expense' && ach.catKeys.some(k => op.category.toLowerCase().includes(k)); }).reduce((s, op) => s + op.amount, 0);
             return [sum, ach.target];
         }
-        if (ach.type === 'uniq_cats') return [new Set(pastOps.map(o => o.category)).size, ach.target];
-        if (ach.type === 'cat_count') return [pastOps.filter(op => ach.catKeys.some(k => op.category.toLowerCase().includes(k))).length, ach.target];
-        if (ach.type === 'recurring_count') return [pastOps.filter(op => op.isRecurring).length, ach.target];
+        if (ach.type === 'uniq_cats') return [new Set(operations.map(o => o.category)).size, ach.target];
+        if (ach.type === 'cat_count') return [operations.filter(op => ach.catKeys.some(k => op.category.toLowerCase().includes(k))).length, ach.target];
+        if (ach.type === 'recurring_count') return [operations.filter(op => op.isRecurring).length, ach.target];
         if (ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') {
             let streak = 0; const today = new Date();
             for (let i = 1; i < 100; i++) {
                 const d = new Date(today); d.setDate(d.getDate() - i); const dStr = d.toISOString().split('T')[0];
-                const hasExpense = pastOps.some(op => op.type === 'expense' && new Date(op.date).toISOString().startsWith(dStr));
-                const hasIncome = pastOps.some(op => op.type === 'income' && new Date(op.date).toISOString().startsWith(dStr));
+                const hasExpense = operations.some(op => op.type === 'expense' && new Date(op.date).toISOString().startsWith(dStr));
+                const hasIncome = operations.some(op => op.type === 'income' && new Date(op.date).toISOString().startsWith(dStr));
                 if (ach.type === 'series_no_exp') { if (hasExpense) break; streak++; }
                 else if (ach.type === 'series_no_exp_inc') { if (hasExpense || !hasIncome) break; streak++; }
             }
