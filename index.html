@@ -1483,7 +1483,7 @@
         } else {
             charts[type] = new Chart(ctx, {
                 type: 'doughnut',
-                 { labels: labels.length ? labels : [''], datasets: [{  data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }] },
+                data: { labels: labels.length ? labels : [''], datasets: [{ data: data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }] },
                 options: { responsive: false, maintainAspectRatio: false, devicePixelRatio: dpr, cutout: '75%', plugins: { tooltip: { enabled: false }, legend: { display: false } }, animation: false }
             });
         }
@@ -1684,6 +1684,7 @@
             if (op.type === 'expense') { dayExpenses[d] = (dayExpenses[d] || 0) + op.amount; if (dayExpenses[d] > maxExpense) maxExpense = dayExpenses[d]; }
             else dayIncomes[d] = true;
         });
+        const startOffset = (firstDay.getDay() + 6) % 7;
         for (let i = 0; i < startOffset; i++) grid.appendChild(document.createElement('div'));
         for (let d = 1; d <= lastDay.getDate(); d++) {
             const cell = document.createElement('div'); cell.className = 'cal-day-cell'; cell.textContent = d;
@@ -1967,11 +1968,11 @@
         
         charts.bar = new Chart(ctx, {
             type: 'bar',
-             {
+            data: {
                 labels: labels,
                 datasets: [
-                    { label: 'Доходы',  incData, backgroundColor: successColor, borderRadius: 6, maxBarThickness: 16 },
-                    { label: 'Расходы',  expData, backgroundColor: dangerColor, borderRadius: 6, maxBarThickness: 16 }
+                    { label: 'Доходы', data: incData, backgroundColor: successColor, borderRadius: 6, maxBarThickness: 16 },
+                    { label: 'Расходы', data: expData, backgroundColor: dangerColor, borderRadius: 6, maxBarThickness: 16 }
                 ]
             },
             options: {
