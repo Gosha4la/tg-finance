@@ -1293,7 +1293,7 @@
         } else {
             charts[type] = new Chart(ctx, {
                 type: 'doughnut',
-                 { labels: labels.length ? labels : [''], datasets: [{  data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }] },
+                data: { labels: labels.length ? labels : [''], datasets: [{ data: data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }] },
                 options: { responsive: false, maintainAspectRatio: false, devicePixelRatio: dpr, cutout: '75%', plugins: { tooltip: { enabled: false }, legend: { display: false } }, animation: false }
             });
         }
@@ -1777,11 +1777,11 @@
         
         charts.bar = new Chart(ctx, {
             type: 'bar',
-             {
+            data: {
                 labels: labels,
                 datasets: [
-                    { label: 'Доходы',  incData, backgroundColor: successColor, borderRadius: 6, maxBarThickness: 16 },
-                    { label: 'Расходы',  expData, backgroundColor: dangerColor, borderRadius: 6, maxBarThickness: 16 }
+                    { label: 'Доходы', data: incData, backgroundColor: successColor, borderRadius: 6, maxBarThickness: 16 },
+                    { label: 'Расходы', data: expData, backgroundColor: dangerColor, borderRadius: 6, maxBarThickness: 16 }
                 ]
             },
             options: {
@@ -2021,12 +2021,11 @@
             totalY += s.amount * 12;
             const color = getColorForCategory(s.name, 'expense');
             const div = document.createElement('div');
-            div.className = 'sub-card';
+            div.className = `sub-card ${s.active ? '' : 'inactive'}`;
             div.style.animation = `slideIn 0.3s ease forwards ${idx * 0.05}s`;
             div.style.opacity = '0';
             div.style.display = 'flex';
             div.style.alignItems = 'center';
-            div.className = `sub-card ${s.active ? '' : 'inactive'}`;
             div.innerHTML = `
                 <div class="sub-dot" style="background:${color}"></div>
                 <div class="sub-info">
@@ -2036,7 +2035,10 @@
                 <div class="sub-actions">
                     <button class="sub-move-btn" onclick="moveSub(${idx}, -1)">↑</button>
                     <button class="sub-move-btn" onclick="moveSub(${idx}, 1)">↓</button>
-                    <label class="switch" style="margin:0; width:46px; height:26px;"><input type="checkbox" ${s.active?'checked':''} onchange="toggleSubActive('${s.id}')"><span class="slider" style="height:26px; border-radius:26px;"><span style="height:20px; width:20px; left:3px; top:3px;"></span></span></label>
+                    <label class="switch" style="margin:0; width:46px; height:26px;">
+                        <input type="checkbox" ${s.active?'checked':''} onchange="toggleSubActive('${s.id}')">
+                        <span class="slider"></span>
+                    </label>
                     <button class="btn-small-action" onclick="openEditSub('${s.id}')">✎</button>
                 </div>
             `;
