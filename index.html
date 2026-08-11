@@ -977,7 +977,7 @@
     
     let currentOpDetail = null;
     let pendingDeleteId = null;
-    let pendingDeleteAction = null; // 'op' or 'sub'
+    let pendingDeleteAction = null;
     let last6MonthsData = [];
 
     const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
@@ -1786,42 +1786,21 @@
             },
             options: {
                 responsive: false,
-                maintainAspectRatio: false,
-                devicePixelRatio: dpr,
                 animation: false,
+                devicePixelRatio: window.devicePixelRatio || 1,
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: css.getPropertyValue('--card-bg').trim(),
-                        borderColor: css.getPropertyValue('--border').trim(),
-                        borderWidth: 1,
-                        titleColor: css.getPropertyValue('--text-primary').trim(),
-                        bodyColor: tickColor,
-                        padding: 10,
-                        callbacks: {
-                            label: (ctx) => ` ${ctx.dataset.label}: ${formatMoney(ctx.raw)} ₽`
-                        }
+                        backgroundColor: '#1a1d24', borderColor: '#2c303a', borderWidth: 1,
+                        titleColor: '#ffffff', bodyColor: '#8e94a3', padding: 10,
+                        callbacks: { label: (c) => ' ' + c.dataset.label + ': ' + formatMoney(c.parsed.y) + ' ₽' }
                     }
                 },
                 scales: {
-                    x: { grid: { display: false }, ticks: { color: tickColor, font: { size: 12, weight: '600' } } },
-                    y: { 
-                        beginAtZero: true,
-                        grid: { color: gridColor },
-                        ticks: { 
-                            color: tickColor, 
-                            font: { size: 11 }, 
-                            maxTicksLimit: 6,
-                            callback: (v) => v >= 1000 ? (v / 1000) + 'к' : v 
-                        }
-                    }
+                    x: { grid: { display: false }, ticks: { color: tickColor, font: { size: 12, weight: 600 } } },
+                    y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: tickColor, font: { size: 11 }, maxTicksLimit: 6, callback: (v) => v >= 1000 ? (v / 1000) + 'к' : v } }
                 },
-                onClick: (e, elements) => {
-                    if (elements.length > 0) {
-                        const index = elements[0].index;
-                        openMonthBreakdown(index);
-                    }
-                }
+                onClick: (e, els) => { if (els.length) openMonthBreakdown(els[0].index); }
             }
         });
     }
@@ -1967,7 +1946,7 @@
         let changed = false;
 
         subscriptions.forEach(sub => {
-            if (!sub.active) return; // Skip inactive
+            if (!sub.active) return;
 
             const exists = operations.some(op => 
                 op.isRecurring && op.parentId === `sub_${sub.id}` && 
