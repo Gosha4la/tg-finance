@@ -52,7 +52,7 @@
             user-select: none;
         }
 
-        /* Header */
+        /* Header & Month Navigation */
         header {
             position: sticky;
             top: 0;
@@ -68,14 +68,12 @@
         }
 
         .month-nav {
-            display: flex;
+            display: grid;
+            grid-template-columns: 40px 1fr 40px 40px;
             align-items: center;
-            gap: 15px;
-            font-weight: 600;
-            font-size: 18px;
+            gap: 4px;
             width: 100%;
-            justify-content: center;
-            position: relative;
+            padding: 0 8px;
         }
 
         .nav-btn {
@@ -84,16 +82,15 @@
             color: var(--text-primary);
             font-size: 24px;
             cursor: pointer;
-            padding: 5px 10px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             transition: background 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: absolute;
+            flex-shrink: 0;
         }
-        .nav-btn.prev { left: 0; }
-        .nav-btn.next { right: 0; }
         .nav-btn:active { background-color: var(--card-bg); transform: scale(0.9); }
 
         .current-month-label {
@@ -102,31 +99,26 @@
             border-radius: 8px;
             transition: background 0.2s;
             white-space: nowrap;
+            text-align: center;
+            font-weight: 600;
+            font-size: 18px;
         }
         .current-month-label:active { background-color: var(--card-bg); }
 
-        .header-actions {
-            position: absolute;
-            right: 0;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 50%;
+        .header-cloud-btn {
+            justify-self: end;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: color 0.2s, background 0.2s;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background 0.2s;
+            color: var(--text-primary);
         }
-        .icon-btn svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-        .icon-btn:active { background-color: var(--card-bg); color: var(--accent); }
+        .header-cloud-btn:active { background-color: var(--card-bg); }
+        .header-cloud-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 
         .container {
             padding: 20px 15px;
@@ -135,7 +127,6 @@
             padding-bottom: calc(var(--nav-height) + 20px);
         }
 
-        /* Charts & Cards */
         .charts-wrapper {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -153,7 +144,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             cursor: pointer;
             transition: transform 0.2s;
-            margin-bottom: 15px;
         }
         .chart-card:active { transform: scale(0.96); }
         .chart-title {
@@ -204,11 +194,13 @@
         .goal-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; }
         .goal-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary); font-size: 13px; text-align: center; }
         .goal-empty span { font-size: 24px; margin-bottom: 5px; opacity: 0.5; }
-        .goal-name { font-weight: 700; font-size: 14px; margin-bottom: 8px; color: var(--text-primary); }
-        .goal-progress-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
-        .goal-progress-bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 3px; }
-        .goal-stats { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); }
-        .goal-achieved { margin-top: 8px; font-size: 12px; color: var(--success); font-weight: 700; text-align: center; animation: pulse 1s infinite; }
+        
+        .goal-row { display: flex; flex-direction: column; gap: 8px; }
+        .goal-item-name { font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .goal-item-bar-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+        .goal-item-bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
+        .goal-item-stats { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-secondary); margin-top: 2px; }
+        .goal-more { font-size: 10px; color: var(--text-secondary); margin-top: 4px; }
 
         .calendar-card {
             background-color: var(--card-bg);
@@ -230,25 +222,7 @@
         .cal-day-cell:active { transform: scale(0.8); }
         .cal-day-cell.has-income::after { content: ''; position: absolute; top: 2px; right: 2px; width: 3px; height: 3px; background: var(--success); border-radius: 50%; }
 
-        /* Operations List & Search */
         .section-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .search-container {
-            width: 100%;
-            margin-bottom: 15px;
-            overflow: hidden;
-            transition: max-height 0.3s ease, opacity 0.3s ease;
-            max-height: 0;
-            opacity: 0;
-        }
-        .search-container.active { max-height: 200px; opacity: 1; }
-        .search-input-wrapper { display: flex; gap: 8px; margin-bottom: 8px; }
-        .search-input { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; color: var(--text-primary); outline: none; }
-        .chips-row { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
-        .chips-row::-webkit-scrollbar { display: none; }
-        .chip { padding: 4px 10px; background: rgba(255,255,255,0.05); border-radius: 12px; font-size: 12px; white-space: nowrap; cursor: pointer; border: 1px solid transparent; }
-        .chip.active { background: var(--accent); color: #fff; }
-        .chip.cat-chip { border-left: 3px solid; }
-
         .ops-list { list-style: none; padding: 0; margin: 0; }
         .op-item {
             background-color: var(--card-bg);
@@ -277,7 +251,23 @@
         .op-amount.expense { color: var(--danger); }
         .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 14px; }
 
-        /* FAB */
+        /* Search & Filter */
+        .search-container {
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            max-height: 0;
+            opacity: 0;
+        }
+        .search-container.active { max-height: 200px; opacity: 1; }
+        .search-input-wrapper { display: flex; gap: 8px; margin-bottom: 8px; }
+        .search-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; color: var(--text-primary); outline: none; }
+        .search-close { width: 36px; height: 36px; background: rgba(255,255,255,0.05); border: none; border-radius: 8px; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .chips-wrapper { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+        .chips-wrapper::-webkit-scrollbar { display: none; }
+        .chip { padding: 6px 12px; background: rgba(255,255,255,0.05); border-radius: 16px; font-size: 12px; white-space: nowrap; cursor: pointer; transition: background 0.2s; }
+        .chip.active { background: var(--accent); color: #fff; }
+
         .fab {
             position: fixed;
             bottom: calc(72px + var(--safe-bottom));
@@ -300,7 +290,6 @@
         }
         .fab:active { transform: scale(0.9); }
 
-        /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -314,11 +303,10 @@
             z-index: 80;
             padding-bottom: var(--safe-bottom);
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 9px; cursor: pointer; transition: color 0.2s; width: 25%; height: 100%; padding-bottom: var(--safe-bottom); margin-bottom: calc(-1 * var(--safe-bottom)); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 10px; cursor: pointer; transition: color 0.2s; width: 25%; height: 100%; padding-bottom: var(--safe-bottom); margin-bottom: calc(-1 * var(--safe-bottom)); }
         .nav-item svg { width: 22px; height: 22px; margin-bottom: 4px; stroke: currentColor; stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
         .nav-item.active { color: var(--accent); }
 
-        /* Bottom Sheet Modal */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -353,7 +341,6 @@
         .sheet-title { font-size: 20px; font-weight: 700; }
         .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; padding: 5px; }
 
-        /* Form Styles */
         .segment-control { display: flex; background-color: rgba(255,255,255,0.05); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
         .segment-btn { flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-secondary); font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
         .segment-btn.active.income { background-color: var(--success); color: #fff; box-shadow: 0 2px 8px rgba(46, 204, 113, 0.4); }
@@ -384,10 +371,10 @@
         .submit-btn { width: 100%; padding: 16px; background-color: var(--accent); color: var(--accent-text); border: none; border-radius: 14px; font-size: 16px; font-weight: 700; margin-top: 10px; cursor: pointer; transition: transform 0.1s, opacity 0.2s; }
         .submit-btn:active { transform: scale(0.98); }
         .submit-btn.disabled { opacity: 0.6; pointer-events: none; }
-        .submit-btn.danger { background-color: var(--danger); color: white; }
-        .submit-btn.secondary { background-color: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-small-action { padding: 8px 12px; background: rgba(255,255,255,0.05); border: none; border-radius: 8px; color: var(--text-primary); font-size: 13px; cursor: pointer; }
+        .btn-small-action:active { background: rgba(255,255,255,0.1); }
+        .btn-danger-text { color: var(--danger); }
 
-        /* Confirm Dialog */
         .confirm-dialog {
             position: fixed;
             top: 50%; left: 50%;
@@ -411,14 +398,12 @@
         .btn-cancel { background: rgba(255,255,255,0.1); color: var(--text-primary); }
         .btn-delete { background: var(--danger); color: white; }
 
-        /* Month Picker */
         .month-picker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
         .month-cell { padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; text-align: center; cursor: pointer; font-size: 14px; }
         .month-cell.active { background: var(--accent); color: #fff; font-weight: bold; }
         .year-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .btn-small { background: rgba(255,255,255,0.1); border: none; color: var(--text-primary); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
 
-        /* Tarot Card */
         .tarot-card {
             width: 170px;
             aspect-ratio: 1/2;
@@ -449,66 +434,11 @@
         .tarot-label { width: 100%; height: 18%; background: linear-gradient(to bottom, #c99a63, #b9854f); display: flex; align-items: center; justify-content: center; text-align: center; padding: 4px; box-sizing: border-box; border-top: 1px solid rgba(0,0,0,0.2); z-index: 2; flex-shrink: 0; }
         .tarot-name { font-family: 'Press Start 2P', cursive; font-size: 7px; color: #3a2413; line-height: 1.4; max-height: 100%; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; letter-spacing: 0.5px; }
 
-        /* Achievements Grid */
         .achievements-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 10px; }
         .ach-header { padding: 15px; text-align: center; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
         .ach-progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 8px; overflow: hidden; }
         .ach-progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
 
-        /* Analytics Specifics */
-        .analytics-chart-container {
-            position: relative;
-            width: 100%;
-            height: 220px;
-            margin: 0 auto 20px;
-        }
-        .analytics-chart-container canvas {
-            width: 100% !important;
-            height: 220px !important;
-        }
-        .heat-map-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .heat-cell {
-            aspect-ratio: 1;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.05);
-            font-size: 10px;
-            color: var(--text-secondary);
-        }
-        .heat-val { font-weight: 700; color: var(--text-primary); font-size: 11px; margin-top: 4px; }
-
-        /* Subscriptions Specifics */
-        .sub-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: slideIn 0.3s ease forwards;
-            opacity: 0;
-            transform: translateY(10px);
-            position: relative;
-            overflow: hidden;
-        }
-        .sub-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background-color: var(--cat-color); }
-        .sub-info { flex-grow: 1; }
-        .sub-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
-        .sub-meta { font-size: 12px; color: var(--text-secondary); }
-        .sub-actions { display: flex; gap: 8px; }
-        .btn-icon-sm { background: rgba(255,255,255,0.05); border: none; color: var(--text-secondary); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .btn-icon-sm:active { background: rgba(255,255,255,0.15); }
-
-        /* Animations */
         @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes fadeScale { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
@@ -524,6 +454,8 @@
 
         .chart-container { position: relative; width: 120px; height: 120px; margin: 0 auto; }
         .chart-container canvas { width: 120px !important; height: 120px !important; }
+        .chart-container-lg { position: relative; width: 100%; height: 220px; margin: 0 auto; }
+        .chart-container-lg canvas { width: 100% !important; height: 220px !important; }
 
         .legend-list { width: 100%; margin-top: 10px; max-height: 96px; overflow-y: auto; }
         .legend-item { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 4px; font-size: 11px; }
@@ -531,6 +463,28 @@
         .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
         .legend-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .legend-val { flex-shrink: 0; font-weight: 600; }
+
+        .heatmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; width: 100%; margin-top: 10px; }
+        .heat-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .heat-day { font-size: 10px; color: var(--text-secondary); }
+        .heat-square { width: 100%; aspect-ratio: 1; border-radius: 8px; background: rgba(255,255,255,0.06); }
+        .heat-val { font-size: 9px; color: var(--text-secondary); white-space: nowrap; }
+
+        .subs-list { display: flex; flex-direction: column; gap: 10px; }
+        .sub-card { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 12px; }
+        .sub-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .sub-info { flex: 1; min-width: 0; }
+        .sub-name { font-weight: 600; font-size: 14px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sub-detail { font-size: 11px; color: var(--text-secondary); }
+        .sub-actions { display: flex; gap: 8px; align-items: center; }
+        .sub-move-btn { background: none; border: none; color: var(--text-secondary); font-size: 16px; cursor: pointer; padding: 4px; }
+        .sub-move-btn:active { color: var(--accent); }
+
+        .backup-status { font-size: 12px; color: var(--text-secondary); margin: 10px 0; text-align: center; }
+        .btn-block { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 600; font-size: 14px; cursor: pointer; margin-bottom: 10px; }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: var(--text-primary); }
+        .btn-danger { background: var(--danger); color: #fff; }
     </style>
 </head>
 <body>
@@ -542,15 +496,14 @@
             <button class="nav-btn prev" id="prevMonth">‹</button>
             <div class="current-month-label" id="monthLabel">Сентябрь 2023</div>
             <button class="nav-btn next" id="nextMonth">›</button>
-        </div>
-        <div class="header-actions">
-            <button class="icon-btn" id="backupBtn" title="Данные и резервные копии">
-                <svg viewBox="0 0 24 24"><path d="M17.5 19c0-1.7-1.3-3-3-3h-1.1c-.1-2.4-2-4.3-4.4-4.3-2.1 0-3.9 1.5-4.3 3.5C2.6 15.6 1 17.5 1 19.8 1 22.1 2.9 24 5.2 24h12.3c2.5 0 4.5-2 4.5-4.5 0-2.3-1.8-4.2-4-4.5"/><path d="M12 3v9"/></svg>
-            </button>
+            <div class="header-cloud-btn" id="cloudBtn" title="Данные и бэкап">
+                <svg viewBox="0 0 24 24"><path d="M17.5 19c0-1.7-1.3-3-3-3h-1.1c-.1-2.9-2.5-5.2-5.4-5.2-2.6 0-4.8 1.8-5.3 4.3C1.2 15.6 0 17.1 0 19c0 2.2 1.8 4 4 4h13.5c2.2 0 4-1.8 4-4v-1c0-1.7-1.3-3-3-3z"/></svg>
+            </div>
         </div>
     </header>
 
     <div class="container">
+        <!-- Charts -->
         <div class="charts-wrapper">
             <div class="chart-card" id="incomeChartCard">
                 <div class="chart-title">Доходы</div>
@@ -576,19 +529,28 @@
             </div>
         </div>
 
+        <!-- Under Charts Grid (Goal + Calendar) -->
         <div class="under-charts-grid">
+            <!-- Goal Card -->
             <div class="goal-card" id="goalCard">
                 <div class="goal-content">
                     <div class="goal-header">Цели</div>
-                    <div class="goal-body" id="goalBody"></div>
+                    <div class="goal-body" id="goalBody">
+                        <!-- Content injected via JS -->
+                    </div>
                 </div>
             </div>
+
+            <!-- Calendar Card -->
             <div class="calendar-card" id="calendarCardBtn">
                 <div class="cal-header">Календарь</div>
-                <div class="mini-cal-grid" id="miniCalGrid"></div>
+                <div class="mini-cal-grid" id="miniCalGrid">
+                    <!-- Days injected via JS -->
+                </div>
             </div>
         </div>
 
+        <!-- Balance Card -->
         <div class="balance-card" id="balanceCard">
             <div class="balance-title">Остаток за месяц</div>
             <div class="balance-amount" id="monthBalanceVal">0 ₽</div>
@@ -596,29 +558,30 @@
             <div class="balance-total">Всего за всё время: <span id="totalBalanceVal">0</span> ₽</div>
         </div>
 
+        <!-- History -->
         <div class="section-title">
             История операций
-            <button class="icon-btn" id="searchToggleBtn">
-                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            </button>
-        </div>
-        
-        <div class="search-container" id="searchContainer">
-            <div class="search-input-wrapper">
-                <input type="text" class="search-input" id="searchInput" placeholder="Поиск по категории, заметке или сумме...">
-                <button class="icon-btn" id="searchClearBtn" style="display:none;">×</button>
-            </div>
-            <div class="chips-row" id="filterChips">
-                <div class="chip active" data-type="all">Все</div>
-                <div class="chip" data-type="income">Доходы</div>
-                <div class="chip" data-type="expense">Расходы</div>
-                <!-- Categories injected here -->
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size: 12px; color: var(--text-secondary); font-weight: 400;" id="historyCount">0 записей</span>
+                <svg id="searchIcon" style="width:20px;height:20px;stroke:var(--text-secondary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;cursor:pointer;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
             </div>
         </div>
 
-        <ul class="ops-list" id="opsList"></ul>
+        <!-- Search & Filter -->
+        <div class="search-container" id="searchContainer">
+            <div class="search-input-wrapper">
+                <input type="text" class="search-input" id="searchInput" placeholder="Поиск по названию, заметке или сумме...">
+                <button class="search-close" id="searchCloseBtn">×</button>
+            </div>
+            <div class="chips-wrapper" id="filterChips">
+                <!-- Chips injected via JS -->
+            </div>
+        </div>
+
+        <ul class="ops-list" id="opsList">
+            <!-- Items injected here -->
+        </ul>
         <div id="emptyState" class="empty-state" style="display: none;">В этом месяце пока нет операций.<br>Нажмите +, чтобы добавить.</div>
-        <div id="searchEmptyState" class="empty-state" style="display: none;">Ничего не найдено.</div>
     </div>
 </div>
 
@@ -630,23 +593,32 @@
         </div>
     </header>
     <div class="container">
-        <div class="chart-card">
-            <div class="chart-title">Последние 6 месяцев</div>
-            <div class="analytics-chart-container">
-                <canvas id="analyticsBarChart" width="600" height="440"></canvas>
+        <!-- 6 Months Bar Chart -->
+        <div class="chart-card" style="width:100%; margin-bottom: 20px; cursor: default;">
+            <div class="chart-title" style="display:flex; justify-content:center; gap:15px; align-items:center;">
+                <span>Последние 6 месяцев</span>
+                <div style="display:flex; gap:8px; font-size:11px; color:var(--text-secondary);">
+                    <div style="display:flex; align-items:center; gap:4px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--success)"></div>Доходы</div>
+                    <div style="display:flex; align-items:center; gap:4px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--danger)"></div>Расходы</div>
+                </div>
+            </div>
+            <div class="chart-container-lg">
+                <canvas id="barChart" width="680" height="440"></canvas>
             </div>
         </div>
 
-        <div class="chart-card">
+        <!-- Heatmap -->
+        <div class="chart-card" style="width:100%; margin-bottom: 20px; cursor: default;">
             <div class="chart-title">Тепловая карта дней недели</div>
-            <div class="heat-map-grid" id="heatMapGrid">
+            <div class="heatmap-grid" id="heatmapGrid">
                 <!-- Injected via JS -->
             </div>
         </div>
 
-        <div class="chart-card" id="yearSummaryCard">
+        <!-- Year Summary -->
+        <div class="chart-card" style="width:100%; cursor: default;">
             <div class="chart-title">Итог года</div>
-            <div id="yearSummaryContent" style="width: 100%; text-align: left;"></div>
+            <div id="yearSummaryContent" style="width:100%; padding: 10px 0;"></div>
         </div>
     </div>
 </div>
@@ -657,18 +629,20 @@
         <div class="month-nav" style="justify-content: space-between; padding: 0 10px;">
             <div style="width: 40px;"></div>
             <div class="current-month-label">Подписки</div>
-            <button class="icon-btn" id="addSubBtnHeader">
-                <svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-            </button>
+            <div style="width: 40px; text-align: right;">
+                <button class="btn-small" id="addSubBtn" style="background:var(--accent); color:#fff;">＋</button>
+            </div>
         </div>
     </header>
     <div class="container">
-        <div class="chart-card" style="margin-bottom: 20px; text-align: center;">
-            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 5px;">Ежемесячно / Ежегодно</div>
-            <div style="font-size: 18px; font-weight: 700;"><span id="subsMonthlySum">0</span> ₽ / <span id="subsYearlySum">0</span> ₽</div>
+        <div style="text-align: center; margin-bottom: 20px; font-size: 13px; color: var(--text-secondary);">
+            <span id="subsTotalMonth" style="color: var(--text-primary); font-weight: 700; font-size: 16px;">0 ₽</span> в месяц · 
+            <span id="subsTotalYear" style="color: var(--text-primary); font-weight: 700; font-size: 16px;">0 ₽</span> в год
         </div>
-        <div id="subsList"></div>
-        <div id="subsEmptyState" class="empty-state">Нет активных подписок.</div>
+        <div class="subs-list" id="subsList">
+            <!-- Injected via JS -->
+        </div>
+        <div id="subsEmpty" class="empty-state" style="display: none;">Нет активных подписок</div>
     </div>
 </div>
 
@@ -688,12 +662,15 @@
                 <div class="ach-progress-fill" id="achTotalProgress"></div>
             </div>
         </div>
-        <div class="achievements-grid" id="achievementsGrid"></div>
+        <div class="achievements-grid" id="achievementsGrid">
+            <!-- Cards injected via JS -->
+        </div>
     </div>
 </div>
 
 <button class="fab" id="addBtn">+</button>
 
+<!-- Bottom Navigation -->
 <div class="bottom-nav">
     <div class="nav-item active" id="navFinances" onclick="switchTab('finances')">
         <svg viewBox="0 0 24 24"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M20 7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5"/><circle cx="17" cy="13.5" r="1.2" fill="currentColor" stroke="none"/></svg>
@@ -713,14 +690,12 @@
     </div>
 </div>
 
-<!-- Modals & Sheets -->
+<!-- Add/Edit Modal -->
 <div class="modal-overlay" id="modalOverlay"></div>
-
-<!-- Add/Edit Op Sheet -->
 <div class="bottom-sheet" id="addSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
-        <div class="sheet-title">Операция</div>
+        <div class="sheet-title">Новая операция</div>
         <button class="close-btn" onclick="closeModal()">×</button>
     </div>
     <form id="opForm" onsubmit="return false;">
@@ -734,34 +709,34 @@
             <input type="number" id="opAmount" class="form-input" placeholder="0" required inputmode="decimal" autocomplete="off" enterkeyhint="done">
         </div>
         <div class="form-group">
-            <label class="form-label">Категория</label>
+            <label class="form-label">Категория / Название</label>
             <input type="text" id="opCategory" class="form-input" placeholder="Например: Продукты" required autocomplete="off" enterkeyhint="done">
             <div class="suggestions-container" id="categorySuggestions" style="display: none;"></div>
         </div>
         <div class="form-group">
-            <label class="form-label">Заметка</label>
+            <label class="form-label">Заметка (необязательно)</label>
             <input type="text" id="opNote" class="form-input" placeholder="Комментарий" autocomplete="off">
         </div>
         <div class="form-group">
             <div class="repeat-toggle-container" id="repeatToggleContainer">
-                <span>Повторяющаяся</span>
+                <span>Повторяющаяся операция</span>
                 <label class="switch">
                     <input type="checkbox" id="opRepeatCheck" onchange="toggleRepeatOptions()">
                     <span class="slider"></span>
                 </label>
             </div>
             <div class="repeat-options" id="repeatOptions">
-                <div class="radio-card selected" onclick="setPeriod('day', this)">День</div>
-                <div class="radio-card" onclick="setPeriod('week', this)">Неделя</div>
-                <div class="radio-card" onclick="setPeriod('month', this)">Месяц</div>
-                <div class="radio-card" onclick="setPeriod('year', this)">Год</div>
+                <div class="radio-card selected" onclick="setPeriod('day', this)">Ежедневно</div>
+                <div class="radio-card" onclick="setPeriod('week', this)">Еженедельно</div>
+                <div class="radio-card" onclick="setPeriod('month', this)">Ежемесячно</div>
+                <div class="radio-card" onclick="setPeriod('year', this)">Ежегодно</div>
             </div>
         </div>
         <button type="button" class="submit-btn" id="saveBtn">Сохранить</button>
     </form>
 </div>
 
-<!-- Op Detail Sheet -->
+<!-- Operation Details Modal -->
 <div class="bottom-sheet" id="opDetailSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
@@ -770,12 +745,12 @@
     </div>
     <div id="opDetailContent" style="padding-bottom: 20px;"></div>
     <div style="display: flex; gap: 10px; margin-top: 10px;">
-        <button class="submit-btn secondary" onclick="editCurrentOp()">Редактировать</button>
-        <button class="submit-btn danger" onclick="deleteCurrentOp()">Удалить</button>
+        <button class="submit-btn" style="background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border);" onclick="editCurrentOp()">Редактировать</button>
+        <button class="submit-btn" style="background: var(--danger); color: white;" onclick="deleteCurrentOp()">Удалить</button>
     </div>
 </div>
 
-<!-- Details List Sheet -->
+<!-- Details Modal (Chart Tap) -->
 <div class="bottom-sheet" id="detailsSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
@@ -785,12 +760,22 @@
     <ul class="ops-list" id="detailsList"></ul>
 </div>
 
-<!-- Month Picker -->
+<!-- Month Breakdown Modal (Bar Chart Tap) -->
+<div class="bottom-sheet" id="breakdownSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+        <div class="sheet-title" id="breakdownTitle">Месяц</div>
+        <button class="close-btn" onclick="closeBreakdown()">×</button>
+    </div>
+    <div id="breakdownContent"></div>
+</div>
+
+<!-- Month Picker Modal -->
 <div class="modal-overlay" id="monthOverlay"></div>
 <div class="bottom-sheet" id="monthSheet" style="height: auto; max-height: 80%;">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
-        <div class="sheet-title">Месяц</div>
+        <div class="sheet-title">Выберите месяц</div>
         <button class="close-btn" onclick="closeMonthPicker()">×</button>
     </div>
     <div class="year-nav">
@@ -799,10 +784,10 @@
         <button class="btn-small" id="nextYearBtn">Год ›</button>
     </div>
     <div class="month-picker-grid" id="monthGrid"></div>
-    <button class="submit-btn secondary" style="margin-top: 20px;" onclick="goToCurrentMonth()">Текущий месяц</button>
+    <button class="submit-btn" style="margin-top: 20px; background: rgba(255,255,255,0.1); color: var(--text-primary);" onclick="goToCurrentMonth()">Текущий месяц</button>
 </div>
 
-<!-- Full Calendar -->
+<!-- Full Calendar Modal -->
 <div class="modal-overlay" id="fullCalOverlay"></div>
 <div class="bottom-sheet" id="fullCalSheet">
     <div class="sheet-handle"></div>
@@ -819,38 +804,40 @@
     <div class="mini-cal-grid" id="fullCalGrid" style="gap: 4px;"></div>
 </div>
 
-<!-- Day Details -->
+<!-- Day Details Modal -->
 <div class="bottom-sheet super-layer" id="dayDetailsSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
-        <button class="btn-small" onclick="backToCalendar()" style="padding: 5px 10px;">‹ Календарь</button>
+        <button class="btn-small" onclick="backToCalendar()" style="padding: 5px 10px;">‹ К календарю</button>
         <div class="sheet-title" id="dayDetailsTitle" style="font-size: 18px;">День</div>
         <button class="close-btn" onclick="closeDayDetails()">×</button>
     </div>
     <div style="text-align: center; margin-bottom: 15px; font-size: 14px; color: var(--text-secondary);">
-        Итоги: <span id="dayIncomeSum" style="color: var(--success); font-weight: bold;"></span> <span id="dayExpenseSum" style="color: var(--danger); font-weight: bold; margin-left: 10px;"></span>
+        Итоги дня: <br>
+        <span id="dayIncomeSum" style="color: var(--success); font-weight: bold;"></span>
+        <span id="dayExpenseSum" style="color: var(--danger); font-weight: bold; margin-left: 10px;"></span>
     </div>
     <ul class="ops-list" id="dayDetailsList"></ul>
-    <div id="dayEmptyState" class="empty-state" style="display: none;">Нет операций.</div>
+    <div id="dayEmptyState" class="empty-state" style="display: none;">Нет операций за этот день.</div>
 </div>
 
-<!-- Goals Sheet -->
+<!-- Goals Modal -->
 <div class="bottom-sheet" id="goalsSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
         <div class="sheet-title">Цели</div>
         <button class="close-btn" onclick="closeGoals()">×</button>
     </div>
-    <button class="submit-btn secondary" style="margin-bottom: 15px;" onclick="openGoalEditor()">＋ Новая цель</button>
-    <div id="goalsList"></div>
+    <button class="btn-block btn-primary" onclick="openAddGoal()">＋ Новая цель</button>
+    <div id="goalsListContent" class="subs-list"></div>
 </div>
 
-<!-- Goal Editor Sheet -->
-<div class="bottom-sheet" id="goalEditorSheet">
+<!-- Add/Edit Goal Modal -->
+<div class="bottom-sheet" id="addGoalSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
-        <div class="sheet-title" id="goalEditorTitle">Цель</div>
-        <button class="close-btn" onclick="closeGoalEditor()">×</button>
+        <div class="sheet-title" id="addGoalTitle">Цель</div>
+        <button class="close-btn" onclick="closeAddGoal()">×</button>
     </div>
     <input type="hidden" id="editGoalId">
     <div class="form-group">
@@ -864,22 +851,22 @@
     <div class="form-group" id="goalCurrentGroup" style="display: none;">
         <label class="form-label">Накоплено</label>
         <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;" id="goalSavedDisplay">0 ₽</div>
-        <label class="form-label">Пополнить на</label>
+        <label class="form-label">Пополнить на сумму</label>
         <div style="display: flex; gap: 10px;">
             <input type="number" id="goalAddAmount" class="form-input" placeholder="0">
-            <button class="submit-btn" style="width: auto; margin: 0;" onclick="addToGoal()">OK</button>
+            <button class="submit-btn" style="width: auto; margin: 0;" onclick="addToGoal()">Пополнить</button>
         </div>
     </div>
     <button class="submit-btn" onclick="saveGoalSettings()">Сохранить</button>
-    <button class="submit-btn danger" id="deleteGoalBtn" style="margin-top: 10px; display: none;" onclick="deleteCurrentGoal()">Удалить цель</button>
+    <button class="submit-btn" id="deleteGoalBtn" style="background: transparent; color: var(--danger); border: 1px solid var(--danger); margin-top: 10px;" onclick="deleteGoal()">Удалить цель</button>
 </div>
 
-<!-- Subscriptions Editor Sheet -->
-<div class="bottom-sheet" id="subEditorSheet">
+<!-- Subscriptions Add/Edit Modal -->
+<div class="bottom-sheet" id="addSubSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
-        <div class="sheet-title" id="subEditorTitle">Подписка</div>
-        <button class="close-btn" onclick="closeSubEditor()">×</button>
+        <div class="sheet-title">Подписка</div>
+        <button class="close-btn" onclick="closeAddSub()">×</button>
     </div>
     <input type="hidden" id="editSubId">
     <div class="form-group">
@@ -895,10 +882,10 @@
         <input type="number" id="subDayInput" class="form-input" placeholder="15" min="1" max="31">
     </div>
     <button class="submit-btn" onclick="saveSubSettings()">Сохранить</button>
-    <button class="submit-btn danger" id="deleteSubBtn" style="margin-top: 10px; display: none;" onclick="deleteCurrentSub()">Удалить</button>
+    <button class="submit-btn" id="deleteSubBtn" style="background: transparent; color: var(--danger); border: 1px solid var(--danger); margin-top: 10px;" onclick="deleteSub()">Удалить</button>
 </div>
 
-<!-- Achievement Detail -->
+<!-- Achievement Detail Modal -->
 <div class="bottom-sheet" id="achDetailSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
@@ -911,34 +898,31 @@
     <div id="achDetailDate" style="text-align:center; color:var(--text-secondary); font-size:12px; display:none;"></div>
 </div>
 
-<!-- Data & Backup Sheet -->
+<!-- Data & Backup Modal -->
 <div class="bottom-sheet" id="dataSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
-        <div class="sheet-title">Данные</div>
-        <button class="close-btn" onclick="closeDataSheet()">×</button>
+        <div class="sheet-title">Данные и бэкап</div>
+        <button class="close-btn" onclick="closeData()">×</button>
     </div>
-    <div style="text-align: center; margin-bottom: 20px;">
-        <div style="font-size: 12px; color: var(--text-secondary);">Последний бэкап:</div>
-        <div id="lastBackupDate" style="font-size: 14px; font-weight: 600; margin-top: 4px;">Нет данных</div>
-    </div>
-    <button class="submit-btn" id="cloudBackupBtn" onclick="performCloudBackup()">Загрузить в облако</button>
-    <button class="submit-btn secondary" style="margin-top: 10px;" id="cloudRestoreBtn" onclick="performCloudRestore()">Восстановить из облака</button>
-    <div style="margin-top: 15px; display: flex; align-items: center; justify-content: space-between; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
-        <span style="font-size: 13px;">Автобэкап</span>
+    <div class="backup-status" id="backupStatus">Загрузка статуса...</div>
+    <button class="btn-block btn-primary" id="btnBackup" onclick="doBackup()">Загрузить в облако</button>
+    <button class="btn-block btn-secondary" id="btnRestore" onclick="doRestore()">Восстановить из облака</button>
+    <div style="margin: 15px 0; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 14px;">Автобэкап</span>
         <label class="switch" style="margin:0;">
-            <input type="checkbox" id="autoBackupToggle" onchange="toggleAutoBackup()">
+            <input type="checkbox" id="autoBackupCheck" onchange="toggleAutoBackup()">
             <span class="slider"></span>
         </label>
     </div>
     <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
-    <button class="submit-btn danger" onclick="showResetConfirm()">Удалить все данные</button>
+    <button class="btn-block btn-danger" onclick="confirmReset()">Удалить все данные</button>
     <div style="font-size: 11px; color: var(--text-secondary); text-align: center; margin-top: 10px;">
-        Доступно только в Telegram WebApp
+        Сброс удалит всё локально. Облачные копии не затрагиваются.
     </div>
 </div>
 
-<!-- Confirm Dialog -->
+<!-- Custom Confirm Dialog -->
 <div class="modal-overlay" id="confirmOverlay" style="z-index: 4000;"></div>
 <div class="confirm-dialog" id="confirmDialog">
     <div class="confirm-text" id="confirmText">Удалить операцию?</div>
@@ -949,7 +933,6 @@
 </div>
 
 <script>
-    // --- Core Init ---
     const tg = window.Telegram.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
 
@@ -960,38 +943,36 @@
     applyTheme();
     if (tg) tg.onEvent('themeChanged', applyTheme);
 
-    // State
     let viewState = { year: new Date().getFullYear(), month: new Date().getMonth() };
     let operations = JSON.parse(localStorage.getItem('fin_ops')) || [];
     let categoryColors = JSON.parse(localStorage.getItem('fin_colors')) || {};
     let currentType = 'expense';
     let currentPeriod = 'day';
-    let charts = { income: null, expense: null, analytics: null };
+    let charts = { income: null, expense: null, bar: null };
     let pickerYear = viewState.year;
     let isSaving = false;
     
-    // Multi-goals migration
+    // Migration: Single Goal -> Multiple Goals
     let goals = JSON.parse(localStorage.getItem('fin_goals')) || [];
     const oldGoal = localStorage.getItem('fin_goal');
     if (oldGoal) {
         try {
             const parsed = JSON.parse(oldGoal);
             if (parsed && parsed.name) {
-                goals.push({ id: Date.now().toString(), ...parsed });
+                goals.push({ id: Date.now().toString(), name: parsed.name, target: parsed.target, saved: parsed.saved || 0 });
                 localStorage.setItem('fin_goals', JSON.stringify(goals));
                 localStorage.removeItem('fin_goal');
             }
         } catch(e) { console.error("Goal migration failed", e); }
     }
 
-    let achievementsUnlocked = JSON.parse(localStorage.getItem('fin_achievements')) || {};
     let subscriptions = JSON.parse(localStorage.getItem('fin_subs')) || [];
+    let achievementsUnlocked = JSON.parse(localStorage.getItem('fin_achievements')) || {};
     let settings = JSON.parse(localStorage.getItem('fin_settings')) || { autoBackup: false };
     
     let currentOpDetail = null;
     let pendingDeleteId = null;
-    let searchActive = false;
-    let currentFilter = { type: 'all', text: '' };
+    let last6MonthsData = []; // For bar chart click mapping
 
     const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
     const fullMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
@@ -1008,15 +989,15 @@
         { id: 6, emoji: '🔥', name: 'Тлеющий уголь', desc: '3 дня подряд без расходов.', type: 'series_no_exp', target: 3 },
         { id: 7, emoji: '☄️', name: 'Чёрная комета', desc: '7 дней подряд без расходов.', type: 'series_no_exp', target: 7 },
         { id: 8, emoji: '🛡️', name: 'Клятва стали', desc: '14 дней подряд без расходов.', type: 'series_no_exp', target: 14 },
-        { id: 9, emoji: '🤫', name: 'Обет молчания', desc: '30 дней подряд без расходов.', type: 'series_no_exp', target: 30 },
-        { id: 10, emoji: '🎯', name: 'Первая дань', desc: 'Накопи 1 000 ₽ на цели.', type: 'goal_sum', target: 1000 },
-        { id: 11, emoji: '👝', name: 'Мешок теней', desc: 'Накопи 50 000 ₽.', type: 'goal_sum', target: 50000 },
-        { id: 12, emoji: '🧰', name: 'Сундук мертвеца', desc: 'Накопи 100 000 ₽.', type: 'goal_sum', target: 100000 },
-        { id: 13, emoji: '🐉', name: 'Гора дракона', desc: 'Накопи 200 000 ₽.', type: 'goal_sum', target: 200000 },
-        { id: 14, emoji: '⚱️', name: 'Жертвенник', desc: 'Накопи 500 000 ₽.', type: 'goal_sum', target: 500000 },
-        { id: 15, emoji: '💎', name: 'Сокровищница', desc: 'Накопи 800 000 ₽.', type: 'goal_sum', target: 800000 },
-        { id: 16, emoji: '🏰', name: 'Империя Тьмы', desc: 'Накопи 1 000 000 ₽.', type: 'goal_sum', target: 1000000 },
-        { id: 17, emoji: '👑', name: 'Владыка мира', desc: 'Накопи 10 000 000 ₽.', type: 'goal_sum', target: 10000000 },
+        { id: 9, emoji: '🤫', name: 'Обет молчания кошелька', desc: '30 дней подряд без расходов.', type: 'series_no_exp', target: 30 },
+        { id: 10, emoji: '🎯', name: 'Первая дань', desc: 'Накопи 1 000 ₽ на цели.', type: 'goal', target: 1000 },
+        { id: 11, emoji: '👝', name: 'Мешок теней', desc: 'Накопи 50 000 ₽.', type: 'goal', target: 50000 },
+        { id: 12, emoji: '🧰', name: 'Сундук мертвеца', desc: 'Накопи 100 000 ₽.', type: 'goal', target: 100000 },
+        { id: 13, emoji: '🐉', name: 'Гора дракона', desc: 'Накопи 200 000 ₽.', type: 'goal', target: 200000 },
+        { id: 14, emoji: '⚱️', name: 'Жертвенник', desc: 'Накопи 500 000 ₽.', type: 'goal', target: 500000 },
+        { id: 15, emoji: '💎', name: 'Сокровищница лича', desc: 'Накопи 800 000 ₽.', type: 'goal', target: 800000 },
+        { id: 16, emoji: '🏰', name: 'Империя Тьмы', desc: 'Накопи 1 000 000 ₽.', type: 'goal', target: 1000000 },
+        { id: 17, emoji: '👑', name: 'Владыка мира', desc: 'Накопи 10 000 000 ₽.', type: 'goal', target: 10000000 },
         { id: 18, emoji: '🍞', name: 'Скромный ужин', desc: 'Потрать 50 000 ₽ на еду за год.', type: 'cat_year', catKeys: ['еда', 'продукты', 'кафе', 'ресторан'], target: 50000 },
         { id: 19, emoji: '🍖', name: 'Пир во время чумы', desc: 'Потрать 100 000 ₽ на еду за год.', type: 'cat_year', catKeys: ['еда', 'продукты', 'кафе', 'ресторан'], target: 100000 },
         { id: 20, emoji: '🍽️', name: 'Пожиратель миров', desc: 'Потрать 500 000 ₽ на еду за год.', type: 'cat_year', catKeys: ['еда', 'продукты', 'кафе', 'ресторан'], target: 500000 },
@@ -1028,31 +1009,31 @@
         { id: 26, emoji: '🧥', name: 'Рваный плащ', desc: 'Потрать 20 000 ₽ на одежду за год.', type: 'cat_year', catKeys: ['одежд', 'обув', 'магазин'], target: 20000 },
         { id: 27, emoji: '⚔️', name: 'Доспех тщеславия', desc: 'Потрать 100 000 ₽ на одежду за год.', type: 'cat_year', catKeys: ['одежд', 'обув', 'магазин'], target: 100000 },
         { id: 28, emoji: '💚', name: 'Отвоёванный месяц', desc: 'Закрой месяц в плюс.', type: 'month_positive' },
-        { id: 29, emoji: '🏆', name: 'Чаша завоевателя', desc: 'Полностью накопи хотя бы одну цель.', type: 'goal_completed' },
+        { id: 29, emoji: '🏆', name: 'Чаша завоевателя', desc: 'Полностью накопи цель.', type: 'goal_completed' },
         { id: 30, emoji: '💰', name: 'Выкуп короля', desc: 'Получи разовый доход от 50 000 ₽.', type: 'single_income', target: 50000 },
         { id: 31, emoji: '🌈', name: 'Семь печатей', desc: 'Используй 8 разных категорий.', type: 'uniq_cats', target: 8 },
         { id: 32, emoji: '🦄', name: 'Повелитель теней', desc: 'Используй 15 разных категорий.', type: 'uniq_cats', target: 15 },
         { id: 33, emoji: '🎩', name: 'Лорд бюджета', desc: '3 месяца подряд в плюс.', type: 'months_positive_series', target: 3 },
-        { id: 34, emoji: '📿', name: 'Коллекционер', desc: 'Используй 25 разных категорий.', type: 'uniq_cats', target: 25 },
-        { id: 35, emoji: '🌙', name: 'Дитя ночи', desc: 'Операция с 00:00 до 05:00.', type: 'time_range', start: 0, end: 5 },
-        { id: 36, emoji: '🦇', name: 'Ранняя пташка', desc: 'Операция с 05:00 до 06:00.', type: 'time_range', start: 5, end: 6 },
-        { id: 37, emoji: '🤡', name: 'Щедрость безумца', desc: 'Разовая трата от 10 000 ₽.', type: 'single_expense', target: 10000 },
+        { id: 34, emoji: '📿', name: 'Коллекционер проклятий', desc: 'Используй 25 разных категорий.', type: 'uniq_cats', target: 25 },
+        { id: 35, emoji: '🌙', name: 'Дитя ночи', desc: 'Добавь операцию с полуночи до 5 утра.', type: 'time_range', start: 0, end: 5 },
+        { id: 36, emoji: '🦇', name: 'Ранняя пташка-нежить', desc: 'Добавь операцию с 5 до 6 утра.', type: 'time_range', start: 5, end: 6 },
+        { id: 37, emoji: '🤡', name: 'Щедрость безумца', desc: 'Соверши разовую трату от 10 000 ₽.', type: 'single_expense', target: 10000 },
         { id: 38, emoji: '👺', name: 'Грошовый бес', desc: 'Потрать ровно 1 ₽.', type: 'exact_amount', target: 1, expenseOnly: true },
         { id: 39, emoji: '☕', name: 'Повелитель кофе', desc: '10 операций с категорией „кофе".', type: 'cat_count', catKeys: ['кофе'], target: 10 },
-        { id: 40, emoji: '🚕', name: 'Таксист Преисподней', desc: '20 операций транспорта.', type: 'cat_count', catKeys: ['проезд', 'транспорт', 'такси', 'метро', 'авто'], target: 20 },
+        { id: 40, emoji: '🚕', name: 'Таксист Преисподней', desc: '20 операций с категорией транспорта.', type: 'cat_count', catKeys: ['проезд', 'транспорт', 'такси', 'метро', 'авто'], target: 20 },
         { id: 41, emoji: '📜', name: 'Повелитель подписок', desc: '5 активных повторяющихся операций.', type: 'recurring_count', target: 5 },
         { id: 42, emoji: '🔢', name: 'Маг чисел', desc: 'Операция ровно на 666 ₽.', type: 'exact_amount', target: 666 },
         { id: 43, emoji: '🗡️', name: 'Рыцарь пятницы', desc: 'Потрать от 5 000 ₽ в пятницу.', type: 'friday_expense', target: 5000 },
-        { id: 44, emoji: '⚗️', name: 'Алхимик баланса', desc: 'День: доходы равны расходам.', type: 'day_equal' },
+        { id: 44, emoji: '⚗️', name: 'Алхимик баланса', desc: 'День, в котором доходы равны расходам.', type: 'day_equal' },
         { id: 45, emoji: '🐹', name: 'Хомяк Апокалипсиса', desc: '7 дней подряд с доходом и без трат.', type: 'series_no_exp_inc', target: 7 },
         { id: 46, emoji: '🏴‍☠️', name: 'Чёрная метка', desc: 'Потрать от 20 000 ₽ за один день.', type: 'day_expense', target: 20000 },
         { id: 47, emoji: '🕸️', name: 'Нищий король', desc: 'Закрой месяц с нулевым балансом.', type: 'month_zero' },
-        { id: 48, emoji: '🔁', name: 'Дежавю', desc: 'Две одинаковые операции в один день.', type: 'duplicate_op' },
+        { id: 48, emoji: '🔁', name: 'Дежавю', desc: 'Две одинаковые операции (сумма и категория) в один день.', type: 'duplicate_op' },
         { id: 49, emoji: '🕯️', name: 'Старожил', desc: 'Год с даты первой операции.', type: 'one_year_since_first' },
         { id: 50, emoji: '🐲', name: 'Тёмный властелин', desc: 'Открой остальные 49 достижений.', type: 'all_unlocked' }
     ];
 
-    const saveData = (skipAutoBackup = false) => {
+    const saveData = () => {
         localStorage.setItem('fin_ops', JSON.stringify(operations));
         localStorage.setItem('fin_colors', JSON.stringify(categoryColors));
         localStorage.setItem('fin_goals', JSON.stringify(goals));
@@ -1060,10 +1041,17 @@
         localStorage.setItem('fin_achievements', JSON.stringify(achievementsUnlocked));
         localStorage.setItem('fin_settings', JSON.stringify(settings));
         
-        if (!skipAutoBackup && settings.autoBackup && tg && tg.CloudStorage) {
-            debounceCloudBackup();
+        if (settings.autoBackup) {
+            debounceBackup();
         }
     };
+
+    // Debounce for Auto Backup
+    let backupTimeout;
+    function debounceBackup() {
+        clearTimeout(backupTimeout);
+        backupTimeout = setTimeout(() => { doBackup(); }, 2000);
+    }
 
     const getColorForCategory = (cat, type) => {
         if (!categoryColors[cat]) {
@@ -1071,7 +1059,7 @@
             const usedColors = Object.values(categoryColors);
             const available = palette.filter(c => !usedColors.includes(c));
             categoryColors[cat] = available.length > 0 ? available[0] : palette[Math.floor(Math.random() * palette.length)];
-            saveData(true);
+            saveData();
         }
         return categoryColors[cat];
     };
@@ -1098,133 +1086,6 @@
         });
     }
 
-    // --- Navigation ---
-    function switchTab(tabName) {
-        document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        
-        const screen = document.getElementById(tabName + 'Screen');
-        const nav = document.getElementById('nav' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
-        const fab = document.getElementById('addBtn');
-        
-        if (screen) screen.classList.add('active');
-        if (nav) nav.classList.add('active');
-        
-        if (tabName === 'finances') {
-            if(fab) fab.style.display = 'flex';
-            updateUI();
-        } else {
-            if(fab) fab.style.display = 'none';
-            if (tabName === 'analytics') renderAnalytics();
-            if (tabName === 'subs') renderSubscriptions();
-            if (tabName === 'achievements') renderAchievementsGrid();
-        }
-        haptic('light');
-    }
-
-    // --- Search & Filter ---
-    const searchToggleBtn = document.getElementById('searchToggleBtn');
-    const searchContainer = document.getElementById('searchContainer');
-    const searchInput = document.getElementById('searchInput');
-    const searchClearBtn = document.getElementById('searchClearBtn');
-    const filterChips = document.getElementById('filterChips');
-
-    if(searchToggleBtn) {
-        searchToggleBtn.onclick = () => {
-            searchActive = !searchActive;
-            searchContainer.classList.toggle('active', searchActive);
-            if (!searchActive) {
-                currentFilter.text = '';
-                currentFilter.type = 'all';
-                searchInput.value = '';
-                searchClearBtn.style.display = 'none';
-                updateFilterChips();
-                renderList('opsList', getFilteredOps());
-            } else {
-                searchInput.focus();
-                renderFilterChips();
-            }
-            haptic('light');
-        };
-    }
-
-    if(searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            currentFilter.text = e.target.value.toLowerCase();
-            searchClearBtn.style.display = currentFilter.text ? 'flex' : 'none';
-            applyFilter();
-        });
-    }
-
-    if(searchClearBtn) {
-        searchClearBtn.onclick = () => {
-            searchInput.value = '';
-            currentFilter.text = '';
-            searchClearBtn.style.display = 'none';
-            applyFilter();
-            searchInput.focus();
-        };
-    }
-
-    function renderFilterChips() {
-        const cats = [...new Set(operations.map(o => o.category))];
-        let html = `<div class="chip ${currentFilter.type === 'all' ? 'active' : ''}" data-type="all">Все</div>
-                    <div class="chip ${currentFilter.type === 'income' ? 'active' : ''}" data-type="income">Доходы</div>
-                    <div class="chip ${currentFilter.type === 'expense' ? 'active' : ''}" data-type="expense">Расходы</div>`;
-        cats.forEach(cat => {
-            const color = getColorForCategory(cat, 'expense'); // Default to expense color for chip border
-            const isActive = currentFilter.type === 'cat' && currentFilter.cat === cat;
-            html += `<div class="chip cat-chip ${isActive ? 'active' : ''}" data-type="cat" data-cat="${cat}" style="border-color: ${isActive ? color : 'transparent'}">${cat}</div>`;
-        });
-        filterChips.innerHTML = html;
-        
-        filterChips.querySelectorAll('.chip').forEach(chip => {
-            chip.onclick = () => {
-                const type = chip.dataset.type;
-                if (type === 'cat') {
-                    currentFilter.type = 'cat';
-                    currentFilter.cat = chip.dataset.cat;
-                } else {
-                    currentFilter.type = type;
-                    currentFilter.cat = null;
-                }
-                updateFilterChips();
-                applyFilter();
-                haptic('light');
-            };
-        });
-    }
-
-    function updateFilterChips() {
-        // Re-render to update active states without full DOM rebuild if needed, 
-        // but for simplicity re-rendering is fine given small dataset
-        renderFilterChips();
-    }
-
-    function applyFilter() {
-        const allOps = getFilteredOps(); // Get month ops
-        const filtered = allOps.filter(op => {
-            const matchText = !currentFilter.text || 
-                              op.category.toLowerCase().includes(currentFilter.text) || 
-                              (op.note && op.note.toLowerCase().includes(currentFilter.text)) ||
-                              op.amount.toString().includes(currentFilter.text);
-            
-            let matchType = true;
-            if (currentFilter.type === 'income') matchType = op.type === 'income';
-            else if (currentFilter.type === 'expense') matchType = op.type === 'expense';
-            else if (currentFilter.type === 'cat') matchType = op.category === currentFilter.cat;
-
-            return matchText && matchType;
-        });
-
-        renderList('opsList', filtered);
-        const emptyEl = document.getElementById('emptyState');
-        const searchEmptyEl = document.getElementById('searchEmptyState');
-        if(emptyEl) emptyEl.style.display = 'none';
-        if(searchEmptyEl) searchEmptyEl.style.display = filtered.length === 0 && currentFilter.text ? 'block' : 'none';
-    }
-
-    // --- Core Logic ---
     function getFilteredOps(type = null, year = viewState.year, month = viewState.month) {
         return operations.filter(op => {
             const d = new Date(op.date);
@@ -1240,9 +1101,6 @@
         const monthLabel = document.getElementById('monthLabel');
         if(monthLabel) monthLabel.textContent = `${fullMonths[month]} ${year}`;
         
-        // Process Subscriptions (Auto-create)
-        processSubscriptions();
-
         const ops = getFilteredOps();
         const incomeOps = ops.filter(o => o.type === 'income');
         const expenseOps = ops.filter(o => o.type === 'expense');
@@ -1269,7 +1127,7 @@
         const carryEl = document.getElementById('balanceCarryVal');
         if(carryEl) {
             if (carry !== 0) {
-                carryEl.textContent = `Перенос: ${(carry >= 0 ? '+' : '') + formatMoney(carry)} ₽`;
+                carryEl.textContent = `Перенос с прошлых месяцев: ${(carry >= 0 ? '+' : '') + formatMoney(carry)} ₽`;
                 carryEl.style.display = 'block';
             } else carryEl.style.display = 'none';
         }
@@ -1282,35 +1140,53 @@
         const totalEl = document.getElementById('totalBalanceVal');
         if(totalEl) totalEl.textContent = formatMoney(totalBalance);
 
-        // Apply search filter if active
-        if (searchActive) applyFilter();
-        else {
-            renderList('opsList', ops);
-            const countEl = document.getElementById('historyCount');
-            if(countEl) countEl.textContent = `${ops.length} записей`;
-            const emptyEl = document.getElementById('emptyState');
-            if(emptyEl) emptyEl.style.display = ops.length === 0 ? 'block' : 'none';
-            const searchEmptyEl = document.getElementById('searchEmptyState');
-            if(searchEmptyEl) searchEmptyEl.style.display = 'none';
-        }
+        renderList('opsList', ops);
+        const countEl = document.getElementById('historyCount');
+        if(countEl) countEl.textContent = `${ops.length} записей`;
+        const emptyEl = document.getElementById('emptyState');
+        if(emptyEl) emptyEl.style.display = ops.length === 0 ? 'block' : 'none';
 
         renderChart('income', incomeOps);
         renderChart('expense', expenseOps);
         renderGoalCard();
         renderMiniCalendar();
         checkAchievements();
+        renderAchievementsGrid();
+        processSubscriptions();
     }
 
-    function renderList(containerId, data) {
+    function renderList(containerId, data, searchQuery = '', filterType = 'all', filterCat = '') {
         const container = document.getElementById(containerId);
         if(!container) return;
         container.innerHTML = '';
-        if (data.length === 0) {
-            if(containerId === 'opsList') return; 
+        
+        let filtered = data;
+        if (searchQuery) {
+            const q = searchQuery.toLowerCase();
+            filtered = data.filter(op => 
+                op.category.toLowerCase().includes(q) || 
+                (op.note && op.note.toLowerCase().includes(q)) ||
+                op.amount.toString().includes(q)
+            );
+        }
+        if (filterType !== 'all') {
+            filtered = filtered.filter(op => op.type === filterType);
+        }
+        if (filterCat) {
+            filtered = filtered.filter(op => op.category === filterCat);
+        }
+
+        if (filtered.length === 0) {
+            if(containerId === 'opsList') {
+                if(data.length === 0) return; 
+                container.innerHTML = '<li class="empty-state">Ничего не найдено</li>';
+                return;
+            }
             container.innerHTML = '<li class="empty-state">Нет операций</li>';
             return;
         }
-        data.forEach((op, index) => {
+
+        filtered.forEach((op, index) => {
             const color = getColorForCategory(op.category, op.type);
             const li = document.createElement('li');
             li.className = 'op-item';
@@ -1374,13 +1250,7 @@
                     const pct = total > 0 ? ((data[i] / total) * 100).toFixed(0) : 0;
                     const div = document.createElement('div');
                     div.className = 'legend-item';
-                    div.innerHTML = `
-                        <div class="legend-left">
-                            <div class="legend-dot" style="background:${colors[i]}"></div>
-                            <div class="legend-name">${lab}</div>
-                        </div>
-                        <div class="legend-val">${pct}%</div>
-                    `;
+                    div.innerHTML = `<div class="legend-left"><div class="legend-dot" style="background:${colors[i]}"></div><div class="legend-name">${lab}</div></div><div class="legend-val">${pct}%</div>`;
                     legendContainer.appendChild(div);
                 });
             } else {
@@ -1399,16 +1269,12 @@
         } else {
             charts[type] = new Chart(ctx, {
                 type: 'doughnut',
-                data: {
-                    labels: labels.length ? labels : [''],
-                    datasets: [{ data: data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }]
-                },
+                data: { labels: labels.length ? labels : [''], datasets: [{ data: data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }] },
                 options: { responsive: false, maintainAspectRatio: false, cutout: '75%', plugins: { tooltip: { enabled: false }, legend: { display: false } }, animation: false }
             });
         }
     }
 
-    // --- Goals Logic ---
     function renderGoalCard() {
         const container = document.getElementById('goalBody');
         if(!container) return;
@@ -1416,20 +1282,32 @@
             container.innerHTML = `<div class="goal-empty"><span>+</span><div>Создать цель</div></div>`;
             return;
         }
+
         const totalSaved = goals.reduce((s, g) => s + g.saved, 0);
         const totalTarget = goals.reduce((s, g) => s + g.target, 0);
-        const percent = Math.min(100, Math.round((totalSaved / totalTarget) * 100));
+        const overallPercent = totalTarget > 0 ? Math.min(100, Math.round((totalSaved / totalTarget) * 100)) : 0;
         
-        // Find closest to completion
-        const sorted = [...goals].sort((a,b) => (a.saved/a.target) - (b.saved/b.target));
-        const nextGoal = sorted[sorted.length - 1]; // Highest progress
-
-        container.innerHTML = `
-            <div class="goal-name">${nextGoal.name}</div>
-            <div class="goal-progress-bar-bg"><div class="goal-progress-bar-fill" style="width: ${percent}%"></div></div>
-            <div class="goal-stats"><span>${formatMoney(totalSaved)} / ${formatMoney(totalTarget)}</span><span>${percent}%</span></div>
-            <div style="font-size:10px; color:var(--text-secondary); margin-top:4px;">Целей: ${goals.length}</div>
-        `;
+        // Sort by progress descending to show top goals
+        const sortedGoals = [...goals].sort((a, b) => (b.saved/b.target) - (a.saved/a.target));
+        const top2 = sortedGoals.slice(0, 2);
+        
+        let html = `<div class="goal-row">`;
+        top2.forEach(g => {
+            const p = g.target > 0 ? Math.min(100, Math.round((g.saved / g.target) * 100)) : 0;
+            html += `
+                <div>
+                    <div class="goal-item-name">${g.name}</div>
+                    <div class="goal-item-bar-bg"><div class="goal-item-bar-fill" style="width: ${p}%"></div></div>
+                    <div class="goal-item-stats"><span>${formatMoney(g.saved)}</span><span>${p}%</span></div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        if (goals.length > 2) {
+            html += `<div class="goal-more">И ещё ${goals.length - 2}</div>`;
+        }
+        
+        container.innerHTML = html;
     }
 
     function openGoals() {
@@ -1441,504 +1319,188 @@
     function closeGoals() {
         document.getElementById('modalOverlay').classList.remove('active');
         document.getElementById('goalsSheet').classList.remove('active');
-        updateUI();
+        renderGoalCard();
+        checkAchievements();
     }
-
     function renderGoalsList() {
-        const list = document.getElementById('goalsList');
-        if(!list) return;
-        list.innerHTML = '';
-        if(goals.length === 0) {
-            list.innerHTML = '<div class="empty-state">Нет целей</div>';
+        const container = document.getElementById('goalsListContent');
+        if(!container) return;
+        container.innerHTML = '';
+        if (goals.length === 0) {
+            container.innerHTML = '<div class="empty-state">Нет целей</div>';
             return;
         }
-        goals.forEach(g => {
-            const pct = Math.min(100, Math.round((g.saved / g.target) * 100));
+        goals.forEach((g, idx) => {
+            const p = g.target > 0 ? Math.min(100, Math.round((g.saved / g.target) * 100)) : 0;
             const div = document.createElement('div');
-            div.className = 'sub-card'; // Reuse style
-            div.style.setProperty('--cat-color', 'var(--accent)');
+            div.className = 'sub-card';
+            div.style.flexDirection = 'column';
+            div.style.alignItems = 'stretch';
             div.innerHTML = `
-                <div class="sub-info">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                     <div class="sub-name">${g.name}</div>
-                    <div class="sub-meta">${formatMoney(g.saved)} из ${formatMoney(g.target)} (${pct}%)</div>
-                    <div class="goal-progress-bar-bg" style="margin-top:5px;"><div class="goal-progress-bar-fill" style="width: ${pct}%"></div></div>
+                    <div style="font-size:12px; font-weight:700;">${p}%</div>
                 </div>
-                <div class="sub-actions">
-                    <button class="btn-icon-sm" onclick="openGoalEditor('${g.id}')">✎</button>
-                    <button class="btn-icon-sm" onclick="quickAddGoal('${g.id}')">+</button>
+                <div class="goal-item-bar-bg" style="height:6px; margin-bottom:6px;"><div class="goal-item-bar-fill" style="width: ${p}%"></div></div>
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-secondary); margin-bottom:8px;">
+                    <span>${formatMoney(g.saved)} из ${formatMoney(g.target)}</span>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="btn-small-action" onclick="openEditGoal('${g.id}')">Изменить</button>
+                    <button class="btn-small-action" onclick="openAddGoal('${g.id}')">Пополнить</button>
+                    <div style="flex:1"></div>
+                    <button class="sub-move-btn" onclick="moveGoal(${idx}, -1)">↑</button>
+                    <button class="sub-move-btn" onclick="moveGoal(${idx}, 1)">↓</button>
                 </div>
             `;
-            list.appendChild(div);
+            container.appendChild(div);
         });
     }
-
-    let editingGoalId = null;
-    function openGoalEditor(id = null) {
-        editingGoalId = id;
-        const sheet = document.getElementById('goalEditorSheet');
-        const title = document.getElementById('goalEditorTitle');
-        const nameIn = document.getElementById('goalNameInput');
-        const targetIn = document.getElementById('goalTargetInput');
-        const curGrp = document.getElementById('goalCurrentGroup');
-        const savedDis = document.getElementById('goalSavedDisplay');
-        const delBtn = document.getElementById('deleteGoalBtn');
-        const addIn = document.getElementById('goalAddAmount');
-
-        if(id) {
-            const g = goals.find(x => x.id === id);
-            if(g) {
-                title.textContent = 'Изменить цель';
-                nameIn.value = g.name;
-                targetIn.value = g.target;
-                curGrp.style.display = 'block';
-                savedDis.textContent = formatMoney(g.saved) + ' ₽';
-                delBtn.style.display = 'block';
-                addIn.value = '';
-            }
-        } else {
-            title.textContent = 'Новая цель';
-            nameIn.value = '';
-            targetIn.value = '';
-            curGrp.style.display = 'none';
-            delBtn.style.display = 'none';
-        }
+    function moveGoal(idx, dir) {
+        if (dir === -1 && idx === 0) return;
+        if (dir === 1 && idx === goals.length - 1) return;
+        const temp = goals[idx];
+        goals[idx] = goals[idx + dir];
+        goals[idx + dir] = temp;
+        saveData();
+        renderGoalsList();
+        renderGoalCard();
+        haptic('light');
+    }
+    function openAddGoal(id = null) {
+        document.getElementById('editGoalId').value = id || '';
+        document.getElementById('addGoalTitle').textContent = id ? 'Пополнить цель' : 'Новая цель';
+        document.getElementById('goalCurrentGroup').style.display = id ? 'block' : 'none';
+        document.getElementById('deleteGoalBtn').style.display = id ? 'block' : 'none';
+        
+        const g = id ? goals.find(x => x.id === id) : null;
+        document.getElementById('goalNameInput').value = g ? g.name : '';
+        document.getElementById('goalTargetInput').value = g ? g.target : '';
+        if(g) document.getElementById('goalSavedDisplay').textContent = formatMoney(g.saved) + ' ₽';
+        document.getElementById('goalAddAmount').value = '';
         
         document.getElementById('goalsSheet').classList.remove('active');
-        sheet.classList.add('active');
+        document.getElementById('addGoalSheet').classList.add('active');
     }
-    function closeGoalEditor() {
-        document.getElementById('goalEditorSheet').classList.remove('active');
+    function closeAddGoal() {
+        document.getElementById('addGoalSheet').classList.remove('active');
         document.getElementById('goalsSheet').classList.add('active');
     }
     function saveGoalSettings() {
+        const id = document.getElementById('editGoalId').value;
         const name = document.getElementById('goalNameInput').value.trim();
         const target = parseFloat(document.getElementById('goalTargetInput').value);
-        if(!name || !target) return;
-
-        if(editingGoalId) {
-            const idx = goals.findIndex(g => g.id === editingGoalId);
-            if(idx > -1) goals[idx] = { ...goals[idx], name, target };
+        if (!name || !target) return;
+        
+        if (id) {
+            const g = goals.find(x => x.id === id);
+            if (g) { g.name = name; g.target = target; }
         } else {
             goals.push({ id: Date.now().toString(), name, target, saved: 0 });
         }
         saveData();
-        closeGoalEditor();
+        closeAddGoal();
         renderGoalsList();
+        renderGoalCard();
         haptic('success');
-    }
-    function deleteCurrentGoal() {
-        if(editingGoalId) {
-            showCustomConfirm('Удалить эту цель?', () => {
-                goals = goals.filter(g => g.id !== editingGoalId);
-                saveData();
-                closeGoalEditor();
-                renderGoalsList();
-                haptic('success');
-            });
-        }
-    }
-    function quickAddGoal(id) {
-        const amount = prompt("Сумма пополнения:");
-        if(amount) {
-            const val = parseFloat(amount);
-            if(val > 0) {
-                const g = goals.find(x => x.id === id);
-                if(g) { g.saved += val; saveData(); renderGoalsList(); haptic('success'); }
-            }
-        }
     }
     function addToGoal() {
+        const id = document.getElementById('editGoalId').value;
         const amount = parseFloat(document.getElementById('goalAddAmount').value);
-        if(!amount || amount <= 0) return;
-        const g = goals.find(x => x.id === editingGoalId);
-        if(g) {
-            g.saved += amount;
+        if (!id || !amount || amount <= 0) return;
+        const g = goals.find(x => x.id === id);
+        if (g) { g.saved += amount; saveData(); document.getElementById('goalSavedDisplay').textContent = formatMoney(g.saved) + ' ₽'; haptic('success'); }
+    }
+    function deleteGoal() {
+        const id = document.getElementById('editGoalId').value;
+        if (id && confirm('Удалить цель?')) {
+            goals = goals.filter(x => x.id !== id);
             saveData();
-            document.getElementById('goalSavedDisplay').textContent = formatMoney(g.saved) + ' ₽';
-            document.getElementById('goalAddAmount').value = '';
-            haptic('success');
+            closeAddGoal();
+            renderGoalsList();
+            renderGoalCard();
+            haptic('warning');
         }
     }
 
-    // --- Subscriptions Logic ---
-    function processSubscriptions() {
-        const today = new Date();
-        const day = today.getDate();
-        const monthKey = `${today.getFullYear()}-${today.getMonth()}`;
-        
-        let changed = false;
-        subscriptions.forEach(sub => {
-            if(sub.active && day >= sub.day) {
-                // Check if already created this month
-                const exists = operations.some(op => 
-                    op.isRecurring && op.parentId === `sub_${sub.id}` && 
-                    new Date(op.date).getMonth() === today.getMonth() &&
-                    new Date(op.date).getFullYear() === today.getFullYear()
-                );
-                
-                if(!exists) {
-                    operations.push({
-                        id: `sub_${sub.id}_${Date.now()}`,
-                        parentId: `sub_${sub.id}`,
-                        date: new Date().toISOString(),
-                        type: 'expense',
-                        amount: sub.amount,
-                        category: sub.name,
-                        note: 'Подписка',
-                        isRecurring: true
-                    });
-                    changed = true;
-                }
-            }
+    function renderMiniCalendar() {
+        const grid = document.getElementById('miniCalGrid'); if(!grid) return; grid.innerHTML = '';
+        weekDays.forEach(d => { const el = document.createElement('div'); el.className = 'cal-day-name'; el.textContent = d; grid.appendChild(el); });
+        const year = viewState.year, month = viewState.month;
+        const firstDay = new Date(year, month, 1), lastDay = new Date(year, month + 1, 0);
+        const startOffset = (firstDay.getDay() + 6) % 7;
+        const monthOps = getFilteredOps();
+        const dayExpenses = {}, dayIncomes = {}; let maxExpense = 0;
+        monthOps.forEach(op => {
+            const d = new Date(op.date).getDate();
+            if (op.type === 'expense') { dayExpenses[d] = (dayExpenses[d] || 0) + op.amount; if (dayExpenses[d] > maxExpense) maxExpense = dayExpenses[d]; }
+            else dayIncomes[d] = true;
         });
-        if(changed) saveData(true);
+        for (let i = 0; i < startOffset; i++) grid.appendChild(document.createElement('div'));
+        for (let d = 1; d <= lastDay.getDate(); d++) {
+            const cell = document.createElement('div'); cell.className = 'cal-day-cell'; cell.textContent = d;
+            const exp = dayExpenses[d] || 0;
+            if (exp > 0) { cell.style.backgroundColor = `rgba(255, 75, 75, ${0.15 + (exp / maxExpense) * 0.85})`; cell.style.color = '#fff'; }
+            if (dayIncomes[d]) cell.classList.add('has-income');
+            cell.onclick = () => openFullCalendar(); grid.appendChild(cell);
+        }
     }
 
-    function renderSubscriptions() {
-        const list = document.getElementById('subsList');
-        const empty = document.getElementById('subsEmptyState');
-        const mSumEl = document.getElementById('subsMonthlySum');
-        const ySumEl = document.getElementById('subsYearlySum');
-        
-        if(!list || !empty) return;
-        list.innerHTML = '';
-        
-        let mSum = 0, ySum = 0;
-        subscriptions.forEach(s => {
-            if(s.active) { mSum += s.amount; ySum += s.amount * 12; }
+    let currentFullCalDate = new Date(viewState.year, viewState.month, 1);
+    function openFullCalendar() {
+        currentFullCalDate = new Date(viewState.year, viewState.month, 1); renderFullCalendar();
+        document.getElementById('fullCalOverlay').classList.add('active');
+        document.getElementById('fullCalSheet').classList.add('active'); haptic('light');
+    }
+    function closeFullCalendar() {
+        document.getElementById('fullCalOverlay').classList.remove('active');
+        document.getElementById('fullCalSheet').classList.remove('active');
+        closeDayDetails();
+    }
+    function renderFullCalendar() {
+        const year = currentFullCalDate.getFullYear(), month = currentFullCalDate.getMonth();
+        const lbl = document.getElementById('fullCalMonthLabel'); if(lbl) lbl.textContent = `${fullMonths[month]} ${year}`;
+        const grid = document.getElementById('fullCalGrid'); if(!grid) return; grid.innerHTML = '';
+        weekDays.forEach(d => { const el = document.createElement('div'); el.className = 'cal-day-name'; el.textContent = d; grid.appendChild(el); });
+        const firstDay = new Date(year, month, 1), lastDay = new Date(year, month + 1, 0);
+        const startOffset = (firstDay.getDay() + 6) % 7; const today = new Date();
+        const monthOps = operations.filter(op => { const d = new Date(op.date); return d.getFullYear() === year && d.getMonth() === month; });
+        const dayExpenses = {}, dayIncomes = {}; let maxExpense = 0;
+        monthOps.forEach(op => {
+            const d = new Date(op.date).getDate();
+            if (op.type === 'expense') { dayExpenses[d] = (dayExpenses[d] || 0) + op.amount; if (dayExpenses[d] > maxExpense) maxExpense = dayExpenses[d]; }
+            else dayIncomes[d] = true;
         });
-        if(mSumEl) mSumEl.textContent = formatMoney(mSum);
-        if(ySumEl) ySumEl.textContent = formatMoney(ySum);
-
-        if(subscriptions.length === 0) {
-            empty.style.display = 'block';
-            return;
-        }
-        empty.style.display = 'none';
-
-        subscriptions.forEach((s, i) => {
-            const color = getColorForCategory(s.name, 'expense');
-            const div = document.createElement('div');
-            div.className = 'sub-card';
-            div.style.setProperty('--cat-color', color);
-            div.style.animationDelay = `${i * 0.05}s`;
-            
-            // Calc next date
-            const today = new Date();
-            let nextDay = s.day;
-            let nextMonth = today.getMonth();
-            if(today.getDate() >= s.day) nextMonth++;
-            const nextDate = new Date(today.getFullYear(), nextMonth, s.day);
-            
-            div.innerHTML = `
-                <div class="sub-info">
-                    <div class="sub-name">${s.name}</div>
-                    <div class="sub-meta">${formatMoney(s.amount)} ₽ · ${s.day}-го числа</div>
-                    <div class="sub-meta" style="font-size:10px;">Следующее: ${nextDate.toLocaleDateString('ru-RU', {day:'numeric', month:'short'})}</div>
-                </div>
-                <div class="sub-actions">
-                    <label class="switch" style="width:40px;height:20px;margin:0;">
-                        <input type="checkbox" ${s.active ? 'checked' : ''} onchange="toggleSubActive('${s.id}')">
-                        <span class="slider" style="height:20px;border-radius:10px;"></span>
-                        <span class="slider:before" style="height:16px;width:16px;left:2px;bottom:2px;"></span>
-                    </label>
-                    <button class="btn-icon-sm" onclick="openSubEditor('${s.id}')">✎</button>
-                    <button class="btn-icon-sm" onclick="deleteSub('${s.id}')">×</button>
-                </div>
-            `;
-            list.appendChild(div);
-        });
-    }
-
-    document.getElementById('addSubBtnHeader').onclick = () => openSubEditor();
-
-    let editingSubId = null;
-    function openSubEditor(id = null) {
-        editingSubId = id;
-        const sheet = document.getElementById('subEditorSheet');
-        const title = document.getElementById('subEditorTitle');
-        const nameIn = document.getElementById('subNameInput');
-        const amountIn = document.getElementById('subAmountInput');
-        const dayIn = document.getElementById('subDayInput');
-        const delBtn = document.getElementById('deleteSubBtn');
-
-        if(id) {
-            const s = subscriptions.find(x => x.id === id);
-            if(s) {
-                title.textContent = 'Изменить подписку';
-                nameIn.value = s.name;
-                amountIn.value = s.amount;
-                dayIn.value = s.day;
-                delBtn.style.display = 'block';
-            }
-        } else {
-            title.textContent = 'Новая подписка';
-            nameIn.value = '';
-            amountIn.value = '';
-            dayIn.value = '';
-            delBtn.style.display = 'none';
-        }
-        sheet.classList.add('active');
-        document.getElementById('modalOverlay').classList.add('active');
-    }
-    function closeSubEditor() {
-        document.getElementById('subEditorSheet').classList.remove('active');
-        document.getElementById('modalOverlay').classList.remove('active');
-        renderSubscriptions();
-    }
-    function saveSubSettings() {
-        const name = document.getElementById('subNameInput').value.trim();
-        const amount = parseFloat(document.getElementById('subAmountInput').value);
-        const day = parseInt(document.getElementById('subDayInput').value);
-        if(!name || !amount || !day) return;
-
-        if(editingSubId) {
-            const idx = subscriptions.findIndex(s => s.id === editingSubId);
-            if(idx > -1) subscriptions[idx] = { ...subscriptions[idx], name, amount, day };
-        } else {
-            subscriptions.push({ id: Date.now().toString(), name, amount, day, active: true });
-        }
-        saveData();
-        closeSubEditor();
-        haptic('success');
-    }
-    function toggleSubActive(id) {
-        const s = subscriptions.find(x => x.id === id);
-        if(s) { s.active = !s.active; saveData(); renderSubscriptions(); haptic('light'); }
-    }
-    function deleteSub(id) {
-        showCustomConfirm('Удалить подписку?', () => {
-            subscriptions = subscriptions.filter(s => s.id !== id);
-            saveData();
-            renderSubscriptions();
-            haptic('success');
-        });
-    }
-
-    // --- Analytics ---
-    function renderAnalytics() {
-        const ctx = document.getElementById('analyticsBarChart')?.getContext('2d');
-        if(!ctx) return;
-
-        const labels = [];
-        const incData = [];
-        const expData = [];
-        
-        for(let i=5; i>=0; i--) {
-            const d = new Date(viewState.year, viewState.month - i, 1);
-            labels.push(d.toLocaleDateString('ru-RU', {month:'short'}));
-            const ops = getFilteredOps(null, d.getFullYear(), d.getMonth());
-            incData.push(ops.filter(o=>o.type==='income').reduce((s,o)=>s+o.amount,0));
-            expData.push(ops.filter(o=>o.type==='expense').reduce((s,o)=>s+o.amount,0));
-        }
-
-        if(charts.analytics) charts.analytics.destroy();
-        charts.analytics = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    { label: 'Доходы', data: incData, backgroundColor: 'var(--success)', borderRadius: 4 },
-                    { label: 'Расходы', data: expData, backgroundColor: 'var(--danger)', borderRadius: 4 }
-                ]
-            },
-            options: {
-                responsive: false, maintainAspectRatio: false,
-                scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, display: false } },
-                plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
-                animation: false,
-                onClick: (e, activeEls) => {
-                    if(activeEls.length > 0) {
-                        const idx = activeEls[0].index;
-                        const d = new Date(viewState.year, viewState.month - (5-idx), 1);
-                        viewState.year = d.getFullYear();
-                        viewState.month = d.getMonth();
-                        switchTab('finances');
-                    }
-                }
-            }
-        });
-
-        // Heat Map
-        const heatGrid = document.getElementById('heatMapGrid');
-        if(heatGrid) {
-            heatGrid.innerHTML = '';
-            const days = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
-            const sums = [0,0,0,0,0,0,0];
-            const counts = [0,0,0,0,0,0,0];
-            
-            operations.filter(o => o.type === 'expense').forEach(o => {
-                const d = new Date(o.date);
-                const dayIdx = (d.getDay() + 6) % 7;
-                sums[dayIdx] += o.amount;
-                counts[dayIdx]++;
-            });
-
-            const maxAvg = Math.max(...sums.map((s,i) => counts[i] ? s/counts[i] : 0));
-
-            days.forEach((d, i) => {
-                const avg = counts[i] ? sums[i]/counts[i] : 0;
-                const intensity = maxAvg ? 0.1 + (avg/maxAvg)*0.9 : 0.1;
-                const div = document.createElement('div');
-                div.className = 'heat-cell';
-                div.style.backgroundColor = `rgba(255, 75, 75, ${intensity})`;
-                div.innerHTML = `<div>${d}</div><div class="heat-val">${formatMoney(Math.round(avg))}</div>`;
-                heatGrid.appendChild(div);
-            });
-        }
-
-        // Year Summary
-        const yearSum = document.getElementById('yearSummaryContent');
-        if(yearSum) {
-            const curYear = new Date().getFullYear();
-            const yearOps = operations.filter(o => new Date(o.date).getFullYear() === curYear);
-            const inc = yearOps.filter(o=>o.type==='income').reduce((s,o)=>s+o.amount,0);
-            const exp = yearOps.filter(o=>o.type==='expense').reduce((s,o)=>s+o.amount,0);
-            const bal = inc - exp;
-            
-            // Top Cats
-            const cats = {};
-            yearOps.filter(o=>o.type==='expense').forEach(o => cats[o.category] = (cats[o.category]||0)+o.amount);
-            const topCats = Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,3);
-            
-            // Max Expense
-            const maxOp = yearOps.filter(o=>o.type==='expense').sort((a,b)=>b.amount-a.amount)[0];
-
-            const totalSaved = goals.reduce((s,g)=>s+g.saved, 0);
-
-            yearSum.innerHTML = `
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:15px; text-align:center;">
-                    <div><div style="font-size:10px;color:var(--text-secondary)">Доходы</div><div style="font-weight:700;color:var(--success)">${formatMoney(inc)}</div></div>
-                    <div><div style="font-size:10px;color:var(--text-secondary)">Расходы</div><div style="font-weight:700;color:var(--danger)">${formatMoney(exp)}</div></div>
-                    <div><div style="font-size:10px;color:var(--text-secondary)">Баланс</div><div style="font-weight:700">${formatMoney(bal)}</div></div>
-                </div>
-                <div style="margin-bottom:10px;"><div style="font-size:12px;color:var(--text-secondary);margin-bottom:5px">Топ категории</div>
-                    ${topCats.map(([k,v]) => `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px;"><span>${k}</span><span>${formatMoney(v)}</span></div>`).join('')}
-                </div>
-                ${maxOp ? `<div style="font-size:11px;color:var(--text-secondary);margin-bottom:5px">Крупная трата: ${maxOp.category} (${formatMoney(maxOp.amount)})</div>` : ''}
-                <div style="font-size:11px;color:var(--text-secondary)">Накоплено в целях: ${formatMoney(totalSaved)}</div>
-                <div style="font-size:11px;color:var(--text-secondary)">Операций: ${yearOps.length}</div>
-            `;
+        for (let i = 0; i < startOffset; i++) grid.appendChild(document.createElement('div'));
+        for (let d = 1; d <= lastDay.getDate(); d++) {
+            const cell = document.createElement('div'); cell.className = 'cal-day-cell'; cell.textContent = d;
+            cell.style.fontSize = '12px'; cell.style.width = '100%'; cell.style.height = '40px';
+            const exp = dayExpenses[d] || 0;
+            if (exp > 0) { cell.style.backgroundColor = `rgba(255, 75, 75, ${0.15 + (exp / maxExpense) * 0.85})`; cell.style.color = '#fff'; }
+            if (dayIncomes[d]) cell.classList.add('has-income');
+            if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) { cell.style.border = `2px solid var(--accent)`; cell.style.boxSizing = 'border-box'; }
+            cell.onclick = () => openDayDetails(year, month, d); grid.appendChild(cell);
         }
     }
-
-    // --- Data & Backup ---
-    document.getElementById('backupBtn').onclick = () => {
-        const sheet = document.getElementById('dataSheet');
-        const lastDateEl = document.getElementById('lastBackupDate');
-        const meta = JSON.parse(localStorage.getItem('fin_bk_meta') || '{}');
-        lastDateEl.textContent = meta.timestamp ? new Date(meta.timestamp).toLocaleString() : 'Нет данных';
-        document.getElementById('autoBackupToggle').checked = !!settings.autoBackup;
-        
-        sheet.classList.add('active');
-        document.getElementById('modalOverlay').classList.add('active');
-    };
-    function closeDataSheet() {
-        document.getElementById('dataSheet').classList.remove('active');
-        document.getElementById('modalOverlay').classList.remove('active');
+    function openDayDetails(year, month, day) {
+        const dateStr = `${day} ${fullMonths[month]} ${year}`;
+        const titleEl = document.getElementById('dayDetailsTitle'); if(titleEl) titleEl.textContent = dateStr;
+        const dayOps = operations.filter(op => { const d = new Date(op.date); return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day; }).sort((a, b) => new Date(b.date) - new Date(a.date));
+        const inc = dayOps.filter(o => o.type === 'income').reduce((s, o) => s + o.amount, 0);
+        const exp = dayOps.filter(o => o.type === 'expense').reduce((s, o) => s + o.amount, 0);
+        const iSum = document.getElementById('dayIncomeSum'), eSum = document.getElementById('dayExpenseSum');
+        if(iSum) iSum.textContent = inc > 0 ? `+${formatMoney(inc)} ₽` : '';
+        if(eSum) eSum.textContent = exp > 0 ? `-${formatMoney(exp)} ₽` : '';
+        renderList('dayDetailsList', dayOps);
+        const empty = document.getElementById('dayEmptyState'); if(empty) empty.style.display = dayOps.length === 0 ? 'block' : 'none';
+        document.getElementById('dayDetailsSheet').classList.add('active'); haptic('light');
     }
-    function toggleAutoBackup() {
-        settings.autoBackup = document.getElementById('autoBackupToggle').checked;
-        saveData();
-        haptic('light');
-    }
+    function closeDayDetails() { document.getElementById('dayDetailsSheet').classList.remove('active'); }
+    function backToCalendar() { closeDayDetails(); }
+    document.getElementById('prevFullCalMonth').onclick = () => { currentFullCalDate.setMonth(currentFullCalDate.getMonth() - 1); renderFullCalendar(); haptic('light'); };
+    document.getElementById('nextFullCalMonth').onclick = () => { currentFullCalDate.setMonth(currentFullCalDate.getMonth() + 1); renderFullCalendar(); haptic('light'); };
 
-    let backupTimeout;
-    function debounceCloudBackup() {
-        clearTimeout(backupTimeout);
-        backupTimeout = setTimeout(performCloudBackup, 2000);
-    }
-
-    async function performCloudBackup() {
-        if(!tg || !tg.CloudStorage) { alert('Доступно только в Telegram'); return; }
-        const btn = document.getElementById('cloudBackupBtn');
-        const origText = btn.textContent;
-        btn.textContent = 'Загрузка...';
-        btn.disabled = true;
-
-        try {
-            const data = {
-                ops: operations, colors: categoryColors, goals: goals, subs: subscriptions, ach: achievementsUnlocked, settings: settings
-            };
-            const json = JSON.stringify(data);
-            const chunkSize = 4000;
-            const chunks = [];
-            for(let i=0; i<json.length; i+=chunkSize) chunks.push(json.slice(i, i+chunkSize));
-            
-            // Clean old
-            const keys = await tg.CloudStorage.getKeys();
-            for(const k of keys) if(k.startsWith('fin_bk')) await tg.CloudStorage.removeItem(k);
-
-            // Write new
-            for(let i=0; i<chunks.length; i++) await tg.CloudStorage.setItem(`fin_bk_${i}`, chunks[i]);
-            await tg.CloudStorage.setItem('fin_bk_meta', JSON.stringify({ chunks: chunks.length, timestamp: Date.now() }));
-            
-            document.getElementById('lastBackupDate').textContent = new Date().toLocaleString();
-            haptic('success');
-        } catch(e) { console.error(e); alert('Ошибка бэкапа'); }
-        finally { btn.textContent = origText; btn.disabled = false; }
-    }
-
-    async function performCloudRestore() {
-        if(!tg || !tg.CloudStorage) { alert('Доступно только в Telegram'); return; }
-        try {
-            const metaStr = await tg.CloudStorage.getItem('fin_bk_meta');
-            if(!metaStr) throw new Error('Нет бэкапа');
-            const meta = JSON.parse(metaStr);
-            
-            let json = '';
-            for(let i=0; i<meta.chunks; i++) {
-                const chunk = await tg.CloudStorage.getItem(`fin_bk_${i}`);
-                if(chunk) json += chunk;
-            }
-            const data = JSON.parse(json);
-            
-            operations = data.ops || [];
-            categoryColors = data.colors || {};
-            goals = data.goals || [];
-            subscriptions = data.subs || [];
-            achievementsUnlocked = data.ach || {};
-            settings = data.settings || {};
-            saveData();
-            location.reload();
-        } catch(e) { alert('Ошибка восстановления: ' + e.message); }
-    }
-
-    function showResetConfirm() {
-        showCustomConfirm('Удалить ВСЕ данные? Операции, цели, подписки и достижения будут стёрты.', () => {
-            const keys = Object.keys(localStorage).filter(k => k.startsWith('fin_'));
-            keys.forEach(k => localStorage.removeItem(k));
-            location.reload();
-        });
-    }
-
-    // --- Shared Utils ---
-    function showCustomConfirm(text, onConfirm) {
-        const overlay = document.getElementById('confirmOverlay');
-        const dialog = document.getElementById('confirmDialog');
-        const txt = document.getElementById('confirmText');
-        const okBtn = document.getElementById('confirmOkBtn');
-        const cancelBtn = document.getElementById('confirmCancelBtn');
-
-        if(txt) txt.textContent = text;
-        if(overlay) overlay.classList.add('active');
-        if(dialog) dialog.classList.add('active');
-
-        const cleanup = () => {
-            if(overlay) overlay.classList.remove('active');
-            if(dialog) dialog.classList.remove('active');
-            okBtn.onclick = null;
-            cancelBtn.onclick = null;
-            overlay.onclick = null;
-        };
-
-        if(okBtn) okBtn.onclick = () => { onConfirm(); cleanup(); };
-        if(cancelBtn) cancelBtn.onclick = cleanup;
-        if(overlay) overlay.onclick = cleanup;
-    }
-
-    // --- Existing Modal Logic (Shortened for brevity, same as before) ---
-    function openModal(editOp = null) { /* ... same as before ... */ 
+    function openModal(editOp = null) {
         haptic('light');
         document.getElementById('modalOverlay').classList.add('active');
         document.getElementById('addSheet').classList.add('active');
@@ -1952,10 +1514,7 @@
             setType(editOp.type);
             document.getElementById('opRepeatCheck').checked = editOp.isRecurring || false;
             toggleRepeatOptions();
-            if(editOp.period) {
-                const radio = document.querySelector(`.radio-card[onclick*="${editOp.period}"]`);
-                if(radio) setPeriod(editOp.period, radio);
-            }
+            if(editOp.period) { const radio = document.querySelector(`.radio-card[onclick*="${editOp.period}"]`); if(radio) setPeriod(editOp.period, radio); }
         } else {
             opIdEl.value = '';
             toggleRepeatOptions();
@@ -1964,8 +1523,14 @@
         }
         hideSuggestions();
     }
-    function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); document.getElementById('addSheet').classList.remove('active'); hideSuggestions(); if (document.activeElement) document.activeElement.blur(); }
-    function openOpDetail(op) { /* ... same ... */
+    function closeModal() {
+        document.getElementById('modalOverlay').classList.remove('active');
+        document.getElementById('addSheet').classList.remove('active');
+        hideSuggestions();
+        if (document.activeElement) document.activeElement.blur();
+    }
+
+    function openOpDetail(op) {
         currentOpDetail = op;
         const isInc = op.type === 'income';
         const sign = isInc ? '+' : '-';
@@ -1973,46 +1538,918 @@
         const noteHtml = op.note ? `<div style="margin-top:5px; color:var(--text-secondary); font-size:14px;">${op.note}</div>` : '';
         const autoBadge = op.isRecurring ? '<span class="auto-badge">AUTO</span>' : '';
         const content = document.getElementById('opDetailContent');
-        if(content) content.innerHTML = `<div style="text-align:center; margin-bottom: 20px;"><div style="font-size: 24px; font-weight: bold; color: var(${isInc ? '--success' : '--danger'}); margin-bottom: 5px;">${sign}${formatMoney(op.amount)} ₽</div><div style="font-weight: 600; font-size: 16px;">${op.category} ${autoBadge}</div><div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">${dateStr}</div>${noteHtml}</div>`;
+        if(content) {
+            content.innerHTML = `<div style="text-align:center; margin-bottom: 20px;"><div style="font-size: 24px; font-weight: bold; color: var(${isInc ? '--success' : '--danger'}); margin-bottom: 5px;">${sign}${formatMoney(op.amount)} ₽</div><div style="font-weight: 600; font-size: 16px;">${op.category} ${autoBadge}</div><div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">${dateStr}</div>${noteHtml}</div>`;
+        }
         document.getElementById('modalOverlay').classList.add('active');
         document.getElementById('opDetailSheet').classList.add('active');
         haptic('light');
     }
-    function closeOpDetail() { document.getElementById('modalOverlay').classList.remove('active'); document.getElementById('opDetailSheet').classList.remove('active'); currentOpDetail = null; }
+    function closeOpDetail() {
+        document.getElementById('modalOverlay').classList.remove('active');
+        document.getElementById('opDetailSheet').classList.remove('active');
+        currentOpDetail = null;
+    }
     function editCurrentOp() { if (currentOpDetail) { closeOpDetail(); setTimeout(() => openModal(currentOpDetail), 300); } }
     function deleteCurrentOp() { if (currentOpDetail) { const id = currentOpDetail.id; closeOpDetail(); showDeleteConfirm(id); } }
-    function openDetails(type, ops) { const title = type === 'income' ? 'Доходы' : 'Расходы'; const tEl = document.getElementById('detailsTitle'); if(tEl) tEl.textContent = title; renderList('detailsList', ops); document.getElementById('modalOverlay').classList.add('active'); document.getElementById('detailsSheet').classList.add('active'); }
+
+    function openDetails(type, ops) {
+        const title = type === 'income' ? 'Доходы' : 'Расходы';
+        const tEl = document.getElementById('detailsTitle'); if(tEl) tEl.textContent = title;
+        renderList('detailsList', ops);
+        document.getElementById('modalOverlay').classList.add('active');
+        document.getElementById('detailsSheet').classList.add('active');
+    }
     function closeDetails() { document.getElementById('modalOverlay').classList.remove('active'); document.getElementById('detailsSheet').classList.remove('active'); }
-    function openMonthPicker() { haptic('light'); pickerYear = viewState.year; renderMonthGrid(); document.getElementById('monthOverlay').classList.add('active'); document.getElementById('monthSheet').classList.add('active'); }
+
+    function openMonthPicker() {
+        haptic('light'); pickerYear = viewState.year; renderMonthGrid();
+        document.getElementById('monthOverlay').classList.add('active');
+        document.getElementById('monthSheet').classList.add('active');
+    }
     function closeMonthPicker() { document.getElementById('monthOverlay').classList.remove('active'); document.getElementById('monthSheet').classList.remove('active'); }
-    function renderMonthGrid() { const yEl = document.getElementById('pickerYear'); if(yEl) yEl.textContent = pickerYear; const grid = document.getElementById('monthGrid'); if(!grid) return; grid.innerHTML = ''; months.forEach((m, idx) => { const div = document.createElement('div'); div.className = `month-cell ${idx === viewState.month && pickerYear === viewState.year ? 'active' : ''}`; div.textContent = m; div.onclick = () => { viewState.year = pickerYear; viewState.month = idx; updateUI(); closeMonthPicker(); haptic('medium'); }; grid.appendChild(div); }); }
+    function renderMonthGrid() {
+        const yEl = document.getElementById('pickerYear'); if(yEl) yEl.textContent = pickerYear;
+        const grid = document.getElementById('monthGrid'); if(!grid) return; grid.innerHTML = '';
+        months.forEach((m, idx) => {
+            const div = document.createElement('div');
+            div.className = `month-cell ${idx === viewState.month && pickerYear === viewState.year ? 'active' : ''}`;
+            div.textContent = m;
+            div.onclick = () => { viewState.year = pickerYear; viewState.month = idx; updateUI(); closeMonthPicker(); haptic('medium'); };
+            grid.appendChild(div);
+        });
+    }
     function goToCurrentMonth() { const now = new Date(); viewState.year = now.getFullYear(); viewState.month = now.getMonth(); updateUI(); closeMonthPicker(); haptic('medium'); }
-    function setType(t) { currentType = t; const bExp = document.getElementById('typeExpense'), bInc = document.getElementById('typeIncome'); if(bExp) bExp.className = `segment-btn ${t === 'expense' ? 'active expense' : ''}`; if(bInc) bInc.className = `segment-btn ${t === 'income' ? 'active income' : ''}`; haptic('light'); }
-    function toggleRepeatOptions() { const checked = document.getElementById('opRepeatCheck').checked; const opts = document.getElementById('repeatOptions'); if(opts) { if (checked) opts.classList.add('show'); else opts.classList.remove('show'); } }
-    function setPeriod(p, el) { currentPeriod = p; document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected')); if(el) el.classList.add('selected'); haptic('light'); }
-    document.getElementById('repeatToggleContainer').onclick = (e) => { if (e.target.closest('.switch')) return; const checkbox = document.getElementById('opRepeatCheck'); if(checkbox) { checkbox.checked = !checkbox.checked; toggleRepeatOptions(); haptic('light'); } };
-    const catInput = document.getElementById('opCategory'); const suggestionsContainer = document.getElementById('categorySuggestions');
-    function showSuggestions(filterText = '') { if(!suggestionsContainer || !catInput) return; const allCats = [...new Set(operations.map(o => o.category))]; const lastUsed = [...allCats].reverse().slice(0, 8); let filtered = filterText.trim() === '' ? lastUsed : allCats.filter(c => c.toLowerCase().includes(filterText.toLowerCase())); if (filtered.length === 0) { hideSuggestions(); return; } suggestionsContainer.innerHTML = ''; filtered.forEach(cat => { const chip = document.createElement('div'); chip.className = 'suggestion-chip'; chip.textContent = cat; chip.onclick = () => { catInput.value = cat; hideSuggestions(); haptic('light'); }; suggestionsContainer.appendChild(chip); }); suggestionsContainer.style.display = 'flex'; }
+
+    function setType(t) {
+        currentType = t;
+        const bExp = document.getElementById('typeExpense'), bInc = document.getElementById('typeIncome');
+        if(bExp) bExp.className = `segment-btn ${t === 'expense' ? 'active expense' : ''}`;
+        if(bInc) bInc.className = `segment-btn ${t === 'income' ? 'active income' : ''}`;
+        haptic('light');
+    }
+    function toggleRepeatOptions() {
+        const checked = document.getElementById('opRepeatCheck').checked;
+        const opts = document.getElementById('repeatOptions');
+        if(opts) { if (checked) opts.classList.add('show'); else opts.classList.remove('show'); }
+    }
+    function setPeriod(p, el) {
+        currentPeriod = p;
+        document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+        if(el) el.classList.add('selected'); haptic('light');
+    }
+    document.getElementById('repeatToggleContainer').onclick = (e) => {
+        if (e.target.closest('.switch')) return;
+        const checkbox = document.getElementById('opRepeatCheck');
+        if(checkbox) { checkbox.checked = !checkbox.checked; toggleRepeatOptions(); haptic('light'); }
+    };
+
+    const catInput = document.getElementById('opCategory');
+    const suggestionsContainer = document.getElementById('categorySuggestions');
+    function showSuggestions(filterText = '') {
+        if(!suggestionsContainer || !catInput) return;
+        const allCats = [...new Set(operations.map(o => o.category))];
+        const lastUsed = [...allCats].reverse().slice(0, 8);
+        let filtered = filterText.trim() === '' ? lastUsed : allCats.filter(c => c.toLowerCase().includes(filterText.toLowerCase()));
+        if (filtered.length === 0) { hideSuggestions(); return; }
+        suggestionsContainer.innerHTML = '';
+        filtered.forEach(cat => {
+            const chip = document.createElement('div'); chip.className = 'suggestion-chip'; chip.textContent = cat;
+            chip.onclick = () => { catInput.value = cat; hideSuggestions(); haptic('light'); };
+            suggestionsContainer.appendChild(chip);
+        });
+        suggestionsContainer.style.display = 'flex';
+    }
     function hideSuggestions() { if(suggestionsContainer) { suggestionsContainer.style.display = 'none'; suggestionsContainer.innerHTML = ''; } }
-    if(catInput) { catInput.addEventListener('focus', () => showSuggestions(catInput.value)); catInput.addEventListener('input', (e) => showSuggestions(e.target.value)); }
+    if(catInput) {
+        catInput.addEventListener('focus', () => showSuggestions(catInput.value));
+        catInput.addEventListener('input', (e) => showSuggestions(e.target.value));
+    }
     document.addEventListener('click', (e) => { if (catInput && suggestionsContainer && !catInput.contains(e.target) && !suggestionsContainer.contains(e.target)) hideSuggestions(); });
+
     const saveBtn = document.getElementById('saveBtn');
-    if(saveBtn) { saveBtn.addEventListener('click', (e) => { e.preventDefault(); if (isSaving) return; if (document.activeElement) document.activeElement.blur(); hideSuggestions(); isSaving = true; saveBtn.classList.add('disabled'); saveBtn.textContent = 'Сохранение...'; try { setTimeout(() => { const form = document.getElementById('opForm'); if (!form.checkValidity()) { form.reportValidity(); throw new Error("Validation failed"); } haptic('success'); const id = document.getElementById('opId').value; const amount = parseFloat(document.getElementById('opAmount').value); const category = document.getElementById('opCategory').value.trim(); const note = document.getElementById('opNote').value.trim(); const isRecurring = document.getElementById('opRepeatCheck').checked; if (id) { const idx = operations.findIndex(o => String(o.id) === String(id)); if (idx > -1) operations[idx] = { ...operations[idx], amount, category, note, type: currentType, isRecurring, period: isRecurring ? currentPeriod : null }; } else { const baseId = Date.now() + '-' + Math.random().toString(36).slice(2); const now = new Date(); operations.push({ id: baseId, date: now.toISOString(), type: currentType, amount, category, note, isRecurring, period: isRecurring ? currentPeriod : null }); if (isRecurring) { let nextDate = new Date(now); for(let i=0; i<12; i++) { if (currentPeriod === 'day') nextDate.setDate(nextDate.getDate() + 1); else if (currentPeriod === 'week') nextDate.setDate(nextDate.getDate() + 7); else if (currentPeriod === 'month') nextDate.setMonth(nextDate.getMonth() + 1); else if (currentPeriod === 'year') nextDate.setFullYear(nextDate.getFullYear() + 1); operations.push({ id: Date.now() + '-' + i + '-' + Math.random().toString(36).slice(2), date: nextDate.toISOString(), type: currentType, amount, category, note, isRecurring: true, period: currentPeriod, parentId: baseId }); } } } saveData(); updateUI(); closeModal(); }, 100); } catch (err) { console.error(err); } finally { isSaving = false; saveBtn.classList.remove('disabled'); saveBtn.textContent = 'Сохранить'; } }); }
-    const confirmOverlay = document.getElementById('confirmOverlay'); const confirmDialog = document.getElementById('confirmDialog'); const confirmText = document.getElementById('confirmText'); const confirmOkBtn = document.getElementById('confirmOkBtn'); const confirmCancelBtn = document.getElementById('confirmCancelBtn');
-    function showDeleteConfirm(id) { pendingDeleteId = id; if(confirmText) confirmText.textContent = "Удалить операцию?"; if(confirmOverlay) confirmOverlay.classList.add('active'); if(confirmDialog) confirmDialog.classList.add('active'); haptic('warning'); }
-    function hideDeleteConfirm() { pendingDeleteId = null; if(confirmOverlay) confirmOverlay.classList.remove('active'); if(confirmDialog) confirmDialog.classList.remove('active'); }
-    if(confirmOkBtn) { confirmOkBtn.onclick = () => { if (pendingDeleteId) { operations = operations.filter(o => o.id !== pendingDeleteId && o.parentId !== pendingDeleteId); saveData(); updateUI(); haptic('success'); const detSheet = document.getElementById('detailsSheet'); if (detSheet && detSheet.classList.contains('active')) closeDetails(); const daySheet = document.getElementById('dayDetailsSheet'); if (daySheet && daySheet.classList.contains('active')) closeDayDetails(); } hideDeleteConfirm(); }; }
-    if(confirmCancelBtn) confirmCancelBtn.onclick = hideDeleteConfirm; if(confirmOverlay) confirmOverlay.onclick = hideDeleteConfirm;
-    function getProgress(ach) { /* ... same ... */ if (ach.type === 'count') return [operations.length, ach.target]; if (ach.type === 'goal_sum') return [goals.reduce((s,g)=>s+g.saved,0), ach.target]; if (ach.type === 'cat_year') { const now = new Date(); const yearAgo = new Date(); yearAgo.setFullYear(now.getFullYear() - 1); const sum = operations.filter(op => { const d = new Date(op.date); return d >= yearAgo && op.type === 'expense' && ach.catKeys.some(k => op.category.toLowerCase().includes(k)); }).reduce((s, op) => s + op.amount, 0); return [sum, ach.target]; } if (ach.type === 'uniq_cats') return [new Set(operations.map(o => o.category)).size, ach.target]; if (ach.type === 'cat_count') return [operations.filter(op => ach.catKeys.some(k => op.category.toLowerCase().includes(k))).length, ach.target]; if (ach.type === 'recurring_count') return [operations.filter(op => op.isRecurring).length, ach.target]; if (ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') { let streak = 0; const today = new Date(); for (let i = 1; i < 100; i++) { const d = new Date(today); d.setDate(d.getDate() - i); const dStr = d.toISOString().split('T')[0]; const hasExpense = operations.some(op => op.type === 'expense' && new Date(op.date).toISOString().startsWith(dStr)); const hasIncome = operations.some(op => op.type === 'income' && new Date(op.date).toISOString().startsWith(dStr)); if (ach.type === 'series_no_exp') { if (hasExpense) break; streak++; } else if (ach.type === 'series_no_exp_inc') { if (hasExpense || !hasIncome) break; streak++; } } return [streak, ach.target]; } return [0, 0]; }
-    function checkCondition(ach) { /* ... same ... */ const [cur, target] = getProgress(ach); if (['count','goal_sum','cat_year','uniq_cats','cat_count','recurring_count','series_no_exp','series_no_exp_inc'].includes(ach.type)) return cur >= target; if (ach.type === 'month_positive') { const m = {}; operations.forEach(op => { const k = `${new Date(op.date).getFullYear()}-${new Date(op.date).getMonth()}`; if(!m[k]) m[k]={inc:0,exp:0}; if(op.type==='income') m[k].inc+=op.amount; else m[k].exp+=op.amount; }); return Object.values(m).some(x => x.inc > x.exp); } if (ach.type === 'goal_completed') return goals.some(g => g.saved >= g.target && g.target > 0); if (ach.type === 'single_income') return operations.some(op => op.type === 'income' && op.amount >= ach.target); if (ach.type === 'months_positive_series') { let streak = 0; const now = new Date(); for (let i = 0; i < 12; i++) { const realM = now.getMonth() - i < 0 ? 12 + (now.getMonth() - i) : now.getMonth() - i; const realY = now.getMonth() - i < 0 ? now.getFullYear() - 1 : now.getFullYear(); const ops = getFilteredOps(null, realY, realM); const inc = ops.filter(o=>o.type==='income').reduce((s,o)=>s+o.amount,0); const exp = ops.filter(o=>o.type==='expense').reduce((s,o)=>s+o.amount,0); if (inc > exp) streak++; else break; } return streak >= ach.target; } if (ach.type === 'time_range') return operations.some(op => { const h = new Date(op.date).getHours(); return h >= ach.start && h < ach.end; }); if (ach.type === 'single_expense') return operations.some(op => op.type === 'expense' && op.amount >= ach.target); if (ach.type === 'exact_amount') return ach.expenseOnly ? operations.some(op => op.type === 'expense' && op.amount === ach.target) : operations.some(op => op.amount === ach.target); if (ach.type === 'friday_expense') return operations.some(op => new Date(op.date).getDay() === 5 && op.type === 'expense' && op.amount >= ach.target); if (ach.type === 'day_equal') { const d = {}; operations.forEach(op => { const k = new Date(op.date).toISOString().split('T')[0]; if(!d[k]) d[k]={inc:0,exp:0}; if(op.type==='income') d[k].inc+=op.amount; else d[k].exp+=op.amount; }); return Object.values(d).some(x => x.inc > 0 && x.exp > 0 && x.inc === x.exp); } if (ach.type === 'day_expense') { const d = {}; operations.filter(op=>op.type==='expense').forEach(op => { const k = new Date(op.date).toISOString().split('T')[0]; d[k]=(d[k]||0)+op.amount; }); return Object.values(d).some(v => v >= ach.target); } if (ach.type === 'month_zero') { const m = {}; operations.forEach(op => { const k = `${new Date(op.date).getFullYear()}-${new Date(op.date).getMonth()}`; if(!m[k]) m[k]={inc:0,exp:0}; if(op.type==='income') m[k].inc+=op.amount; else m[k].exp+=op.amount; }); return Object.values(m).some(x => (x.inc>0 || x.exp>0) && x.inc === x.exp); } if (ach.type === 'duplicate_op') { const s = new Set(); for(const op of operations) { const k = `${new Date(op.date).toISOString().split('T')[0]}-${op.category}-${op.amount}`; if(s.has(k)) return true; s.add(k); } return false; } if (ach.type === 'one_year_since_first') { if (operations.length === 0) return false; const first = new Date(Math.min(...operations.map(op => new Date(op.date)))); return (new Date() - first) / (1000*60*60*24*365) >= 1; } if (ach.type === 'all_unlocked') return Object.keys(achievementsUnlocked).length >= 49; return false; }
-    function checkAchievements() { let changed = false; ACHIEVEMENTS_LIST.forEach(ach => { if (!achievementsUnlocked[ach.id] && checkCondition(ach)) { achievementsUnlocked[ach.id] = new Date().toISOString(); changed = true; if (document.getElementById('achievementsScreen').classList.contains('active')) haptic('success'); } }); if (changed) saveData(); }
-    function renderAchievementsGrid() { const grid = document.getElementById('achievementsGrid'); if(!grid) return; grid.innerHTML = ''; const unlockedCount = Object.keys(achievementsUnlocked).length; const counterEl = document.getElementById('achCounter'), progEl = document.getElementById('achTotalProgress'); if(counterEl) counterEl.textContent = `${unlockedCount}/50`; if(progEl) progEl.style.width = `${(unlockedCount / 50) * 100}%`; ACHIEVEMENTS_LIST.forEach(ach => { const isUnlocked = !!achievementsUnlocked[ach.id]; const [cur, target] = getProgress(ach); const card = document.createElement('div'); card.className = `tarot-card ${isUnlocked ? 'opened' : 'closed'}`; card.onclick = () => openAchDetail(ach); let progressText = '', progressWidth = '0%'; if (!isUnlocked) { if (['count','goal_sum','cat_year','uniq_cats','cat_count','recurring_count','series_no_exp','series_no_exp_inc'].includes(ach.type)) { const fmtCur = (ach.type === 'goal_sum' || ach.type === 'cat_year') ? formatMoney(cur) : cur; const fmtTarget = (ach.type === 'goal_sum' || ach.type === 'cat_year') ? formatMoney(target) : target; progressText = `${fmtCur} / ${fmtTarget}`; progressWidth = `${Math.min(100, (cur / target) * 100)}%`; } else progressText = '???'; } card.innerHTML = `<div class="tarot-canvas"><div class="tarot-emoji">${ach.emoji}</div>${!isUnlocked ? `<div class="tarot-progress-overlay" style="font-size: ${progressText.length > 10 ? '8px' : '9px'}">${progressText}</div><div class="tarot-progress-bar"><div class="tarot-progress-fill" style="width: ${progressWidth}"></div></div>` : ''}</div><div class="tarot-label"><div class="tarot-name">${ach.name}</div></div>`; grid.appendChild(card); }); }
-    function openAchDetail(ach) { const isUnlocked = !!achievementsUnlocked[ach.id]; const nameEl = document.getElementById('achDetailName'); const descEl = document.getElementById('achDetailDesc'); const dateEl = document.getElementById('achDetailDate'); if (nameEl) nameEl.textContent = ach.name; if (descEl) descEl.textContent = isUnlocked ? ach.desc : 'Условие скрыто'; if (dateEl) { if (isUnlocked && achievementsUnlocked[ach.id]) { dateEl.textContent = 'Открыто ' + new Date(achievementsUnlocked[ach.id]).toLocaleDateString('ru-RU'); dateEl.style.display = 'block'; } else { dateEl.style.display = 'none'; } } const cardContainer = document.getElementById('achDetailCard'); if(cardContainer) { const [cur, target] = getProgress(ach); let progressText = '', progressWidth = '0%'; if (!isUnlocked) { if (['count','goal_sum','cat_year','uniq_cats','cat_count','recurring_count','series_no_exp','series_no_exp_inc'].includes(ach.type)) { const fmtCur = (ach.type === 'goal_sum' || ach.type === 'cat_year') ? formatMoney(cur) : cur; const fmtTarget = (ach.type === 'goal_sum' || ach.type === 'cat_year') ? formatMoney(target) : target; progressText = `${fmtCur} / ${fmtTarget}`; progressWidth = `${Math.min(100, (cur / target) * 100)}%`; } else progressText = '???'; } cardContainer.innerHTML = `<div class="tarot-card ${isUnlocked ? 'opened' : 'closed'}" style="width: 200px; margin-bottom: 20px;"><div class="tarot-canvas"><div class="tarot-emoji">${ach.emoji}</div>${!isUnlocked ? `<div class="tarot-progress-overlay" style="font-size: ${progressText.length > 12 ? '7px' : '9px'}">${progressText}</div><div class="tarot-progress-bar"><div class="tarot-progress-fill" style="width: ${progressWidth}"></div></div>` : ''}</div><div class="tarot-label"><div class="tarot-name">${ach.name}</div></div></div>`; } document.getElementById('modalOverlay').classList.add('active'); document.getElementById('achDetailSheet').classList.add('active'); haptic('light'); }
+    if(saveBtn) {
+        saveBtn.addEventListener('click', (e) => {
+            e.preventDefault(); if (isSaving) return;
+            if (document.activeElement) document.activeElement.blur(); hideSuggestions();
+            isSaving = true; saveBtn.classList.add('disabled'); saveBtn.textContent = 'Сохранение...';
+            try {
+                setTimeout(() => {
+                    const form = document.getElementById('opForm');
+                    if (!form.checkValidity()) { form.reportValidity(); throw new Error("Validation failed"); }
+                    haptic('success');
+                    const id = document.getElementById('opId').value;
+                    const amount = parseFloat(document.getElementById('opAmount').value);
+                    const category = document.getElementById('opCategory').value.trim();
+                    const note = document.getElementById('opNote').value.trim();
+                    const isRecurring = document.getElementById('opRepeatCheck').checked;
+                    
+                    if (id) {
+                        const idx = operations.findIndex(o => String(o.id) === String(id));
+                        if (idx > -1) operations[idx] = { ...operations[idx], amount, category, note, type: currentType, isRecurring, period: isRecurring ? currentPeriod : null };
+                    } else {
+                        const baseId = Date.now() + '-' + Math.random().toString(36).slice(2);
+                        const now = new Date();
+                        operations.push({ id: baseId, date: now.toISOString(), type: currentType, amount, category, note, isRecurring, period: isRecurring ? currentPeriod : null });
+                        if (isRecurring) {
+                            let nextDate = new Date(now);
+                            for(let i=0; i<12; i++) {
+                                if (currentPeriod === 'day') nextDate.setDate(nextDate.getDate() + 1);
+                                else if (currentPeriod === 'week') nextDate.setDate(nextDate.getDate() + 7);
+                                else if (currentPeriod === 'month') nextDate.setMonth(nextDate.getMonth() + 1);
+                                else if (currentPeriod === 'year') nextDate.setFullYear(nextDate.getFullYear() + 1);
+                                operations.push({ id: Date.now() + '-' + i + '-' + Math.random().toString(36).slice(2), date: nextDate.toISOString(), type: currentType, amount, category, note, isRecurring: true, period: currentPeriod, parentId: baseId });
+                            }
+                        }
+                    }
+                    saveData(); updateUI(); closeModal();
+                }, 100);
+            } catch (err) { console.error(err); } finally {
+                isSaving = false; saveBtn.classList.remove('disabled'); saveBtn.textContent = 'Сохранить';
+            }
+        });
+    }
+
+    const confirmOverlay = document.getElementById('confirmOverlay');
+    const confirmDialog = document.getElementById('confirmDialog');
+    const confirmText = document.getElementById('confirmText');
+    const confirmOkBtn = document.getElementById('confirmOkBtn');
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+
+    function showDeleteConfirm(id) {
+        pendingDeleteId = id;
+        if(confirmText) confirmText.textContent = "Удалить операцию?";
+        if(confirmOverlay) confirmOverlay.classList.add('active');
+        if(confirmDialog) confirmDialog.classList.add('active');
+        haptic('warning');
+    }
+    function hideDeleteConfirm() {
+        pendingDeleteId = null;
+        if(confirmOverlay) confirmOverlay.classList.remove('active');
+        if(confirmDialog) confirmDialog.classList.remove('active');
+    }
+    if(confirmOkBtn) {
+        confirmOkBtn.onclick = () => {
+            if (pendingDeleteId) {
+                operations = operations.filter(o => o.id !== pendingDeleteId && o.parentId !== pendingDeleteId);
+                saveData(); updateUI(); haptic('success');
+                const detSheet = document.getElementById('detailsSheet');
+                if (detSheet && detSheet.classList.contains('active')) closeDetails();
+                const daySheet = document.getElementById('dayDetailsSheet');
+                if (daySheet && daySheet.classList.contains('active')) closeDayDetails();
+            }
+            hideDeleteConfirm();
+        };
+    }
+    if(confirmCancelBtn) confirmCancelBtn.onclick = hideDeleteConfirm;
+    if(confirmOverlay) confirmOverlay.onclick = hideDeleteConfirm;
+
+    // Analytics Functions
+    function renderAnalytics() {
+        renderBarChart();
+        renderHeatmap();
+        renderYearSummary();
+    }
+
+    function renderBarChart() {
+        const ctx = document.getElementById('barChart')?.getContext('2d');
+        if(!ctx) return;
+        
+        const now = new Date();
+        const labels = [];
+        const incData = [];
+        const expData = [];
+        last6MonthsData = [];
+
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const key = `${d.getFullYear()}-${d.getMonth()}`;
+            labels.push(fullMonths[d.getMonth()].substring(0, 3));
+            last6MonthsData.push({ year: d.getFullYear(), month: d.getMonth() });
+            
+            const ops = getFilteredOps(null, d.getFullYear(), d.getMonth());
+            incData.push(ops.filter(o => o.type === 'income').reduce((s,o)=>s+o.amount, 0));
+            expData.push(ops.filter(o => o.type === 'expense').reduce((s,o)=>s+o.amount, 0));
+        }
+
+        if (charts.bar) charts.bar.destroy();
+        
+        charts.bar = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Доходы', data: incData, backgroundColor: 'var(--success)', borderRadius: 6, maxBarThickness: 16 },
+                    { label: 'Расходы', data: expData, backgroundColor: 'var(--danger)', borderRadius: 6, maxBarThickness: 16 }
+                ]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                animation: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'var(--card-bg)',
+                        borderColor: 'var(--border)',
+                        borderWidth: 1,
+                        titleColor: 'var(--text-primary)',
+                        bodyColor: 'var(--text-secondary)',
+                        padding: 10,
+                        callbacks: {
+                            label: (ctx) => ` ${ctx.dataset.label}: ${formatMoney(ctx.raw)} ₽`
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: 'var(--text-secondary)', font: { size: 10 } } },
+                    y: { display: false, beginAtZero: true }
+                },
+                onClick: (e, elements) => {
+                    if (elements.length > 0) {
+                        const index = elements[0].index;
+                        openMonthBreakdown(index);
+                    }
+                }
+            }
+        });
+    }
+
+    function openMonthBreakdown(index) {
+        const data = last6MonthsData[index];
+        if (!data) return;
+        
+        const ops = getFilteredOps(null, data.year, data.month);
+        const incOps = ops.filter(o => o.type === 'income');
+        const expOps = ops.filter(o => o.type === 'expense');
+        const totalInc = incOps.reduce((s,o)=>s+o.amount, 0);
+        const totalExp = expOps.reduce((s,o)=>s+o.amount, 0);
+
+        const title = document.getElementById('breakdownTitle');
+        if(title) title.textContent = `${fullMonths[data.month]} ${data.year}`;
+        
+        const content = document.getElementById('breakdownContent');
+        if(!content) return;
+        
+        let html = '';
+        
+        // Income Section
+        if (totalInc > 0) {
+            html += `<div style="margin-bottom:15px;"><div style="font-size:12px; color:var(--success); font-weight:700; margin-bottom:8px;">ДОХОДЫ: ${formatMoney(totalInc)} ₽</div>`;
+            const groups = {};
+            incOps.forEach(op => { groups[op.category] = (groups[op.category]||0) + op.amount; });
+            Object.entries(groups).sort((a,b)=>b[1]-a[1]).forEach(([cat, sum]) => {
+                const pct = ((sum/totalInc)*100).toFixed(0);
+                const color = getColorForCategory(cat, 'income');
+                html += `<div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:${color}"></div><div class="legend-name">${cat}</div></div><div class="legend-val">${formatMoney(sum)} (${pct}%)</div></div>`;
+            });
+            html += `</div>`;
+        }
+
+        // Expense Section
+        if (totalExp > 0) {
+            html += `<div><div style="font-size:12px; color:var(--danger); font-weight:700; margin-bottom:8px;">РАСХОДЫ: ${formatMoney(totalExp)} ₽</div>`;
+            const groups = {};
+            expOps.forEach(op => { groups[op.category] = (groups[op.category]||0) + op.amount; });
+            Object.entries(groups).sort((a,b)=>b[1]-a[1]).forEach(([cat, sum]) => {
+                const pct = ((sum/totalExp)*100).toFixed(0);
+                const color = getColorForCategory(cat, 'expense');
+                html += `<div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:${color}"></div><div class="legend-name">${cat}</div></div><div class="legend-val">${formatMoney(sum)} (${pct}%)</div></div>`;
+            });
+            html += `</div>`;
+        }
+
+        if (totalInc === 0 && totalExp === 0) html = '<div class="empty-state">Нет операций</div>';
+        
+        content.innerHTML = html;
+        document.getElementById('modalOverlay').classList.add('active');
+        document.getElementById('breakdownSheet').classList.add('active');
+        haptic('light');
+    }
+    function closeBreakdown() {
+        document.getElementById('modalOverlay').classList.remove('active');
+        document.getElementById('breakdownSheet').classList.remove('active');
+    }
+
+    function renderHeatmap() {
+        const grid = document.getElementById('heatmapGrid');
+        if(!grid) return;
+        grid.innerHTML = '';
+        
+        const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+        const totals = [0,0,0,0,0,0,0];
+        const counts = [0,0,0,0,0,0,0];
+        
+        operations.filter(o => o.type === 'expense').forEach(op => {
+            const d = new Date(op.date);
+            const dayIdx = (d.getDay() + 6) % 7;
+            totals[dayIdx] += op.amount;
+            counts[dayIdx]++;
+        });
+        
+        const maxAvg = Math.max(...totals.map((t, i) => counts[i] ? t/counts[i] : 0));
+        
+        for(let i=0; i<7; i++) {
+            const avg = counts[i] ? totals[i]/counts[i] : 0;
+            const intensity = maxAvg > 0 ? 0.15 + (avg/maxAvg)*0.85 : 0.15;
+            const div = document.createElement('div');
+            div.className = 'heat-cell';
+            div.innerHTML = `
+                <div class="heat-day">${days[i]}</div>
+                <div class="heat-square" style="background: rgba(255,75,75,${intensity})"></div>
+                <div class="heat-val">${formatMoney(Math.round(avg))}</div>
+            `;
+            grid.appendChild(div);
+        }
+    }
+
+    function renderYearSummary() {
+        const container = document.getElementById('yearSummaryContent');
+        if(!container) return;
+        
+        const year = new Date().getFullYear();
+        const ops = operations.filter(op => new Date(op.date).getFullYear() === year);
+        const inc = ops.filter(o => o.type === 'income').reduce((s,o)=>s+o.amount, 0);
+        const exp = ops.filter(o => o.type === 'expense').reduce((s,o)=>s+o.amount, 0);
+        const bal = inc - exp;
+        const totalSaved = goals.reduce((s, g) => s + g.saved, 0);
+        
+        // Top 3 expenses
+        const expGroups = {};
+        ops.filter(o => o.type === 'expense').forEach(op => { expGroups[op.category] = (expGroups[op.category]||0) + op.amount; });
+        const top3 = Object.entries(expGroups).sort((a,b)=>b[1]-a[1]).slice(0, 3);
+        
+        // Largest single expense
+        const largest = ops.filter(o => o.type === 'expense').sort((a,b)=>b.amount-a.amount)[0];
+
+        let html = `
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:15px; text-align:center;">
+                <div><div style="font-size:10px; color:var(--text-secondary)">Доходы</div><div style="font-weight:700; color:var(--success)">${formatMoney(inc)}</div></div>
+                <div><div style="font-size:10px; color:var(--text-secondary)">Расходы</div><div style="font-weight:700; color:var(--danger)">${formatMoney(exp)}</div></div>
+                <div><div style="font-size:10px; color:var(--text-secondary)">Баланс</div><div style="font-weight:700; color:${bal>=0?'var(--success)':'var(--danger)'}">${formatMoney(bal)}</div></div>
+            </div>
+        `;
+        
+        if (top3.length > 0) {
+            html += `<div style="margin-bottom:15px;"><div style="font-size:11px; color:var(--text-secondary); margin-bottom:5px;">Топ категории</div>`;
+            top3.forEach(([cat, sum]) => {
+                const color = getColorForCategory(cat, 'expense');
+                html += `<div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:${color}"></div><div class="legend-name">${cat}</div></div><div class="legend-val">${formatMoney(sum)}</div></div>`;
+            });
+            html += `</div>`;
+        }
+        
+        if (largest) {
+            html += `<div style="margin-bottom:15px;"><div style="font-size:11px; color:var(--text-secondary); margin-bottom:5px;">Крупнейшая трата</div><div style="font-size:13px; font-weight:600;">${largest.category} <span style="color:var(--text-secondary); font-weight:400;">(${new Date(largest.date).toLocaleDateString('ru-RU')})</span></div><div style="color:var(--danger); font-weight:700;">${formatMoney(largest.amount)} ₽</div></div>`;
+        }
+        
+        html += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:11px; color:var(--text-secondary);">
+            <div>Накоплено: <span style="color:var(--text-primary); font-weight:700;">${formatMoney(totalSaved)}</span></div>
+            <div>Операций: <span style="color:var(--text-primary); font-weight:700;">${ops.length}</span></div>
+        </div>`;
+        
+        container.innerHTML = html;
+    }
+
+    // Subscriptions Logic
+    function processSubscriptions() {
+        const today = new Date();
+        const day = today.getDate();
+        const month = today.getMonth();
+        const year = today.getFullYear();
+        let changed = false;
+
+        subscriptions.forEach(sub => {
+            if (sub.active && day >= sub.day) {
+                // Check if already created this month
+                const exists = operations.some(op => 
+                    op.isRecurring && op.parentId === `sub_${sub.id}` && 
+                    new Date(op.date).getMonth() === month && 
+                    new Date(op.date).getFullYear() === year
+                );
+                
+                if (!exists) {
+                    operations.push({
+                        id: `sub_${sub.id}_${Date.now()}`,
+                        date: new Date(year, month, sub.day).toISOString(),
+                        type: 'expense',
+                        amount: sub.amount,
+                        category: sub.name,
+                        note: 'Подписка',
+                        isRecurring: true,
+                        parentId: `sub_${sub.id}`
+                    });
+                    changed = true;
+                }
+            }
+        });
+
+        if (changed) {
+            saveData();
+            updateUI();
+        }
+        renderSubsScreen();
+    }
+
+    function renderSubsScreen() {
+        const container = document.getElementById('subsList');
+        const empty = document.getElementById('subsEmpty');
+        if(!container) return;
+        container.innerHTML = '';
+        
+        let totalM = 0, totalY = 0;
+        const activeSubs = subscriptions.filter(s => s.active);
+        
+        if (activeSubs.length === 0) {
+            if(empty) empty.style.display = 'block';
+            return;
+        }
+        if(empty) empty.style.display = 'none';
+
+        activeSubs.forEach((s, idx) => {
+            totalM += s.amount;
+            totalY += s.amount * 12;
+            const color = getColorForCategory(s.name, 'expense');
+            const div = document.createElement('div');
+            div.className = 'sub-card';
+            div.style.animation = `slideIn 0.3s ease forwards ${idx * 0.05}s`;
+            div.style.opacity = '0';
+            div.innerHTML = `
+                <div class="sub-dot" style="background:${color}"></div>
+                <div class="sub-info">
+                    <div class="sub-name">${s.name}</div>
+                    <div class="sub-detail">${formatMoney(s.amount)} ₽ · списание ${s.day}-го</div>
+                </div>
+                <div class="sub-actions">
+                    <button class="sub-move-btn" onclick="moveSub(${idx}, -1)">↑</button>
+                    <button class="sub-move-btn" onclick="moveSub(${idx}, 1)">↓</button>
+                    <label class="switch" style="margin:0; width:40px; height:20px;"><input type="checkbox" ${s.active?'checked':''} onchange="toggleSubActive('${s.id}')"><span class="slider" style="height:20px; border-radius:10px;"><span style="height:16px; width:16px; left:2px; bottom:2px;"></span></span></label>
+                    <button class="btn-small-action" onclick="openEditSub('${s.id}')">✎</button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+        
+        document.getElementById('subsTotalMonth').textContent = formatMoney(totalM) + ' ₽';
+        document.getElementById('subsTotalYear').textContent = formatMoney(totalY) + ' ₽';
+    }
+
+    function moveSub(idx, dir) {
+        const activeSubs = subscriptions.filter(s => s.active);
+        // We need to map back to original array indices or just sort the main array?
+        // Let's just swap in the main array based on filtered logic is hard.
+        // Simpler: Just swap in the main 'subscriptions' array assuming order is preserved visually
+        // But visual is only active. Let's find the actual object.
+        const sub = activeSubs[idx];
+        const currentIdx = subscriptions.indexOf(sub);
+        const targetIdx = currentIdx + dir;
+        if (targetIdx < 0 || targetIdx >= subscriptions.length) return;
+        
+        const temp = subscriptions[currentIdx];
+        subscriptions[currentIdx] = subscriptions[targetIdx];
+        subscriptions[targetIdx] = temp;
+        saveData();
+        renderSubsScreen();
+        haptic('light');
+    }
+
+    function toggleSubActive(id) {
+        const s = subscriptions.find(x => x.id === id);
+        if(s) { s.active = !s.active; saveData(); renderSubsScreen(); haptic('light'); }
+    }
+
+    function openAddSub() {
+        document.getElementById('editSubId').value = '';
+        document.getElementById('subNameInput').value = '';
+        document.getElementById('subAmountInput').value = '';
+        document.getElementById('subDayInput').value = '';
+        document.getElementById('deleteSubBtn').style.display = 'none';
+        document.getElementById('modalOverlay').classList.add('active');
+        document.getElementById('addSubSheet').classList.add('active');
+    }
+    function openEditSub(id) {
+        const s = subscriptions.find(x => x.id === id);
+        if(!s) return;
+        document.getElementById('editSubId').value = s.id;
+        document.getElementById('subNameInput').value = s.name;
+        document.getElementById('subAmountInput').value = s.amount;
+        document.getElementById('subDayInput').value = s.day;
+        document.getElementById('deleteSubBtn').style.display = 'block';
+        document.getElementById('modalOverlay').classList.add('active');
+        document.getElementById('addSubSheet').classList.add('active');
+    }
+    function closeAddSub() {
+        document.getElementById('modalOverlay').classList.remove('active');
+        document.getElementById('addSubSheet').classList.remove('active');
+    }
+    function saveSubSettings() {
+        const id = document.getElementById('editSubId').value;
+        const name = document.getElementById('subNameInput').value.trim();
+        const amount = parseFloat(document.getElementById('subAmountInput').value);
+        const day = parseInt(document.getElementById('subDayInput').value);
+        if (!name || !amount || !day) return;
+        
+        if (id) {
+            const s = subscriptions.find(x => x.id === id);
+            if (s) { s.name = name; s.amount = amount; s.day = day; }
+        } else {
+            subscriptions.push({ id: Date.now().toString(), name, amount, day, active: true });
+        }
+        saveData();
+        closeAddSub();
+        renderSubsScreen();
+        haptic('success');
+    }
+    function deleteSub() {
+        const id = document.getElementById('editSubId').value;
+        if (id && confirm('Удалить подписку?')) {
+            subscriptions = subscriptions.filter(x => x.id !== id);
+            saveData();
+            closeAddSub();
+            renderSubsScreen();
+            haptic('warning');
+        }
+    }
+
+    // Backup & Reset
+    async function loadBackupStatus() {
+        const statusEl = document.getElementById('backupStatus');
+        const btnRestore = document.getElementById('btnRestore');
+        const check = document.getElementById('autoBackupCheck');
+        
+        if (!tg || !tg.CloudStorage) {
+            statusEl.textContent = 'Доступно только в Telegram';
+            btnRestore.disabled = true;
+            check.disabled = true;
+            return;
+        }
+
+        try {
+            const metaKey = 'fin_bk_meta';
+            const meta = await new Promise(resolve => tg.CloudStorage.getItem(metaKey, resolve));
+            if (meta) {
+                const data = JSON.parse(meta);
+                statusEl.textContent = `Копия от: ${new Date(data.timestamp).toLocaleString('ru-RU')}`;
+                btnRestore.disabled = false;
+            } else {
+                statusEl.textContent = 'Нет копий в облаке';
+                btnRestore.disabled = true;
+            }
+        } catch (e) {
+            statusEl.textContent = 'Ошибка чтения';
+        }
+        
+        check.checked = !!settings.autoBackup;
+    }
+
+    async function doBackup() {
+        if (!tg || !tg.CloudStorage) { alert('Доступно только в Telegram'); return; }
+        const btn = document.getElementById('btnBackup');
+        btn.textContent = 'Загрузка...';
+        btn.disabled = true;
+
+        try {
+            const data = {
+                ops: operations,
+                colors: categoryColors,
+                goals: goals,
+                subs: subscriptions,
+                achievements: achievementsUnlocked,
+                settings: settings
+            };
+            const json = JSON.stringify(data);
+            const chunkSize = 4000;
+            const chunks = [];
+            for (let i = 0; i < json.length; i += chunkSize) {
+                chunks.push(json.substring(i, i + chunkSize));
+            }
+
+            // Delete old chunks
+            const metaKey = 'fin_bk_meta';
+            const oldMeta = await new Promise(resolve => tg.CloudStorage.getItem(metaKey, resolve));
+            if (oldMeta) {
+                const old = JSON.parse(oldMeta);
+                for (let i = 0; i < old.chunks; i++) {
+                    await new Promise(resolve => tg.CloudStorage.removeItem(`fin_bk_${i}`, resolve));
+                }
+            }
+
+            // Write new
+            for (let i = 0; i < chunks.length; i++) {
+                await new Promise(resolve => tg.CloudStorage.setItem(`fin_bk_${i}`, chunks[i], resolve));
+            }
+            await new Promise(resolve => tg.CloudStorage.setItem(metaKey, JSON.stringify({ chunks: chunks.length, timestamp: Date.now() }), resolve));
+            
+            statusEl = document.getElementById('backupStatus');
+            statusEl.textContent = `Успешно: ${new Date().toLocaleString('ru-RU')}`;
+            haptic('success');
+        } catch (e) {
+            console.error(e);
+            document.getElementById('backupStatus').textContent = 'Ошибка записи';
+            haptic('error');
+        } finally {
+            btn.textContent = 'Загрузить в облако';
+            btn.disabled = false;
+        }
+    }
+
+    async function doRestore() {
+        if (!tg || !tg.CloudStorage) return;
+        if (!confirm('Восстановить данные из облака? Текущие данные будут перезаписаны.')) return;
+        
+        try {
+            const meta = await new Promise(resolve => tg.CloudStorage.getItem('fin_bk_meta', resolve));
+            if (!meta) return;
+            const { chunks } = JSON.parse(meta);
+            let json = '';
+            for (let i = 0; i < chunks; i++) {
+                const part = await new Promise(resolve => tg.CloudStorage.getItem(`fin_bk_${i}`, resolve));
+                json += part;
+            }
+            const data = JSON.parse(json);
+            
+            localStorage.setItem('fin_ops', JSON.stringify(data.ops || []));
+            localStorage.setItem('fin_colors', JSON.stringify(data.colors || {}));
+            localStorage.setItem('fin_goals', JSON.stringify(data.goals || []));
+            localStorage.setItem('fin_subs', JSON.stringify(data.subs || []));
+            localStorage.setItem('fin_achievements', JSON.stringify(data.achievements || {}));
+            localStorage.setItem('fin_settings', JSON.stringify(data.settings || {}));
+            
+            location.reload();
+        } catch (e) {
+            alert('Ошибка восстановления');
+        }
+    }
+
+    function toggleAutoBackup() {
+        settings.autoBackup = document.getElementById('autoBackupCheck').checked;
+        saveData();
+        haptic('light');
+    }
+
+    function confirmReset() {
+        const text = document.getElementById('confirmText');
+        if(text) text.textContent = "Удалить ВСЕ данные? Операции, цели, подписки и достижения будут стёрты.";
+        const okBtn = document.getElementById('confirmOkBtn');
+        if(okBtn) {
+            okBtn.onclick = () => {
+                Object.keys(localStorage).forEach(k => {
+                    if (k.startsWith('fin_')) localStorage.removeItem(k);
+                });
+                location.reload();
+            };
+        }
+        showDeleteConfirm('RESET_TRIGGER'); // Reusing dialog logic
+    }
+
+    function openData() {
+        haptic('light');
+        loadBackupStatus();
+        document.getElementById('modalOverlay').classList.add('active');
+        document.getElementById('dataSheet').classList.add('active');
+    }
+    function closeData() {
+        document.getElementById('modalOverlay').classList.remove('active');
+        document.getElementById('dataSheet').classList.remove('active');
+    }
+
+    function getProgress(ach) {
+        if (ach.type === 'count') return [operations.length, ach.target];
+        if (ach.type === 'goal') return [goals.reduce((s,g)=>s+g.saved,0), ach.target];
+        if (ach.type === 'cat_year') {
+            const now = new Date(); const yearAgo = new Date(); yearAgo.setFullYear(now.getFullYear() - 1);
+            const sum = operations.filter(op => { const d = new Date(op.date); return d >= yearAgo && op.type === 'expense' && ach.catKeys.some(k => op.category.toLowerCase().includes(k)); }).reduce((s, op) => s + op.amount, 0);
+            return [sum, ach.target];
+        }
+        if (ach.type === 'uniq_cats') return [new Set(operations.map(o => o.category)).size, ach.target];
+        if (ach.type === 'cat_count') return [operations.filter(op => ach.catKeys.some(k => op.category.toLowerCase().includes(k))).length, ach.target];
+        if (ach.type === 'recurring_count') return [operations.filter(op => op.isRecurring).length, ach.target];
+        if (ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') {
+            let streak = 0; const today = new Date();
+            for (let i = 1; i < 100; i++) {
+                const d = new Date(today); d.setDate(d.getDate() - i); const dStr = d.toISOString().split('T')[0];
+                const hasExpense = operations.some(op => op.type === 'expense' && new Date(op.date).toISOString().startsWith(dStr));
+                const hasIncome = operations.some(op => op.type === 'income' && new Date(op.date).toISOString().startsWith(dStr));
+                if (ach.type === 'series_no_exp') { if (hasExpense) break; streak++; }
+                else if (ach.type === 'series_no_exp_inc') { if (hasExpense || !hasIncome) break; streak++; }
+            }
+            return [streak, ach.target];
+        }
+        return [0, 0];
+    }
+    function checkCondition(ach) {
+        const [cur, target] = getProgress(ach);
+        if (['count','goal','cat_year','uniq_cats','cat_count','recurring_count','series_no_exp','series_no_exp_inc'].includes(ach.type)) return cur >= target;
+        if (ach.type === 'month_positive') {
+            const m = {}; operations.forEach(op => { const k = `${new Date(op.date).getFullYear()}-${new Date(op.date).getMonth()}`; if(!m[k]) m[k]={inc:0,exp:0}; if(op.type==='income') m[k].inc+=op.amount; else m[k].exp+=op.amount; });
+            return Object.values(m).some(x => x.inc > x.exp);
+        }
+        if (ach.type === 'goal_completed') return goals.some(g => g.saved >= g.target && g.target > 0);
+        if (ach.type === 'single_income') return operations.some(op => op.type === 'income' && op.amount >= ach.target);
+        if (ach.type === 'months_positive_series') {
+            let streak = 0; const now = new Date();
+            for (let i = 0; i < 12; i++) {
+                const realM = now.getMonth() - i < 0 ? 12 + (now.getMonth() - i) : now.getMonth() - i;
+                const realY = now.getMonth() - i < 0 ? now.getFullYear() - 1 : now.getFullYear();
+                const ops = getFilteredOps(null, realY, realM);
+                const inc = ops.filter(o=>o.type==='income').reduce((s,o)=>s+o.amount,0);
+                const exp = ops.filter(o=>o.type==='expense').reduce((s,o)=>s+o.amount,0);
+                if (inc > exp) streak++; else break;
+            }
+            return streak >= ach.target;
+        }
+        if (ach.type === 'time_range') return operations.some(op => { const h = new Date(op.date).getHours(); return h >= ach.start && h < ach.end; });
+        if (ach.type === 'single_expense') return operations.some(op => op.type === 'expense' && op.amount >= ach.target);
+        if (ach.type === 'exact_amount') return ach.expenseOnly ? operations.some(op => op.type === 'expense' && op.amount === ach.target) : operations.some(op => op.amount === ach.target);
+        if (ach.type === 'friday_expense') return operations.some(op => new Date(op.date).getDay() === 5 && op.type === 'expense' && op.amount >= ach.target);
+        if (ach.type === 'day_equal') {
+            const d = {}; operations.forEach(op => { const k = new Date(op.date).toISOString().split('T')[0]; if(!d[k]) d[k]={inc:0,exp:0}; if(op.type==='income') d[k].inc+=op.amount; else d[k].exp+=op.amount; });
+            return Object.values(d).some(x => x.inc > 0 && x.exp > 0 && x.inc === x.exp);
+        }
+        if (ach.type === 'day_expense') {
+            const d = {}; operations.filter(op=>op.type==='expense').forEach(op => { const k = new Date(op.date).toISOString().split('T')[0]; d[k]=(d[k]||0)+op.amount; });
+            return Object.values(d).some(v => v >= ach.target);
+        }
+        if (ach.type === 'month_zero') {
+            const m = {}; operations.forEach(op => { const k = `${new Date(op.date).getFullYear()}-${new Date(op.date).getMonth()}`; if(!m[k]) m[k]={inc:0,exp:0}; if(op.type==='income') m[k].inc+=op.amount; else m[k].exp+=op.amount; });
+            return Object.values(m).some(x => (x.inc>0 || x.exp>0) && x.inc === x.exp);
+        }
+        if (ach.type === 'duplicate_op') {
+            const s = new Set(); for(const op of operations) { const k = `${new Date(op.date).toISOString().split('T')[0]}-${op.category}-${op.amount}`; if(s.has(k)) return true; s.add(k); }
+            return false;
+        }
+        if (ach.type === 'one_year_since_first') {
+            if (operations.length === 0) return false;
+            const first = new Date(Math.min(...operations.map(op => new Date(op.date))));
+            return (new Date() - first) / (1000*60*60*24*365) >= 1;
+        }
+        if (ach.type === 'all_unlocked') return Object.keys(achievementsUnlocked).length >= 49;
+        return false;
+    }
+    function checkAchievements() {
+        let changed = false;
+        ACHIEVEMENTS_LIST.forEach(ach => {
+            if (!achievementsUnlocked[ach.id] && checkCondition(ach)) {
+                achievementsUnlocked[ach.id] = new Date().toISOString(); changed = true;
+                if (document.getElementById('achievementsScreen').classList.contains('active')) haptic('success');
+            }
+        });
+        if (changed) saveData();
+    }
+    function renderAchievementsGrid() {
+        const grid = document.getElementById('achievementsGrid'); if(!grid) return; grid.innerHTML = '';
+        const unlockedCount = Object.keys(achievementsUnlocked).length;
+        const counterEl = document.getElementById('achCounter'), progEl = document.getElementById('achTotalProgress');
+        if(counterEl) counterEl.textContent = `${unlockedCount}/50`;
+        if(progEl) progEl.style.width = `${(unlockedCount / 50) * 100}%`;
+        ACHIEVEMENTS_LIST.forEach(ach => {
+            const isUnlocked = !!achievementsUnlocked[ach.id];
+            const [cur, target] = getProgress(ach);
+            const card = document.createElement('div');
+            card.className = `tarot-card ${isUnlocked ? 'opened' : 'closed'}`;
+            card.onclick = () => openAchDetail(ach);
+            let progressText = '', progressWidth = '0%';
+            if (!isUnlocked) {
+                if (['count','goal','cat_year','uniq_cats','cat_count','recurring_count','series_no_exp','series_no_exp_inc'].includes(ach.type)) {
+                    const fmtCur = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(cur) : cur;
+                    const fmtTarget = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(target) : target;
+                    progressText = `${fmtCur} / ${fmtTarget}`; progressWidth = `${Math.min(100, (cur / target) * 100)}%`;
+                } else progressText = '???';
+            }
+            card.innerHTML = `<div class="tarot-canvas"><div class="tarot-emoji">${ach.emoji}</div>${!isUnlocked ? `<div class="tarot-progress-overlay" style="font-size: ${progressText.length > 10 ? '8px' : '9px'}">${progressText}</div><div class="tarot-progress-bar"><div class="tarot-progress-fill" style="width: ${progressWidth}"></div></div>` : ''}</div><div class="tarot-label"><div class="tarot-name">${ach.name}</div></div>`;
+            grid.appendChild(card);
+        });
+    }
+    function openAchDetail(ach) {
+        const isUnlocked = !!achievementsUnlocked[ach.id];
+        const nameEl = document.getElementById('achDetailName');
+        const descEl = document.getElementById('achDetailDesc');
+        const dateEl = document.getElementById('achDetailDate');
+        if (nameEl) nameEl.textContent = ach.name;
+        if (descEl) descEl.textContent = isUnlocked ? ach.desc : 'Условие скрыто';
+        if (dateEl) {
+            if (isUnlocked && achievementsUnlocked[ach.id]) {
+                dateEl.textContent = 'Открыто ' + new Date(achievementsUnlocked[ach.id]).toLocaleDateString('ru-RU');
+                dateEl.style.display = 'block';
+            } else {
+                dateEl.style.display = 'none';
+            }
+        }
+        const cardContainer = document.getElementById('achDetailCard');
+        if(cardContainer) {
+            const [cur, target] = getProgress(ach);
+            let progressText = '', progressWidth = '0%';
+            if (!isUnlocked) {
+                if (['count','goal','cat_year','uniq_cats','cat_count','recurring_count','series_no_exp','series_no_exp_inc'].includes(ach.type)) {
+                    const fmtCur = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(cur) : cur;
+                    const fmtTarget = (ach.type === 'goal' || ach.type === 'cat_year') ? formatMoney(target) : target;
+                    progressText = `${fmtCur} / ${fmtTarget}`; progressWidth = `${Math.min(100, (cur / target) * 100)}%`;
+                } else progressText = '???';
+            }
+            cardContainer.innerHTML = `<div class="tarot-card ${isUnlocked ? 'opened' : 'closed'}" style="width: 200px; margin-bottom: 20px;"><div class="tarot-canvas"><div class="tarot-emoji">${ach.emoji}</div>${!isUnlocked ? `<div class="tarot-progress-overlay" style="font-size: ${progressText.length > 12 ? '7px' : '9px'}">${progressText}</div><div class="tarot-progress-bar"><div class="tarot-progress-fill" style="width: ${progressWidth}"></div></div>` : ''}</div><div class="tarot-label"><div class="tarot-name">${ach.name}</div></div></div>`;
+        }
+        document.getElementById('modalOverlay').classList.add('active');
+        document.getElementById('achDetailSheet').classList.add('active');
+        haptic('light');
+    }
     function closeAchDetail() { document.getElementById('modalOverlay').classList.remove('active'); document.getElementById('achDetailSheet').classList.remove('active'); }
+
+    function switchTab(tab) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        
+        const fab = document.getElementById('addBtn');
+        
+        if (tab === 'finances') {
+            document.getElementById('financesScreen').classList.add('active');
+            document.getElementById('navFinances').classList.add('active');
+            fab.style.display = 'flex';
+            updateUI();
+        } else if (tab === 'analytics') {
+            document.getElementById('analyticsScreen').classList.add('active');
+            document.getElementById('navAnalytics').classList.add('active');
+            fab.style.display = 'none';
+            renderAnalytics();
+        } else if (tab === 'subs') {
+            document.getElementById('subsScreen').classList.add('active');
+            document.getElementById('navSubs').classList.add('active');
+            fab.style.display = 'none';
+            renderSubsScreen();
+        } else if (tab === 'achievements') {
+            document.getElementById('achievementsScreen').classList.add('active');
+            document.getElementById('navAchievements').classList.add('active');
+            fab.style.display = 'none';
+            renderAchievementsGrid();
+        }
+        haptic('light');
+    }
+
+    // Search Logic
+    const searchIcon = document.getElementById('searchIcon');
+    const searchContainer = document.getElementById('searchContainer');
+    const searchInput = document.getElementById('searchInput');
+    const searchCloseBtn = document.getElementById('searchCloseBtn');
+    const filterChips = document.getElementById('filterChips');
+    
+    let currentFilterType = 'all';
+    let currentFilterCat = '';
+
+    searchIcon.onclick = () => {
+        const isActive = searchContainer.classList.contains('active');
+        if (isActive) {
+            searchContainer.classList.remove('active');
+            searchInput.value = '';
+            currentFilterType = 'all';
+            currentFilterCat = '';
+            renderList('opsList', getFilteredOps());
+            renderFilterChips();
+        } else {
+            searchContainer.classList.add('active');
+            searchInput.focus();
+            renderFilterChips();
+        }
+        haptic('light');
+    };
+
+    searchCloseBtn.onclick = () => {
+        searchContainer.classList.remove('active');
+        searchInput.value = '';
+        currentFilterType = 'all';
+        currentFilterCat = '';
+        renderList('opsList', getFilteredOps());
+        renderFilterChips();
+    };
+
+    searchInput.addEventListener('input', () => {
+        renderList('opsList', getFilteredOps(), searchInput.value, currentFilterType, currentFilterCat);
+    });
+
+    function renderFilterChips() {
+        filterChips.innerHTML = '';
+        const cats = ['Все', 'Доходы', 'Расходы', ...new Set(operations.map(o => o.category))];
+        cats.forEach(c => {
+            const chip = document.createElement('div');
+            chip.className = `chip ${ (c === 'Все' && currentFilterType === 'all' && !currentFilterCat) || c === currentFilterCat ? 'active' : '' }`;
+            chip.textContent = c;
+            chip.onclick = () => {
+                if (c === 'Все') { currentFilterType = 'all'; currentFilterCat = ''; }
+                else if (c === 'Доходы') { currentFilterType = 'income'; currentFilterCat = ''; }
+                else if (c === 'Расходы') { currentFilterType = 'expense'; currentFilterCat = ''; }
+                else { currentFilterType = 'all'; currentFilterCat = c; }
+                renderFilterChips();
+                renderList('opsList', getFilteredOps(), searchInput.value, currentFilterType, currentFilterCat);
+                haptic('light');
+            };
+            filterChips.appendChild(chip);
+        });
+    }
+
     document.getElementById('addBtn').onclick = () => openModal();
     document.getElementById('modalOverlay').onclick = closeAllSheets;
     document.getElementById('monthOverlay').onclick = closeAllSheets;
     document.getElementById('fullCalOverlay').onclick = closeAllSheets;
+    document.getElementById('cloudBtn').onclick = openData;
+
     document.getElementById('incomeChartCard').onclick = () => { haptic('medium'); openDetails('income', getFilteredOps('income')); };
     document.getElementById('expenseChartCard').onclick = () => { haptic('medium'); openDetails('expense', getFilteredOps('expense')); };
     document.getElementById('goalCard').onclick = openGoals;
@@ -2022,18 +2459,7 @@
     document.getElementById('monthLabel').onclick = openMonthPicker;
     document.getElementById('prevYearBtn').onclick = () => { pickerYear--; renderMonthGrid(); haptic('light'); };
     document.getElementById('nextYearBtn').onclick = () => { pickerYear++; renderMonthGrid(); haptic('light'); };
-    
-    // Calendar Functions
-    let currentFullCalDate = new Date(viewState.year, viewState.month, 1);
-    function openFullCalendar() { currentFullCalDate = new Date(viewState.year, viewState.month, 1); renderFullCalendar(); document.getElementById('fullCalOverlay').classList.add('active'); document.getElementById('fullCalSheet').classList.add('active'); haptic('light'); }
-    function closeFullCalendar() { document.getElementById('fullCalOverlay').classList.remove('active'); document.getElementById('fullCalSheet').classList.remove('active'); closeDayDetails(); }
-    function renderFullCalendar() { const year = currentFullCalDate.getFullYear(), month = currentFullCalDate.getMonth(); const lbl = document.getElementById('fullCalMonthLabel'); if(lbl) lbl.textContent = `${fullMonths[month]} ${year}`; const grid = document.getElementById('fullCalGrid'); if(!grid) return; grid.innerHTML = ''; weekDays.forEach(d => { const el = document.createElement('div'); el.className = 'cal-day-name'; el.textContent = d; grid.appendChild(el); }); const firstDay = new Date(year, month, 1), lastDay = new Date(year, month + 1, 0); const startOffset = (firstDay.getDay() + 6) % 7; const today = new Date(); const monthOps = operations.filter(op => { const d = new Date(op.date); return d.getFullYear() === year && d.getMonth() === month; }); const dayExpenses = {}, dayIncomes = {}; let maxExpense = 0; monthOps.forEach(op => { const d = new Date(op.date).getDate(); if (op.type === 'expense') { dayExpenses[d] = (dayExpenses[d] || 0) + op.amount; if (dayExpenses[d] > maxExpense) maxExpense = dayExpenses[d]; } else dayIncomes[d] = true; }); for (let i = 0; i < startOffset; i++) grid.appendChild(document.createElement('div')); for (let d = 1; d <= lastDay.getDate(); d++) { const cell = document.createElement('div'); cell.className = 'cal-day-cell'; cell.textContent = d; cell.style.fontSize = '12px'; cell.style.width = '100%'; cell.style.height = '40px'; const exp = dayExpenses[d] || 0; if (exp > 0) { cell.style.backgroundColor = `rgba(255, 75, 75, ${0.15 + (exp / maxExpense) * 0.85})`; cell.style.color = '#fff'; } if (dayIncomes[d]) cell.classList.add('has-income'); if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) { cell.style.border = `2px solid var(--accent)`; cell.style.boxSizing = 'border-box'; } cell.onclick = () => openDayDetails(year, month, d); grid.appendChild(cell); } }
-    function openDayDetails(year, month, day) { const dateStr = `${day} ${fullMonths[month]} ${year}`; const titleEl = document.getElementById('dayDetailsTitle'); if(titleEl) titleEl.textContent = dateStr; const dayOps = operations.filter(op => { const d = new Date(op.date); return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day; }).sort((a, b) => new Date(b.date) - new Date(a.date)); const inc = dayOps.filter(o => o.type === 'income').reduce((s, o) => s + o.amount, 0); const exp = dayOps.filter(o => o.type === 'expense').reduce((s, o) => s + o.amount, 0); const iSum = document.getElementById('dayIncomeSum'), eSum = document.getElementById('dayExpenseSum'); if(iSum) iSum.textContent = inc > 0 ? `+${formatMoney(inc)} ₽` : ''; if(eSum) eSum.textContent = exp > 0 ? `-${formatMoney(exp)} ₽` : ''; renderList('dayDetailsList', dayOps); const empty = document.getElementById('dayEmptyState'); if(empty) empty.style.display = dayOps.length === 0 ? 'block' : 'none'; document.getElementById('dayDetailsSheet').classList.add('active'); haptic('light'); }
-    function closeDayDetails() { document.getElementById('dayDetailsSheet').classList.remove('active'); }
-    function backToCalendar() { closeDayDetails(); }
-    document.getElementById('prevFullCalMonth').onclick = () => { currentFullCalDate.setMonth(currentFullCalDate.getMonth() - 1); renderFullCalendar(); haptic('light'); };
-    document.getElementById('nextFullCalMonth').onclick = () => { currentFullCalDate.setMonth(currentFullCalDate.getMonth() + 1); renderFullCalendar(); haptic('light'); };
-    function renderMiniCalendar() { const grid = document.getElementById('miniCalGrid'); if(!grid) return; grid.innerHTML = ''; weekDays.forEach(d => { const el = document.createElement('div'); el.className = 'cal-day-name'; el.textContent = d; grid.appendChild(el); }); const year = viewState.year, month = viewState.month; const firstDay = new Date(year, month, 1), lastDay = new Date(year, month + 1, 0); const startOffset = (firstDay.getDay() + 6) % 7; const monthOps = getFilteredOps(); const dayExpenses = {}, dayIncomes = {}; let maxExpense = 0; monthOps.forEach(op => { const d = new Date(op.date).getDate(); if (op.type === 'expense') { dayExpenses[d] = (dayExpenses[d] || 0) + op.amount; if (dayExpenses[d] > maxExpense) maxExpense = dayExpenses[d]; } else dayIncomes[d] = true; }); for (let i = 0; i < startOffset; i++) grid.appendChild(document.createElement('div')); for (let d = 1; d <= lastDay.getDate(); d++) { const cell = document.createElement('div'); cell.className = 'cal-day-cell'; cell.textContent = d; const exp = dayExpenses[d] || 0; if (exp > 0) { cell.style.backgroundColor = `rgba(255, 75, 75, ${0.15 + (exp / maxExpense) * 0.85})`; cell.style.color = '#fff'; } if (dayIncomes[d]) cell.classList.add('has-income'); cell.onclick = () => openFullCalendar(); grid.appendChild(cell); } }
+    document.getElementById('addSubBtn').onclick = openAddSub;
 
     updateUI();
 </script>
