@@ -356,11 +356,11 @@
         .suggestion-chip:active { background-color: rgba(255,255,255,0.15); }
 
         .repeat-toggle-container { display: flex; align-items: center; justify-content: space-between; padding: 14px; background-color: rgba(255,255,255,0.05); border-radius: 12px; cursor: pointer; margin-bottom: 0; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; margin-left: 10px; pointer-events: auto; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.2); transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--accent); }
+        .slider { position: absolute; inset: 0; background: rgba(255,255,255,0.2); border-radius: 34px; transition: .3s; }
+        .slider:before { content: ''; position: absolute; width: 20px; height: 20px; left: 4px; bottom: 4px; background: #fff; border-radius: 50%; transition: .3s; }
+        input:checked + .slider { background: var(--accent); }
         input:checked + .slider:before { transform: translateX(22px); }
 
         .repeat-options { margin-top: 15px; display: none; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -405,7 +405,8 @@
         .btn-small { background: rgba(255,255,255,0.1); border: none; color: var(--text-primary); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
 
         .tarot-card {
-            width: 170px;
+            width: 100%;
+            max-width: 170px;
             aspect-ratio: 1/2;
             border-radius: 8px;
             position: relative;
@@ -426,7 +427,7 @@
         .tarot-card.closed { filter: grayscale(0.8) brightness(0.55); }
         .tarot-canvas { width: 100%; flex-grow: 1; position: relative; display: flex; align-items: center; justify-content: center; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 4px); }
         .tarot-canvas::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 50% 45%, rgba(217,160,91,0.18), transparent 60%); pointer-events: none; }
-        .tarot-emoji { font-size: 52px; z-index: 2; filter: drop-shadow(0 0 6px rgba(255,180,80,0.45)); transition: transform 0.5s; }
+        .tarot-emoji { font-size: clamp(36px, 11vw, 52px); z-index: 2; filter: drop-shadow(0 0 6px rgba(255,180,80,0.45)); transition: transform 0.5s; }
         .tarot-card.opened .tarot-emoji { transform: scale(1.1); }
         .tarot-progress-overlay { position: absolute; top: 10px; width: 70%; text-align: center; font-size: 9px; color: rgba(255,255,255,0.6); z-index: 3; text-shadow: 0 1px 2px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .tarot-progress-bar { position: absolute; bottom: 18%; width: 70%; height: 4px; background: rgba(0,0,0,0.5); border-radius: 2px; overflow: hidden; z-index: 3; }
@@ -471,7 +472,8 @@
         .heat-val { font-size: 9px; color: var(--text-secondary); white-space: nowrap; }
 
         .subs-list { display: flex; flex-direction: column; gap: 10px; }
-        .sub-card { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 12px; }
+        .sub-card { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 12px; transition: opacity 0.3s; }
+        .sub-card.inactive { opacity: 0.5; }
         .sub-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
         .sub-info { flex: 1; min-width: 0; }
         .sub-name { font-weight: 600; font-size: 14px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -940,7 +942,6 @@
     function applyTheme() {
         const scheme = (tg && tg.colorScheme === 'light') ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', scheme);
-        // Redraw analytics if visible to update chart colors
         if (document.getElementById('analyticsScreen').classList.contains('active')) {
             renderAnalytics();
         }
@@ -957,7 +958,6 @@
     let pickerYear = viewState.year;
     let isSaving = false;
     
-    // Migration: Single Goal -> Multiple Goals
     let goals = JSON.parse(localStorage.getItem('fin_goals')) || [];
     const oldGoal = localStorage.getItem('fin_goal');
     if (oldGoal) {
@@ -1099,7 +1099,6 @@
         }).sort((a, b) => new Date(b.date) - new Date(a.date));
     }
 
-    // Helper for Analytics: Only past operations
     const isPast = op => new Date(op.date) <= new Date();
 
     function updateUI() {
@@ -1122,9 +1121,6 @@
         const monthExpense = expenseOps.reduce((sum, op) => sum + op.amount, 0);
         const monthBalance = carry + monthIncome - monthExpense;
         
-        // Total balance considers ALL time (including future planned? No, usually total is real)
-        // But requirement says "Total" in main screen should show planned too if they are in the list?
-        // Let's stick to standard: Total is all operations in DB.
         const totalIncome = operations.filter(o => o.type === 'income').reduce((sum, op) => sum + op.amount, 0);
         const totalExpense = operations.filter(o => o.type === 'expense').reduce((sum, op) => sum + op.amount, 0);
         const totalBalance = totalIncome - totalExpense;
@@ -1761,7 +1757,6 @@
             labels.push(fullMonths[d.getMonth()].substring(0, 3));
             last6MonthsData.push({ year: d.getFullYear(), month: d.getMonth() });
             
-            // Only count PAST operations for analytics
             const ops = getFilteredOps(null, d.getFullYear(), d.getMonth()).filter(isPast);
             incData.push(ops.filter(o => o.type === 'income').reduce((s,o)=>s+o.amount, 0));
             expData.push(ops.filter(o => o.type === 'expense').reduce((s,o)=>s+o.amount, 0));
@@ -1874,7 +1869,6 @@
         const totals = [0,0,0,0,0,0,0];
         const counts = [0,0,0,0,0,0,0];
         
-        // Only count PAST operations
         operations.filter(op => op.type === 'expense' && isPast(op)).forEach(op => {
             const d = new Date(op.date);
             const dayIdx = (d.getDay() + 6) % 7;
@@ -1903,7 +1897,6 @@
         if(!container) return;
         
         const year = new Date().getFullYear();
-        // Only count PAST operations in current year
         const ops = operations.filter(op => new Date(op.date).getFullYear() === year && isPast(op));
         const inc = ops.filter(o => o.type === 'income').reduce((s,o)=>s+o.amount, 0);
         const exp = ops.filter(o => o.type === 'expense').reduce((s,o)=>s+o.amount, 0);
@@ -1954,7 +1947,8 @@
         let changed = false;
 
         subscriptions.forEach(sub => {
-            if (sub.active && day >= sub.day) {
+            if (sub.active) {
+                // Check if exists in current month
                 const exists = operations.some(op => 
                     op.isRecurring && op.parentId === `sub_${sub.id}` && 
                     new Date(op.date).getMonth() === month && 
@@ -1962,9 +1956,17 @@
                 );
                 
                 if (!exists) {
+                    // Create immediately if not exists (either today or on sub.day if passed)
+                    let opDate = new Date(year, month, sub.day);
+                    if (day < sub.day) {
+                         // If today is before sub.day, we create for next month? 
+                         // No, requirement says: "if no spending in current month -> create operation IMMEDIATELY (today)"
+                         opDate = new Date(); 
+                    }
+                    
                     operations.push({
                         id: `sub_${sub.id}_${Date.now()}`,
-                        date: new Date(year, month, sub.day).toISOString(),
+                        date: opDate.toISOString(),
                         type: 'expense',
                         amount: sub.amount,
                         category: sub.name,
@@ -1981,7 +1983,6 @@
             saveData();
             updateUI();
         }
-        renderSubsScreen();
     }
 
     function renderSubsScreen() {
@@ -2044,7 +2045,12 @@
 
     function toggleSubActive(id) {
         const s = subscriptions.find(x => x.id === id);
-        if(s) { s.active = !s.active; saveData(); renderSubsScreen(); haptic('light'); }
+        if (!s) return;
+        s.active = !s.active;
+        saveData();
+        processSubscriptions();
+        renderSubsScreen();
+        haptic('light');
     }
 
     function openAddSub() {
@@ -2085,6 +2091,8 @@
             subscriptions.push({ id: Date.now().toString(), name, amount, day, active: true });
         }
         saveData();
+        processSubscriptions();
+        updateUI();
         closeAddSub();
         renderSubsScreen();
         haptic('success');
@@ -2388,7 +2396,7 @@
                     progressText = `${fmtCur} / ${fmtTarget}`; progressWidth = `${Math.min(100, (cur / target) * 100)}%`;
                 } else progressText = '???';
             }
-            cardContainer.innerHTML = `<div class="tarot-card ${isUnlocked ? 'opened' : 'closed'}" style="width: 200px; margin-bottom: 20px;"><div class="tarot-canvas"><div class="tarot-emoji">${ach.emoji}</div>${!isUnlocked ? `<div class="tarot-progress-overlay" style="font-size: ${progressText.length > 12 ? '7px' : '9px'}">${progressText}</div><div class="tarot-progress-bar"><div class="tarot-progress-fill" style="width: ${progressWidth}"></div></div>` : ''}</div><div class="tarot-label"><div class="tarot-name">${ach.name}</div></div></div>`;
+            cardContainer.innerHTML = `<div class="tarot-card ${isUnlocked ? 'opened' : 'closed'}" style="width: min(200px, 70vw); margin: 0 auto;"><div class="tarot-canvas"><div class="tarot-emoji">${ach.emoji}</div>${!isUnlocked ? `<div class="tarot-progress-overlay" style="font-size: ${progressText.length > 12 ? '7px' : '9px'}">${progressText}</div><div class="tarot-progress-bar"><div class="tarot-progress-fill" style="width: ${progressWidth}"></div></div>` : ''}</div><div class="tarot-label"><div class="tarot-name">${ach.name}</div></div></div>`;
         }
         document.getElementById('modalOverlay').classList.add('active');
         document.getElementById('achDetailSheet').classList.add('active');
