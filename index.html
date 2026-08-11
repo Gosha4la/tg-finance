@@ -356,12 +356,12 @@
         .suggestion-chip:active { background-color: rgba(255,255,255,0.15); }
 
         .repeat-toggle-container { display: flex; align-items: center; justify-content: space-between; padding: 14px; background-color: rgba(255,255,255,0.05); border-radius: 12px; cursor: pointer; margin-bottom: 0; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; inset: 0; background: rgba(255,255,255,0.2); border-radius: 34px; transition: .3s; }
-        .slider:before { content: ''; position: absolute; width: 20px; height: 20px; left: 4px; bottom: 4px; background: #fff; border-radius: 50%; transition: .3s; }
+        .switch { position: relative; display: inline-block; width: 46px; height: 26px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; margin: 0; }
+        .slider { position: absolute; inset: 0; background: rgba(255,255,255,0.2); border-radius: 26px; transition: .25s; }
+        .slider:before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .25s; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
         input:checked + .slider { background: var(--accent); }
-        input:checked + .slider:before { transform: translateX(22px); }
+        input:checked + .slider:before { transform: translateX(20px); }
 
         .repeat-options { margin-top: 15px; display: none; grid-template-columns: 1fr 1fr; gap: 10px; }
         .repeat-options.show { display: grid; }
@@ -884,7 +884,7 @@
         <input type="number" id="subDayInput" class="form-input" placeholder="15" min="1" max="31">
     </div>
     <button class="submit-btn" onclick="saveSubSettings()">Сохранить</button>
-    <button class="submit-btn" id="deleteSubBtn" style="background: transparent; color: var(--danger); border: 1px solid var(--danger); margin-top: 10px;" onclick="deleteSub()">Удалить</button>
+    <button class="submit-btn" id="deleteSubBtn" style="background: transparent; color: var(--danger); border: 1px solid var(--danger); margin-top: 10px;" onclick="requestDeleteSub()">Удалить</button>
 </div>
 
 <!-- Achievement Detail Modal -->
@@ -977,6 +977,7 @@
     
     let currentOpDetail = null;
     let pendingDeleteId = null;
+    let pendingDeleteAction = null; // 'op' or 'sub'
     let last6MonthsData = [];
 
     const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
@@ -1292,7 +1293,7 @@
         } else {
             charts[type] = new Chart(ctx, {
                 type: 'doughnut',
-                data: { labels: labels.length ? labels : [''], datasets: [{ data: data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }] },
+                 { labels: labels.length ? labels : [''], datasets: [{  data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }] },
                 options: { responsive: false, maintainAspectRatio: false, devicePixelRatio: dpr, cutout: '75%', plugins: { tooltip: { enabled: false }, legend: { display: false } }, animation: false }
             });
         }
@@ -1573,7 +1574,7 @@
         currentOpDetail = null;
     }
     function editCurrentOp() { if (currentOpDetail) { closeOpDetail(); setTimeout(() => openModal(currentOpDetail), 300); } }
-    function deleteCurrentOp() { if (currentOpDetail) { const id = currentOpDetail.id; closeOpDetail(); showDeleteConfirm(id); } }
+    function deleteCurrentOp() { if (currentOpDetail) { const id = currentOpDetail.id; closeOpDetail(); showDeleteConfirm(id, 'op'); } }
 
     function openDetails(type, ops) {
         const title = type === 'income' ? 'Доходы' : 'Расходы';
@@ -1698,27 +1699,35 @@
     const confirmOkBtn = document.getElementById('confirmOkBtn');
     const confirmCancelBtn = document.getElementById('confirmCancelBtn');
 
-    function showDeleteConfirm(id) {
+    function showDeleteConfirm(id, actionType) {
         pendingDeleteId = id;
-        if(confirmText) confirmText.textContent = "Удалить операцию?";
+        pendingDeleteAction = actionType;
+        if(confirmText) confirmText.textContent = actionType === 'sub' ? "Удалить подписку?" : "Удалить операцию?";
         if(confirmOverlay) confirmOverlay.classList.add('active');
         if(confirmDialog) confirmDialog.classList.add('active');
         haptic('warning');
     }
     function hideDeleteConfirm() {
         pendingDeleteId = null;
+        pendingDeleteAction = null;
         if(confirmOverlay) confirmOverlay.classList.remove('active');
         if(confirmDialog) confirmDialog.classList.remove('active');
     }
     if(confirmOkBtn) {
         confirmOkBtn.onclick = () => {
-            if (pendingDeleteId) {
+            if (pendingDeleteAction === 'op' && pendingDeleteId) {
                 operations = operations.filter(o => o.id !== pendingDeleteId && o.parentId !== pendingDeleteId);
                 saveData(); updateUI(); haptic('success');
                 const detSheet = document.getElementById('detailsSheet');
                 if (detSheet && detSheet.classList.contains('active')) closeDetails();
                 const daySheet = document.getElementById('dayDetailsSheet');
                 if (daySheet && daySheet.classList.contains('active')) closeDayDetails();
+            } else if (pendingDeleteAction === 'sub' && pendingDeleteId) {
+                subscriptions = subscriptions.filter(x => x.id !== pendingDeleteId);
+                saveData();
+                closeAddSub();
+                renderSubsScreen();
+                haptic('warning');
             }
             hideDeleteConfirm();
         };
@@ -1740,10 +1749,12 @@
         const dpr = setupCanvasHighDPI('barChart', 220);
         const ctx = canvas.getContext('2d');
         
-        const rootStyles = getComputedStyle(document.documentElement);
-        const successColor = rootStyles.getPropertyValue('--success').trim();
-        const dangerColor = rootStyles.getPropertyValue('--danger').trim();
-        const textColor = rootStyles.getPropertyValue('--text-secondary').trim();
+        const css = getComputedStyle(document.documentElement);
+        const successColor = css.getPropertyValue('--success').trim();
+        const dangerColor = css.getPropertyValue('--danger').trim();
+        const tickColor = css.getPropertyValue('--text-secondary').trim();
+        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+        const gridColor = isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)';
         
         const now = new Date();
         const labels = [];
@@ -1766,11 +1777,11 @@
         
         charts.bar = new Chart(ctx, {
             type: 'bar',
-            data: {
+             {
                 labels: labels,
                 datasets: [
-                    { label: 'Доходы', data: incData, backgroundColor: successColor, borderRadius: 6, maxBarThickness: 16 },
-                    { label: 'Расходы', data: expData, backgroundColor: dangerColor, borderRadius: 6, maxBarThickness: 16 }
+                    { label: 'Доходы',  incData, backgroundColor: successColor, borderRadius: 6, maxBarThickness: 16 },
+                    { label: 'Расходы',  expData, backgroundColor: dangerColor, borderRadius: 6, maxBarThickness: 16 }
                 ]
             },
             options: {
@@ -1781,11 +1792,11 @@
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: rootStyles.getPropertyValue('--card-bg').trim(),
-                        borderColor: rootStyles.getPropertyValue('--border').trim(),
+                        backgroundColor: css.getPropertyValue('--card-bg').trim(),
+                        borderColor: css.getPropertyValue('--border').trim(),
                         borderWidth: 1,
-                        titleColor: rootStyles.getPropertyValue('--text-primary').trim(),
-                        bodyColor: textColor,
+                        titleColor: css.getPropertyValue('--text-primary').trim(),
+                        bodyColor: tickColor,
                         padding: 10,
                         callbacks: {
                             label: (ctx) => ` ${ctx.dataset.label}: ${formatMoney(ctx.raw)} ₽`
@@ -1793,8 +1804,17 @@
                     }
                 },
                 scales: {
-                    x: { grid: { display: false }, ticks: { color: textColor, font: { size: 10 } } },
-                    y: { display: false, beginAtZero: true }
+                    x: { grid: { display: false }, ticks: { color: tickColor, font: { size: 12, weight: '600' } } },
+                    y: { 
+                        beginAtZero: true,
+                        grid: { color: gridColor },
+                        ticks: { 
+                            color: tickColor, 
+                            font: { size: 11 }, 
+                            maxTicksLimit: 6,
+                            callback: (v) => v >= 1000 ? (v / 1000) + 'к' : v 
+                        }
+                    }
                 },
                 onClick: (e, elements) => {
                     if (elements.length > 0) {
@@ -1947,35 +1967,31 @@
         let changed = false;
 
         subscriptions.forEach(sub => {
-            if (sub.active) {
-                // Check if exists in current month
-                const exists = operations.some(op => 
-                    op.isRecurring && op.parentId === `sub_${sub.id}` && 
-                    new Date(op.date).getMonth() === month && 
-                    new Date(op.date).getFullYear() === year
-                );
-                
-                if (!exists) {
-                    // Create immediately if not exists (either today or on sub.day if passed)
-                    let opDate = new Date(year, month, sub.day);
-                    if (day < sub.day) {
-                         // If today is before sub.day, we create for next month? 
-                         // No, requirement says: "if no spending in current month -> create operation IMMEDIATELY (today)"
-                         opDate = new Date(); 
-                    }
-                    
-                    operations.push({
-                        id: `sub_${sub.id}_${Date.now()}`,
-                        date: opDate.toISOString(),
-                        type: 'expense',
-                        amount: sub.amount,
-                        category: sub.name,
-                        note: 'Подписка',
-                        isRecurring: true,
-                        parentId: `sub_${sub.id}`
-                    });
-                    changed = true;
+            if (!sub.active) return; // Skip inactive
+
+            const exists = operations.some(op => 
+                op.isRecurring && op.parentId === `sub_${sub.id}` && 
+                new Date(op.date).getMonth() === month && 
+                new Date(op.date).getFullYear() === year
+            );
+            
+            if (!exists) {
+                let opDate = new Date(year, month, sub.day);
+                if (day < sub.day) {
+                     opDate = new Date(); 
                 }
+                
+                operations.push({
+                    id: `sub_${sub.id}_${Date.now()}`,
+                    date: opDate.toISOString(),
+                    type: 'expense',
+                    amount: sub.amount,
+                    category: sub.name,
+                    note: 'Подписка',
+                    isRecurring: true,
+                    parentId: `sub_${sub.id}`
+                });
+                changed = true;
             }
         });
 
@@ -2008,16 +2024,19 @@
             div.className = 'sub-card';
             div.style.animation = `slideIn 0.3s ease forwards ${idx * 0.05}s`;
             div.style.opacity = '0';
+            div.style.display = 'flex';
+            div.style.alignItems = 'center';
+            div.className = `sub-card ${s.active ? '' : 'inactive'}`;
             div.innerHTML = `
                 <div class="sub-dot" style="background:${color}"></div>
                 <div class="sub-info">
                     <div class="sub-name">${s.name}</div>
-                    <div class="sub-detail">${formatMoney(s.amount)} ₽ · списание ${s.day}-го</div>
+                    <div class="sub-detail">${formatMoney(s.amount)} ₽ · списание ${s.day}-го ${s.active ? '' : '· пауза'}</div>
                 </div>
                 <div class="sub-actions">
                     <button class="sub-move-btn" onclick="moveSub(${idx}, -1)">↑</button>
                     <button class="sub-move-btn" onclick="moveSub(${idx}, 1)">↓</button>
-                    <label class="switch" style="margin:0; width:40px; height:20px;"><input type="checkbox" ${s.active?'checked':''} onchange="toggleSubActive('${s.id}')"><span class="slider" style="height:20px; border-radius:10px;"><span style="height:16px; width:16px; left:2px; bottom:2px;"></span></span></label>
+                    <label class="switch" style="margin:0; width:46px; height:26px;"><input type="checkbox" ${s.active?'checked':''} onchange="toggleSubActive('${s.id}')"><span class="slider" style="height:26px; border-radius:26px;"><span style="height:20px; width:20px; left:3px; top:3px;"></span></span></label>
                     <button class="btn-small-action" onclick="openEditSub('${s.id}')">✎</button>
                 </div>
             `;
@@ -2097,14 +2116,11 @@
         renderSubsScreen();
         haptic('success');
     }
-    function deleteSub() {
+    function requestDeleteSub() {
         const id = document.getElementById('editSubId').value;
-        if (id && confirm('Удалить подписку?')) {
-            subscriptions = subscriptions.filter(x => x.id !== id);
-            saveData();
+        if (id) {
             closeAddSub();
-            renderSubsScreen();
-            haptic('warning');
+            showDeleteConfirm(id, 'sub');
         }
     }
 
@@ -2234,7 +2250,7 @@
                 location.reload();
             };
         }
-        showDeleteConfirm('RESET_TRIGGER');
+        showDeleteConfirm('RESET_TRIGGER', 'op');
     }
 
     function confirmFullReset() {
@@ -2249,7 +2265,7 @@
                 location.reload();
             };
         }
-        showDeleteConfirm('FULL_RESET_TRIGGER');
+        showDeleteConfirm('FULL_RESET_TRIGGER', 'op');
     }
 
     function openData() {
