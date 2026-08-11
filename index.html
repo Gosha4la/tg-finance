@@ -644,7 +644,7 @@
         <div class="subs-list" id="subsList">
             <!-- Injected via JS -->
         </div>
-        <div id="subsEmpty" class="empty-state" style="display: none;">Нет активных подписок</div>
+        <div id="subsEmpty" class="empty-state" style="display: none;">Нет подписок</div>
     </div>
 </div>
 
@@ -977,7 +977,7 @@
     
     let currentOpDetail = null;
     let pendingDeleteId = null;
-    let pendingDeleteAction = null;
+    let pendingDeleteAction = null; // 'op' or 'sub'
     let last6MonthsData = [];
 
     const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
@@ -1946,7 +1946,7 @@
         let changed = false;
 
         subscriptions.forEach(sub => {
-            if (!sub.active) return;
+            if (!sub.active) return; // Skip inactive subscriptions
 
             const exists = operations.some(op => 
                 op.isRecurring && op.parentId === `sub_${sub.id}` && 
@@ -1987,17 +1987,21 @@
         container.innerHTML = '';
         
         let totalM = 0, totalY = 0;
+        // Calculate totals ONLY for active subscriptions
         const activeSubs = subscriptions.filter(s => s.active);
-        
-        if (activeSubs.length === 0) {
+        activeSubs.forEach(s => {
+            totalM += s.amount;
+            totalY += s.amount * 12;
+        });
+
+        if (subscriptions.length === 0) {
             if(empty) empty.style.display = 'block';
             return;
         }
         if(empty) empty.style.display = 'none';
 
-        activeSubs.forEach((s, idx) => {
-            totalM += s.amount;
-            totalY += s.amount * 12;
+        // Render ALL subscriptions (active and inactive)
+        subscriptions.forEach((s, idx) => {
             const color = getColorForCategory(s.name, 'expense');
             const div = document.createElement('div');
             div.className = `sub-card ${s.active ? '' : 'inactive'}`;
@@ -2005,17 +2009,20 @@
             div.style.opacity = '0';
             div.style.display = 'flex';
             div.style.alignItems = 'center';
+            
+            const pauseText = s.active ? '' : '· пауза';
+            
             div.innerHTML = `
                 <div class="sub-dot" style="background:${color}"></div>
                 <div class="sub-info">
                     <div class="sub-name">${s.name}</div>
-                    <div class="sub-detail">${formatMoney(s.amount)} ₽ · списание ${s.day}-го ${s.active ? '' : '· пауза'}</div>
+                    <div class="sub-detail">${formatMoney(s.amount)} ₽ · списание ${s.day}-го ${pauseText}</div>
                 </div>
                 <div class="sub-actions">
                     <button class="sub-move-btn" onclick="moveSub(${idx}, -1)">↑</button>
                     <button class="sub-move-btn" onclick="moveSub(${idx}, 1)">↓</button>
                     <label class="switch" style="margin:0; width:46px; height:26px;">
-                        <input type="checkbox" ${s.active?'checked':''} onchange="toggleSubActive('${s.id}')">
+                        <input type="checkbox" ${s.active ? 'checked' : ''} onchange="toggleSubActive('${s.id}')">
                         <span class="slider"></span>
                     </label>
                     <button class="btn-small-action" onclick="openEditSub('${s.id}')">✎</button>
@@ -2029,14 +2036,11 @@
     }
 
     function moveSub(idx, dir) {
-        const activeSubs = subscriptions.filter(s => s.active);
-        const sub = activeSubs[idx];
-        const currentIdx = subscriptions.indexOf(sub);
-        const targetIdx = currentIdx + dir;
+        const targetIdx = idx + dir;
         if (targetIdx < 0 || targetIdx >= subscriptions.length) return;
         
-        const temp = subscriptions[currentIdx];
-        subscriptions[currentIdx] = subscriptions[targetIdx];
+        const temp = subscriptions[idx];
+        subscriptions[idx] = subscriptions[targetIdx];
         subscriptions[targetIdx] = temp;
         saveData();
         renderSubsScreen();
