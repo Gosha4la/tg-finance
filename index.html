@@ -15,6 +15,7 @@
             --text-secondary: #8e94a3;
             --accent: #2962ff;
             --accent-text: #ffffff;
+            --accent-glow: rgba(41, 98, 255, 0.4);
             --danger: #ff4b4b;
             --success: #2ecc71;
             --border: #2c303a;
@@ -31,6 +32,7 @@
             --text-secondary: #8e94a3;
             --accent: #2962ff;
             --accent-text: #ffffff;
+            --accent-glow: rgba(41, 98, 255, 0.2);
             --danger: #ff4b4b;
             --success: #2ecc71;
             --border: #e0e0e0;
@@ -245,7 +247,7 @@
         .op-name { font-weight: 600; font-size: 15px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .op-note { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .op-date { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; margin-top: 2px;}
-        .auto-badge { font-size: 9px; background: var(--accent); color: #fff; padding: 1px 4px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
+        .auto-badge { font-size: 9px; background: var(--accent); color: var(--accent-text); padding: 1px 4px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
         .op-amount { font-weight: 700; font-size: 15px; white-space: nowrap; }
         .op-amount.income { color: var(--success); }
         .op-amount.expense { color: var(--danger); }
@@ -266,7 +268,7 @@
         .chips-wrapper { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
         .chips-wrapper::-webkit-scrollbar { display: none; }
         .chip { padding: 6px 12px; background: rgba(255,255,255,0.05); border-radius: 16px; font-size: 12px; white-space: nowrap; cursor: pointer; transition: background 0.2s; }
-        .chip.active { background: var(--accent); color: #fff; }
+        .chip.active { background: var(--accent); color: var(--accent-text); }
 
         .fab {
             position: fixed;
@@ -282,7 +284,7 @@
             justify-content: center;
             font-size: 32px;
             font-weight: 300;
-            box-shadow: 0 4px 15px rgba(41, 98, 255, 0.4);
+            box-shadow: 0 4px 15px var(--accent-glow);
             cursor: pointer;
             z-index: 90;
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -366,9 +368,9 @@
         .repeat-options { margin-top: 15px; display: none; grid-template-columns: 1fr 1fr; gap: 10px; }
         .repeat-options.show { display: grid; }
         .radio-card { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; text-align: center; font-size: 13px; cursor: pointer; border: 2px solid transparent; user-select: none; }
-        .radio-card.selected { border-color: var(--accent); background: rgba(41, 98, 255, 0.15); }
+        .radio-card.selected { border-color: var(--accent); background: var(--accent-glow); }
 
-        .submit-btn { width: 100%; padding: 16px; background-color: var(--accent); color: var(--accent-text); border: none; border-radius: 14px; font-size: 16px; font-weight: 700; margin-top: 10px; cursor: pointer; transition: transform 0.1s, opacity 0.2s; }
+        .submit-btn { width: 100%; padding: 16px; background-color: var(--accent); color: var(--accent-text); border: none; border-radius: 14px; font-size: 16px; font-weight: 700; margin-top: 10px; cursor: pointer; transition: transform 0.1s, opacity 0.2s; box-shadow: 0 4px 10px var(--accent-glow); }
         .submit-btn:active { transform: scale(0.98); }
         .submit-btn.disabled { opacity: 0.6; pointer-events: none; }
         .btn-small-action { padding: 8px 12px; background: rgba(255,255,255,0.05); border: none; border-radius: 8px; color: var(--text-primary); font-size: 13px; cursor: pointer; }
@@ -400,7 +402,7 @@
 
         .month-picker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
         .month-cell { padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; text-align: center; cursor: pointer; font-size: 14px; }
-        .month-cell.active { background: var(--accent); color: #fff; font-weight: bold; }
+        .month-cell.active { background: var(--accent); color: var(--accent-text); font-weight: bold; box-shadow: 0 2px 8px var(--accent-glow); }
         .year-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .btn-small { background: rgba(255,255,255,0.1); border: none; color: var(--text-primary); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
 
@@ -484,9 +486,27 @@
 
         .backup-status { font-size: 12px; color: var(--text-secondary); margin: 10px 0; text-align: center; }
         .btn-block { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 600; font-size: 14px; cursor: pointer; margin-bottom: 10px; }
-        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary { background: var(--accent); color: var(--accent-text); }
         .btn-secondary { background: rgba(255,255,255,0.1); color: var(--text-primary); }
         .btn-danger { background: var(--danger); color: #fff; }
+
+        /* Customization Styles */
+        .settings-section { margin-bottom: 25px; }
+        .settings-title { font-size: 16px; font-weight: 700; margin-bottom: 15px; color: var(--text-primary); border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .theme-segment { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 12px; margin-bottom: 20px; }
+        .theme-btn { padding: 10px; border: none; background: transparent; color: var(--text-secondary); font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 13px; }
+        .theme-btn.active { background: var(--accent); color: var(--accent-text); box-shadow: 0 2px 8px var(--accent-glow); }
+        
+        .swatches-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .swatch { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; position: relative; transition: transform 0.2s; border: 2px solid transparent; }
+        .swatch:active { transform: scale(0.9); }
+        .swatch.active::after { content: ''; position: absolute; inset: -4px; border: 2px solid var(--text-primary); border-radius: 50%; }
+        
+        .bg-option { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 8px; cursor: pointer; border: 2px solid transparent; }
+        .bg-option.active { border-color: var(--accent); background: var(--accent-glow); }
+        .bg-preview { width: 24px; height: 24px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); }
+        
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -632,7 +652,7 @@
             <div style="width: 40px;"></div>
             <div class="current-month-label">Подписки</div>
             <div style="width: 40px; text-align: right;">
-                <button class="btn-small" id="addSubBtn" style="background:var(--accent); color:#fff;">＋</button>
+                <button class="btn-small" id="addSubBtn" style="background:var(--accent); color:var(--accent-text);">＋</button>
             </div>
         </div>
     </header>
@@ -907,6 +927,42 @@
         <div class="sheet-title">Данные и бэкап</div>
         <button class="close-btn" onclick="closeData()">×</button>
     </div>
+    
+    <!-- Customization Section -->
+    <div class="settings-section">
+        <div class="settings-title">Оформление</div>
+        
+        <div class="form-label" style="margin-bottom: 8px;">Тема</div>
+        <div class="theme-segment">
+            <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">Тёмная</button>
+            <button class="theme-btn" data-theme="light" onclick="setTheme('light')">Светлая</button>
+            <button class="theme-btn" data-theme="auto" onclick="setTheme('auto')">Авто</button>
+        </div>
+
+        <div class="form-label" style="margin-bottom: 8px;">Акцент</div>
+        <div class="swatches-grid" id="accentSwatches">
+            <!-- Injected via JS -->
+        </div>
+
+        <div class="form-label" style="margin-bottom: 8px;" id="bgLabel">Фон</div>
+        <div id="bgOptions" class="hidden">
+            <div class="bg-option" data-bg="standard" onclick="setBackground('standard')">
+                <span>Стандарт</span>
+                <div class="bg-preview" style="background: #0f1115;"></div>
+            </div>
+            <div class="bg-option" data-bg="amoled" onclick="setBackground('amoled')">
+                <span>Амолед</span>
+                <div class="bg-preview" style="background: #000000;"></div>
+            </div>
+            <div class="bg-option" data-bg="graphite" onclick="setBackground('graphite')">
+                <span>Графит</span>
+                <div class="bg-preview" style="background: #17181c;"></div>
+            </div>
+        </div>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+
     <div class="backup-status" id="backupStatus">Загрузка статуса...</div>
     <button class="btn-block btn-primary" id="btnBackup" onclick="doBackup()">Загрузить в облако</button>
     <button class="btn-block btn-secondary" id="btnRestore" onclick="doRestore()">Восстановить из облака</button>
@@ -918,6 +974,7 @@
         </label>
     </div>
     <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+    <button class="btn-block btn-secondary" onclick="resetAppearance()">Сбросить оформление</button>
     <button class="btn-block btn-danger" onclick="confirmReset()">Удалить все данные</button>
     <button class="btn-block btn-danger" style="background: #900;" onclick="confirmFullReset()">Полный сброс (включая достижения)</button>
     <div style="font-size: 11px; color: var(--text-secondary); text-align: center; margin-top: 10px;">
@@ -939,15 +996,143 @@
     const tg = window.Telegram.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
 
-    function applyTheme() {
-        const scheme = (tg && tg.colorScheme === 'light') ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', scheme);
-        if (document.getElementById('analyticsScreen').classList.contains('active')) {
-            renderAnalytics();
+    // Appearance Presets
+    const ACCENT_PRESETS = {
+        blue: { color: '#2962ff', text: '#ffffff', glow: 'rgba(41, 98, 255, 0.4)' },
+        yellow: { color: '#ffdd2d', text: '#1a1d24', glow: 'rgba(255, 221, 45, 0.4)' },
+        green: { color: '#2ecc71', text: '#ffffff', glow: 'rgba(46, 204, 113, 0.4)' },
+        purple: { color: '#9b59b6', text: '#ffffff', glow: 'rgba(155, 89, 182, 0.4)' },
+        red: { color: '#ff4b4b', text: '#ffffff', glow: 'rgba(255, 75, 75, 0.4)' },
+        orange: { color: '#ff9f43', text: '#1a1d24', glow: 'rgba(255, 159, 67, 0.4)' },
+        pink: { color: '#ec4899', text: '#ffffff', glow: 'rgba(236, 72, 153, 0.4)' },
+        teal: { color: '#14b8a6', text: '#ffffff', glow: 'rgba(20, 184, 166, 0.4)' }
+    };
+
+    const BG_PRESETS = {
+        standard: { bg: '#0f1115', card: '#1a1d24' },
+        amoled: { bg: '#000000', card: '#121212' },
+        graphite: { bg: '#17181c', card: '#202127' }
+    };
+
+    function applyAppearance() {
+        const settings = JSON.parse(localStorage.getItem('fin_settings')) || {};
+        const theme = settings.theme || 'auto';
+        const accentId = settings.accent || 'blue';
+        const bgId = settings.bg || 'standard';
+
+        // Apply Theme
+        let effectiveTheme = theme;
+        if (theme === 'auto') {
+            effectiveTheme = (tg && tg.colorScheme === 'light') ? 'light' : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', effectiveTheme);
+
+        // Apply Accent
+        const accent = ACCENT_PRESETS[accentId];
+        if (accent) {
+            document.documentElement.style.setProperty('--accent', accent.color);
+            document.documentElement.style.setProperty('--accent-text', accent.text);
+            document.documentElement.style.setProperty('--accent-glow', accent.glow);
+        }
+
+        // Apply Background (only in dark mode)
+        if (effectiveTheme === 'dark') {
+            const bg = BG_PRESETS[bgId];
+            if (bg) {
+                document.documentElement.style.setProperty('--bg-color', bg.bg);
+                document.documentElement.style.setProperty('--card-bg', bg.card);
+            }
+        } else {
+            document.documentElement.style.removeProperty('--bg-color');
+            document.documentElement.style.removeProperty('--card-bg');
+        }
+
+        // Update Telegram Header Color
+        if (tg && tg.setHeaderColor) {
+            const computedStyle = getComputedStyle(document.documentElement);
+            const bgColor = computedStyle.getPropertyValue('--bg-color').trim();
+            tg.setHeaderColor(bgColor || '#0f1115');
+        }
+
+        renderAppearanceUI(theme, accentId, bgId, effectiveTheme);
+    }
+
+    function setTheme(t) {
+        const settings = JSON.parse(localStorage.getItem('fin_settings')) || {};
+        settings.theme = t;
+        localStorage.setItem('fin_settings', JSON.stringify(settings));
+        applyAppearance();
+        haptic('light');
+    }
+
+    function setAccent(id) {
+        const settings = JSON.parse(localStorage.getItem('fin_settings')) || {};
+        settings.accent = id;
+        localStorage.setItem('fin_settings', JSON.stringify(settings));
+        applyAppearance();
+        haptic('light');
+    }
+
+    function setBackground(id) {
+        const settings = JSON.parse(localStorage.getItem('fin_settings')) || {};
+        settings.bg = id;
+        localStorage.setItem('fin_settings', JSON.stringify(settings));
+        applyAppearance();
+        haptic('light');
+    }
+
+    function resetAppearance() {
+        const settings = JSON.parse(localStorage.getItem('fin_settings')) || {};
+        settings.theme = 'auto';
+        settings.accent = 'blue';
+        settings.bg = 'standard';
+        localStorage.setItem('fin_settings', JSON.stringify(settings));
+        applyAppearance();
+        haptic('success');
+    }
+
+    function renderAppearanceUI(currentTheme, currentAccent, currentBg, effectiveTheme) {
+        // Theme Buttons
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.theme === currentTheme);
+        });
+
+        // Accent Swatches
+        const swatchesContainer = document.getElementById('accentSwatches');
+        if (swatchesContainer) {
+            swatchesContainer.innerHTML = '';
+            Object.keys(ACCENT_PRESETS).forEach(id => {
+                const div = document.createElement('div');
+                div.className = `swatch ${id === currentAccent ? 'active' : ''}`;
+                div.style.backgroundColor = ACCENT_PRESETS[id].color;
+                div.onclick = () => setAccent(id);
+                swatchesContainer.appendChild(div);
+            });
+        }
+
+        // Background Options Visibility
+        const bgOptions = document.getElementById('bgOptions');
+        const bgLabel = document.getElementById('bgLabel');
+        if (bgOptions && bgLabel) {
+            if (effectiveTheme === 'dark') {
+                bgOptions.classList.remove('hidden');
+                bgLabel.classList.remove('hidden');
+                document.querySelectorAll('.bg-option').forEach(opt => {
+                    opt.classList.toggle('active', opt.dataset.bg === currentBg);
+                });
+            } else {
+                bgOptions.classList.add('hidden');
+                bgLabel.classList.add('hidden');
+            }
         }
     }
-    applyTheme();
-    if (tg) tg.onEvent('themeChanged', applyTheme);
+
+    // Initialize Appearance BEFORE anything else
+    applyAppearance();
+    if (tg) tg.onEvent('themeChanged', () => {
+        const settings = JSON.parse(localStorage.getItem('fin_settings')) || {};
+        if (settings.theme === 'auto') applyAppearance();
+    });
 
     let viewState = { year: new Date().getFullYear(), month: new Date().getMonth() };
     let operations = JSON.parse(localStorage.getItem('fin_ops')) || [];
@@ -977,7 +1162,7 @@
     
     let currentOpDetail = null;
     let pendingDeleteId = null;
-    let pendingDeleteAction = null; // 'op' or 'sub'
+    let pendingDeleteAction = null;
     let last6MonthsData = [];
 
     const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
@@ -1293,7 +1478,7 @@
         } else {
             charts[type] = new Chart(ctx, {
                 type: 'doughnut',
-                data: { labels: labels.length ? labels : [''], datasets: [{ data: data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }] },
+                 { labels: labels.length ? labels : [''], datasets: [{  data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }] },
                 options: { responsive: false, maintainAspectRatio: false, devicePixelRatio: dpr, cutout: '75%', plugins: { tooltip: { enabled: false }, legend: { display: false } }, animation: false }
             });
         }
@@ -1777,11 +1962,11 @@
         
         charts.bar = new Chart(ctx, {
             type: 'bar',
-            data: {
+             {
                 labels: labels,
                 datasets: [
-                    { label: 'Доходы', data: incData, backgroundColor: successColor, borderRadius: 6, maxBarThickness: 16 },
-                    { label: 'Расходы', data: expData, backgroundColor: dangerColor, borderRadius: 6, maxBarThickness: 16 }
+                    { label: 'Доходы',  incData, backgroundColor: successColor, borderRadius: 6, maxBarThickness: 16 },
+                    { label: 'Расходы',  expData, backgroundColor: dangerColor, borderRadius: 6, maxBarThickness: 16 }
                 ]
             },
             options: {
@@ -1946,7 +2131,7 @@
         let changed = false;
 
         subscriptions.forEach(sub => {
-            if (!sub.active) return; // Skip inactive subscriptions
+            if (!sub.active) return;
 
             const exists = operations.some(op => 
                 op.isRecurring && op.parentId === `sub_${sub.id}` && 
@@ -1987,7 +2172,6 @@
         container.innerHTML = '';
         
         let totalM = 0, totalY = 0;
-        // Calculate totals ONLY for active subscriptions
         const activeSubs = subscriptions.filter(s => s.active);
         activeSubs.forEach(s => {
             totalM += s.amount;
@@ -2000,7 +2184,6 @@
         }
         if(empty) empty.style.display = 'none';
 
-        // Render ALL subscriptions (active and inactive)
         subscriptions.forEach((s, idx) => {
             const color = getColorForCategory(s.name, 'expense');
             const div = document.createElement('div');
