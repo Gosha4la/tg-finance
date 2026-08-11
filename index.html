@@ -495,10 +495,10 @@
         <div class="month-nav">
             <button class="nav-btn prev" id="prevMonth">‹</button>
             <div class="current-month-label" id="monthLabel">Сентябрь 2023</div>
-            <button class="nav-btn next" id="nextMonth">›</button>
             <div class="header-cloud-btn" id="cloudBtn" title="Данные и бэкап">
                 <svg viewBox="0 0 24 24"><path d="M17.5 19c0-1.7-1.3-3-3-3h-1.1c-.1-2.9-2.5-5.2-5.4-5.2-2.6 0-4.8 1.8-5.3 4.3C1.2 15.6 0 17.1 0 19c0 2.2 1.8 4 4 4h13.5c2.2 0 4-1.8 4-4v-1c0-1.7-1.3-3-3-3z"/></svg>
             </div>
+            <button class="nav-btn next" id="nextMonth">›</button>
         </div>
     </header>
 
@@ -916,7 +916,8 @@
         </label>
     </div>
     <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
-    <button class="btn-block btn-danger" onclick="confirmReset()">Удалить все данные</button>
+    <button class="btn-block btn-danger" onclick="confirmReset(false)">Удалить все данные</button>
+    <button class="btn-block btn-danger" style="background: #900;" onclick="confirmReset(true)">Полный сброс (включая достижения)</button>
     <div style="font-size: 11px; color: var(--text-secondary); text-align: center; margin-top: 10px;">
         Сброс удалит всё локально. Облачные копии не затрагиваются.
     </div>
@@ -939,6 +940,10 @@
     function applyTheme() {
         const scheme = (tg && tg.colorScheme === 'light') ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', scheme);
+        // Redraw analytics charts on theme change
+        if(document.getElementById('analyticsScreen').classList.contains('active')) {
+            renderAnalytics();
+        }
     }
     applyTheme();
     if (tg) tg.onEvent('themeChanged', applyTheme);
@@ -972,7 +977,7 @@
     
     let currentOpDetail = null;
     let pendingDeleteId = null;
-    let last6MonthsData = []; // For bar chart click mapping
+    let last6MonthsData = [];
 
     const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
     const fullMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
@@ -1046,7 +1051,6 @@
         }
     };
 
-    // Debounce for Auto Backup
     let backupTimeout;
     function debounceBackup() {
         clearTimeout(backupTimeout);
@@ -1071,6 +1075,9 @@
             else tg.HapticFeedback.impactOccurred(style);
         }
     };
+
+    // Helper: Check if operation is in the past or present
+    const isPast = (op) => new Date(op.date) <= new Date();
 
     const vv = window.visualViewport;
     if (vv) {
@@ -1115,6 +1122,7 @@
         const monthExpense = expenseOps.reduce((sum, op) => sum + op.amount, 0);
         const monthBalance = carry + monthIncome - monthExpense;
         
+        // Total balance uses ALL operations (including future planned ones for context)
         const totalIncome = operations.filter(o => o.type === 'income').reduce((sum, op) => sum + op.amount, 0);
         const totalExpense = operations.filter(o => o.type === 'expense').reduce((sum, op) => sum + op.amount, 0);
         const totalBalance = totalIncome - totalExpense;
@@ -1261,6 +1269,12 @@
         const ctx = document.getElementById(ctxId)?.getContext('2d');
         if(!ctx) return;
 
+        // Handle High DPI
+        const dpr = window.devicePixelRatio || 1;
+        const canvas = document.getElementById(ctxId);
+        canvas.width = 120 * dpr;
+        canvas.height = 120 * dpr;
+
         if (charts[type]) {
             charts[type].data.labels = labels.length ? labels : [''];
             charts[type].data.datasets[0].data = data.length ? data : [1];
@@ -1269,8 +1283,8 @@
         } else {
             charts[type] = new Chart(ctx, {
                 type: 'doughnut',
-                data: { labels: labels.length ? labels : [''], datasets: [{ data: data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }] },
-                options: { responsive: false, maintainAspectRatio: false, cutout: '75%', plugins: { tooltip: { enabled: false }, legend: { display: false } }, animation: false }
+                 { labels: labels.length ? labels : [''], datasets: [{  data.length ? data : [1], backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }] },
+                options: { responsive: false, maintainAspectRatio: false, devicePixelRatio: dpr, cutout: '75%', plugins: { tooltip: { enabled: false }, legend: { display: false } }, animation: false }
             });
         }
     }
@@ -1287,7 +1301,6 @@
         const totalTarget = goals.reduce((s, g) => s + g.target, 0);
         const overallPercent = totalTarget > 0 ? Math.min(100, Math.round((totalSaved / totalTarget) * 100)) : 0;
         
-        // Sort by progress descending to show top goals
         const sortedGoals = [...goals].sort((a, b) => (b.saved/b.target) - (a.saved/a.target));
         const top2 = sortedGoals.slice(0, 2);
         
@@ -1715,6 +1728,18 @@
         const ctx = document.getElementById('barChart')?.getContext('2d');
         if(!ctx) return;
         
+        const dpr = window.devicePixelRatio || 1;
+        const canvas = document.getElementById('barChart');
+        const w = canvas.parentElement.clientWidth;
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(220 * dpr);
+
+        // Resolve colors
+        const cs = getComputedStyle(document.documentElement);
+        const successColor = cs.getPropertyValue('--success').trim();
+        const dangerColor = cs.getPropertyValue('--danger').trim();
+        const textColor = cs.getPropertyValue('--text-secondary').trim();
+
         const now = new Date();
         const labels = [];
         const incData = [];
@@ -1727,7 +1752,8 @@
             labels.push(fullMonths[d.getMonth()].substring(0, 3));
             last6MonthsData.push({ year: d.getFullYear(), month: d.getMonth() });
             
-            const ops = getFilteredOps(null, d.getFullYear(), d.getMonth());
+            // ONLY PAST OPERATIONS FOR ANALYTICS
+            const ops = getFilteredOps(null, d.getFullYear(), d.getMonth()).filter(isPast);
             incData.push(ops.filter(o => o.type === 'income').reduce((s,o)=>s+o.amount, 0));
             expData.push(ops.filter(o => o.type === 'expense').reduce((s,o)=>s+o.amount, 0));
         }
@@ -1736,25 +1762,26 @@
         
         charts.bar = new Chart(ctx, {
             type: 'bar',
-            data: {
+             {
                 labels: labels,
                 datasets: [
-                    { label: 'Доходы', data: incData, backgroundColor: 'var(--success)', borderRadius: 6, maxBarThickness: 16 },
-                    { label: 'Расходы', data: expData, backgroundColor: 'var(--danger)', borderRadius: 6, maxBarThickness: 16 }
+                    { label: 'Доходы',  incData, backgroundColor: successColor, borderRadius: 6, maxBarThickness: 16 },
+                    { label: 'Расходы',  expData, backgroundColor: dangerColor, borderRadius: 6, maxBarThickness: 16 }
                 ]
             },
             options: {
                 responsive: false,
                 maintainAspectRatio: false,
+                devicePixelRatio: dpr,
                 animation: false,
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: 'var(--card-bg)',
-                        borderColor: 'var(--border)',
+                        backgroundColor: cs.getPropertyValue('--card-bg').trim(),
+                        borderColor: cs.getPropertyValue('--border').trim(),
                         borderWidth: 1,
-                        titleColor: 'var(--text-primary)',
-                        bodyColor: 'var(--text-secondary)',
+                        titleColor: cs.getPropertyValue('--text-primary').trim(),
+                        bodyColor: textColor,
                         padding: 10,
                         callbacks: {
                             label: (ctx) => ` ${ctx.dataset.label}: ${formatMoney(ctx.raw)} ₽`
@@ -1762,7 +1789,7 @@
                     }
                 },
                 scales: {
-                    x: { grid: { display: false }, ticks: { color: 'var(--text-secondary)', font: { size: 10 } } },
+                    x: { grid: { display: false }, ticks: { color: textColor, font: { size: 10 } } },
                     y: { display: false, beginAtZero: true }
                 },
                 onClick: (e, elements) => {
@@ -1793,7 +1820,6 @@
         
         let html = '';
         
-        // Income Section
         if (totalInc > 0) {
             html += `<div style="margin-bottom:15px;"><div style="font-size:12px; color:var(--success); font-weight:700; margin-bottom:8px;">ДОХОДЫ: ${formatMoney(totalInc)} ₽</div>`;
             const groups = {};
@@ -1806,7 +1832,6 @@
             html += `</div>`;
         }
 
-        // Expense Section
         if (totalExp > 0) {
             html += `<div><div style="font-size:12px; color:var(--danger); font-weight:700; margin-bottom:8px;">РАСХОДЫ: ${formatMoney(totalExp)} ₽</div>`;
             const groups = {};
@@ -1840,7 +1865,8 @@
         const totals = [0,0,0,0,0,0,0];
         const counts = [0,0,0,0,0,0,0];
         
-        operations.filter(o => o.type === 'expense').forEach(op => {
+        // ONLY PAST OPERATIONS
+        operations.filter(op => op.type === 'expense' && isPast(op)).forEach(op => {
             const d = new Date(op.date);
             const dayIdx = (d.getDay() + 6) % 7;
             totals[dayIdx] += op.amount;
@@ -1868,18 +1894,17 @@
         if(!container) return;
         
         const year = new Date().getFullYear();
-        const ops = operations.filter(op => new Date(op.date).getFullYear() === year);
+        // ONLY PAST OPERATIONS
+        const ops = operations.filter(op => new Date(op.date).getFullYear() === year && isPast(op));
         const inc = ops.filter(o => o.type === 'income').reduce((s,o)=>s+o.amount, 0);
         const exp = ops.filter(o => o.type === 'expense').reduce((s,o)=>s+o.amount, 0);
         const bal = inc - exp;
         const totalSaved = goals.reduce((s, g) => s + g.saved, 0);
         
-        // Top 3 expenses
         const expGroups = {};
         ops.filter(o => o.type === 'expense').forEach(op => { expGroups[op.category] = (expGroups[op.category]||0) + op.amount; });
         const top3 = Object.entries(expGroups).sort((a,b)=>b[1]-a[1]).slice(0, 3);
         
-        // Largest single expense
         const largest = ops.filter(o => o.type === 'expense').sort((a,b)=>b.amount-a.amount)[0];
 
         let html = `
@@ -1921,7 +1946,6 @@
 
         subscriptions.forEach(sub => {
             if (sub.active && day >= sub.day) {
-                // Check if already created this month
                 const exists = operations.some(op => 
                     op.isRecurring && op.parentId === `sub_${sub.id}` && 
                     new Date(op.date).getMonth() === month && 
@@ -1996,10 +2020,6 @@
 
     function moveSub(idx, dir) {
         const activeSubs = subscriptions.filter(s => s.active);
-        // We need to map back to original array indices or just sort the main array?
-        // Let's just swap in the main array based on filtered logic is hard.
-        // Simpler: Just swap in the main 'subscriptions' array assuming order is preserved visually
-        // But visual is only active. Let's find the actual object.
         const sub = activeSubs[idx];
         const currentIdx = subscriptions.indexOf(sub);
         const targetIdx = currentIdx + dir;
@@ -2124,7 +2144,6 @@
                 chunks.push(json.substring(i, i + chunkSize));
             }
 
-            // Delete old chunks
             const metaKey = 'fin_bk_meta';
             const oldMeta = await new Promise(resolve => tg.CloudStorage.getItem(metaKey, resolve));
             if (oldMeta) {
@@ -2134,7 +2153,6 @@
                 }
             }
 
-            // Write new
             for (let i = 0; i < chunks.length; i++) {
                 await new Promise(resolve => tg.CloudStorage.setItem(`fin_bk_${i}`, chunks[i], resolve));
             }
@@ -2187,19 +2205,31 @@
         haptic('light');
     }
 
-    function confirmReset() {
+    function confirmReset(full) {
         const text = document.getElementById('confirmText');
-        if(text) text.textContent = "Удалить ВСЕ данные? Операции, цели, подписки и достижения будут стёрты.";
         const okBtn = document.getElementById('confirmOkBtn');
+        
+        if (full) {
+            text.textContent = "Стереть ВСЁ, включая достижения?";
+        } else {
+            text.textContent = "Удалить все данные (кроме достижений)?";
+        }
+
         if(okBtn) {
             okBtn.onclick = () => {
                 Object.keys(localStorage).forEach(k => {
-                    if (k.startsWith('fin_')) localStorage.removeItem(k);
+                    if (k.startsWith('fin_')) {
+                        if (full) {
+                            localStorage.removeItem(k);
+                        } else {
+                            if (k !== 'fin_achievements') localStorage.removeItem(k);
+                        }
+                    }
                 });
                 location.reload();
             };
         }
-        showDeleteConfirm('RESET_TRIGGER'); // Reusing dialog logic
+        showDeleteConfirm('RESET_TRIGGER');
     }
 
     function openData() {
@@ -2214,22 +2244,24 @@
     }
 
     function getProgress(ach) {
-        if (ach.type === 'count') return [operations.length, ach.target];
+        // Achievements also use only past operations for fairness
+        const pastOps = operations.filter(isPast);
+        if (ach.type === 'count') return [pastOps.length, ach.target];
         if (ach.type === 'goal') return [goals.reduce((s,g)=>s+g.saved,0), ach.target];
         if (ach.type === 'cat_year') {
             const now = new Date(); const yearAgo = new Date(); yearAgo.setFullYear(now.getFullYear() - 1);
-            const sum = operations.filter(op => { const d = new Date(op.date); return d >= yearAgo && op.type === 'expense' && ach.catKeys.some(k => op.category.toLowerCase().includes(k)); }).reduce((s, op) => s + op.amount, 0);
+            const sum = pastOps.filter(op => { const d = new Date(op.date); return d >= yearAgo && op.type === 'expense' && ach.catKeys.some(k => op.category.toLowerCase().includes(k)); }).reduce((s, op) => s + op.amount, 0);
             return [sum, ach.target];
         }
-        if (ach.type === 'uniq_cats') return [new Set(operations.map(o => o.category)).size, ach.target];
-        if (ach.type === 'cat_count') return [operations.filter(op => ach.catKeys.some(k => op.category.toLowerCase().includes(k))).length, ach.target];
-        if (ach.type === 'recurring_count') return [operations.filter(op => op.isRecurring).length, ach.target];
+        if (ach.type === 'uniq_cats') return [new Set(pastOps.map(o => o.category)).size, ach.target];
+        if (ach.type === 'cat_count') return [pastOps.filter(op => ach.catKeys.some(k => op.category.toLowerCase().includes(k))).length, ach.target];
+        if (ach.type === 'recurring_count') return [pastOps.filter(op => op.isRecurring).length, ach.target];
         if (ach.type === 'series_no_exp' || ach.type === 'series_no_exp_inc') {
             let streak = 0; const today = new Date();
             for (let i = 1; i < 100; i++) {
                 const d = new Date(today); d.setDate(d.getDate() - i); const dStr = d.toISOString().split('T')[0];
-                const hasExpense = operations.some(op => op.type === 'expense' && new Date(op.date).toISOString().startsWith(dStr));
-                const hasIncome = operations.some(op => op.type === 'income' && new Date(op.date).toISOString().startsWith(dStr));
+                const hasExpense = pastOps.some(op => op.type === 'expense' && new Date(op.date).toISOString().startsWith(dStr));
+                const hasIncome = pastOps.some(op => op.type === 'income' && new Date(op.date).toISOString().startsWith(dStr));
                 if (ach.type === 'series_no_exp') { if (hasExpense) break; streak++; }
                 else if (ach.type === 'series_no_exp_inc') { if (hasExpense || !hasIncome) break; streak++; }
             }
